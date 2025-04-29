@@ -17,6 +17,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   username: z.string().min(3, {
@@ -41,6 +42,7 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -56,7 +58,11 @@ export default function Register() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     // This would normally connect to your Django backend
     console.log("Register submitted:", values);
-    // navigate('/login'); // Uncomment to redirect after registration
+    toast({
+      title: "Registro exitoso",
+      description: "¡Bienvenido a Contala!",
+    });
+    navigate('/dashboard'); // Redirect to dashboard after registration
   }
 
   return (
