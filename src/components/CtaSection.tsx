@@ -1,5 +1,6 @@
 
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 export default function CtaSection() {
   return (
@@ -13,16 +14,16 @@ export default function CtaSection() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               className="bg-contala-green text-contala-cream hover:bg-contala-green/90 h-12 px-8 text-lg"
-              onClick={() => window.location.href = "/register"}
+              asChild
             >
-              Crear cuenta gratis
+              <Link to="/login">Iniciar sesión</Link>
             </Button>
             <Button 
               variant="outline" 
               className="border-contala-green text-contala-green hover:bg-contala-green hover:text-contala-cream h-12 px-8 text-lg"
-              onClick={() => window.location.href = "/contact"}
+              asChild
             >
-              Contactar equipo
+              <Link to="/register">Registrarme</Link>
             </Button>
           </div>
         </div>
