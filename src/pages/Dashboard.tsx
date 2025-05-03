@@ -6,6 +6,7 @@ import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { UserProfile } from "@/components/dashboard/UserProfile";
 import { ProjectsSection } from "@/components/dashboard/ProjectsSection";
 import { CreatorsSection } from "@/components/dashboard/CreatorsSection";
+import { ConvocatoriasSection } from "@/components/dashboard/ConvocatoriasSection";
 
 export default function Dashboard() {
   const location = useLocation();
@@ -17,6 +18,8 @@ export default function Dashboard() {
       return "proyectos";
     } else if (path.includes("/creadores")) {
       return "creadores";
+    } else if (path.includes("/convocatorias")) {
+      return "convocatorias";
     } else {
       return "perfil";
     }
@@ -32,6 +35,7 @@ export default function Dashboard() {
           {activeSection === "perfil" && <UserProfile />}
           {activeSection === "proyectos" && <ProjectsSection />}
           {activeSection === "creadores" && <CreatorsSection />}
+          {activeSection === "convocatorias" && <ConvocatoriasSection />}
         </SidebarInset>
       </div>
     </SidebarProvider>

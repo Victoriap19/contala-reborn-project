@@ -4,7 +4,8 @@ import {
   User, 
   FileText, 
   Users, 
-  LogOut 
+  LogOut,
+  Bullhorn
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -48,6 +49,11 @@ export function DashboardSidebar() {
       title: "Tus Creadores",
       path: "/dashboard/creadores",
     },
+    {
+      icon: Bullhorn,
+      title: "Convocatorias",
+      path: "/dashboard/convocatorias",
+    },
   ];
 
   const handleMenuClick = (path: string, index: number) => {
@@ -74,7 +80,8 @@ export function DashboardSidebar() {
                     isActive={
                       (activeItem === "perfil" && item.path === "/dashboard") ||
                       (activeItem === "proyectos" && item.path === "/dashboard/proyectos") ||
-                      (activeItem === "creadores" && item.path === "/dashboard/creadores")
+                      (activeItem === "creadores" && item.path === "/dashboard/creadores") ||
+                      (activeItem === "convocatorias" && item.path === "/dashboard/convocatorias")
                     }
                     onClick={() => handleMenuClick(item.path, index)}
                   >

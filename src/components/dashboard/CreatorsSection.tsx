@@ -1,205 +1,159 @@
+
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Star, Search, Users, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { MapPin, Search, User, GalleryThumbnails } from "lucide-react";
-import { 
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { CreatorProfile } from "./CreatorProfile";
-import { useIsMobile } from "@/hooks/use-mobile";
+
+type Creator = {
+  id: string;
+  name: string;
+  location: string;
+  avatar: string;
+  rating: number;
+  tag: string;
+};
+
+// Mock data for creators
+const creatorsData: Creator[] = [
+  {
+    id: "1",
+    name: "Laura Rodríguez",
+    location: "Buenos Aires",
+    avatar: "https://images.unsplash.com/photo-1601412436009-d964bd02edbc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
+    rating: 4.5,
+    tag: "Moda",
+  },
+  {
+    id: "2",
+    name: "Carlos Gómez",
+    location: "Córdoba",
+    avatar: "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
+    rating: 5,
+    tag: "Gaming",
+  },
+  {
+    id: "3",
+    name: "Ana Martínez",
+    location: "Rosario",
+    avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
+    rating: 4,
+    tag: "Lifestyle",
+  },
+  {
+    id: "4",
+    name: "Daniel López",
+    location: "Mendoza",
+    avatar: "https://images.unsplash.com/photo-1619380061814-58f03707f082?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
+    rating: 4.5,
+    tag: "Fitness",
+  },
+  {
+    id: "5",
+    name: "Valentina Ruiz",
+    location: "Buenos Aires",
+    avatar: "https://images.unsplash.com/photo-1592621385612-4d7129426394?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
+    rating: 3.5,
+    tag: "Gastronomía",
+  },
+];
+
+// Star rating component
+const StarRating = ({ rating }: { rating: number }) => {
+  // Round to nearest 0.5
+  const roundedRating = Math.round(rating * 2) / 2;
+  return (
+    <div className="flex">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <span key={star}>
+          {star <= roundedRating ? (
+            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+          ) : star - 0.5 === roundedRating ? (
+            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400 fill-[50%]" />
+          ) : (
+            <Star className="w-4 h-4 text-gray-300" />
+          )}
+        </span>
+      ))}
+    </div>
+  );
+};
 
 export function CreatorsSection() {
-  const [selectedCreator, setSelectedCreator] = useState<any>(null);
-  const isMobile = useIsMobile();
-  
-  // Mock data for content creators with enhanced properties
-  const contentCreators = [
-    {
-      id: 1,
-      name: "Laura Martínez",
-      image: "https://images.unsplash.com/photo-1523712999610-f77fbcfc3843",
-      category: "Moda",
-      followers: "10K",
-      location: "Buenos Aires",
-      minFee: 500,
-      acceptsTrade: false,
-      bio: "Influencer de moda con 5 años de experiencia trabajando con marcas nacionales e internacionales. Especializada en contenido fotográfico para redes sociales.",
-      tags: ["Fotografía", "Lifestyle"]
-    },
-    {
-      id: 2,
-      name: "Carlos Gómez",
-      image: "https://images.unsplash.com/photo-1485833077593-4278bba3f11f",
-      category: "Tecnología",
-      followers: "50K",
-      location: "Córdoba",
-      minFee: 1000,
-      acceptsTrade: true,
-      bio: "Creador de contenido tecnológico, especializado en reviews de productos y tutoriales de software. Amplia experiencia en videos para YouTube y TikTok.",
-      tags: ["Video", "Reviews"]
-    },
-    {
-      id: 3,
-      name: "Marta Sánchez",
-      image: "https://images.unsplash.com/photo-1501286353178-1ec881214838",
-      category: "Belleza",
-      followers: "25K",
-      location: "Rosario",
-      minFee: 750,
-      acceptsTrade: true,
-      bio: "Maquilladora profesional y creadora de contenido de belleza. Especializada en tutoriales de maquillaje y reseñas de productos.",
-      tags: ["Tutorial", "Reseñas"]
-    },
-    {
-      id: 4,
-      name: "Juan Pérez",
-      image: "https://images.unsplash.com/photo-1582562124811-c09040d0a901",
-      category: "Gaming",
-      followers: "100K",
-      location: "Mendoza",
-      minFee: 1200,
-      acceptsTrade: false,
-      bio: "Streamer y creador de contenido de videojuegos. Especializado en gameplays y reviews de títulos populares.",
-      tags: ["Streaming", "Gameplay"]
-    },
-    {
-      id: 5,
-      name: "Ana Castro",
-      image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
-      category: "Fitness",
-      followers: "75K",
-      location: "Buenos Aires",
-      minFee: 800,
-      acceptsTrade: true,
-      bio: "Entrenadora personal y creadora de contenido fitness. Especializada en rutinas de entrenamiento y consejos de nutrición.",
-      tags: ["Entrenamiento", "Nutrición"]
-    }
-  ];
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCreator, setSelectedCreator] = useState<Creator | null>(null);
+
+  const filteredCreators = creatorsData.filter(creator =>
+    creator.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    creator.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    creator.tag.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleViewProfile = (creator: Creator) => {
+    setSelectedCreator(creator);
+  };
+
+  const handleNewRating = (creatorId: string, newRating: number) => {
+    // In a real app, this would update the rating in the database
+    console.log(`Rating creator ${creatorId} with ${newRating} stars`);
+  };
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-contala-green">Tus Creadores</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-contala-green flex items-center gap-2">
+          <Users className="h-6 w-6" />
+          Tus Creadores
+        </h2>
+      </div>
       
-      <div className="mb-6">
-        <div className="relative">
-          <Input 
-            placeholder="Buscar creadores por categoría, ubicación..." 
-            className="pl-10"
-          />
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400" />
-          </div>
-        </div>
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+        <Input
+          placeholder="Buscar por nombre, ubicación o categoría..."
+          className="pl-10"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
-
-      <div className="py-4">
-        <h3 className="font-medium text-lg text-contala-green mb-4">Creadores destacados</h3>
-        <Carousel className="w-full">
-          <CarouselContent>
-            {contentCreators.map((creator) => (
-              <CarouselItem key={creator.id} className="md:basis-1/2 lg:basis-1/3">
-                <Card className="overflow-hidden h-full">
-                  <div className="aspect-video w-full overflow-hidden bg-gray-100">
-                    <img 
-                      src={creator.image} 
-                      alt={creator.name} 
-                      className="w-full h-full object-cover"
-                    />
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filteredCreators.map((creator) => (
+          <Card key={creator.id} className="overflow-hidden hover:shadow-md transition-shadow">
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-4">
+                <Avatar>
+                  <AvatarImage src={creator.avatar} alt={creator.name} />
+                  <AvatarFallback>{creator.name.substring(0, 2)}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-lg text-contala-green truncate">{creator.name}</p>
+                  <div className="flex items-center text-sm text-gray-500">
+                    <MapPin className="h-3 w-3 mr-1" />
+                    <span>{creator.location}</span>
                   </div>
-                  <CardContent className="p-4">
-                    <h4 className="font-medium text-contala-green">{creator.name}</h4>
-                    <div className="flex items-center justify-between mt-2 text-sm text-gray-500">
-                      <span>{creator.category}</span>
-                      <span>{creator.followers} seguidores</span>
-                    </div>
-                    <div className="flex items-center mt-2 text-sm text-gray-500">
-                      <MapPin className="w-3 h-3 mr-1" />
-                      <span>{creator.location}</span>
-                    </div>
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      {creator.acceptsTrade && (
-                        <Badge variant="outline" className="text-xs border-contala-pink text-contala-pink">
-                          Acepta Canje
-                        </Badge>
-                      )}
-                      <Badge variant="outline" className="text-xs border-contala-green text-contala-green">
-                        Caché Min: ${creator.minFee}
-                      </Badge>
-                    </div>
-                    <Button 
-                      variant="outline" 
-                      className="w-full mt-3 border-contala-pink text-contala-pink hover:bg-contala-pink hover:text-contala-green"
-                      onClick={() => setSelectedCreator(creator)}
-                    >
-                      Ver perfil
-                    </Button>
-                  </CardContent>
-                </Card>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious className={`${isMobile ? "-left-2" : "-left-4"} bg-contala-green text-contala-cream`} />
-          <CarouselNext className={`${isMobile ? "-right-2" : "-right-4"} bg-contala-green text-contala-cream`} />
-        </Carousel>
-      </div>
-
-      <div className="py-4">
-        <h3 className="font-medium text-lg text-contala-green mb-4">Todos los creadores</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {contentCreators.map((creator) => (
-            <Card key={creator.id} className="overflow-hidden">
-              <div className="aspect-video w-full overflow-hidden bg-gray-100">
-                <img 
-                  src={creator.image} 
-                  alt={creator.name} 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <CardContent className="p-4">
-                <h4 className="font-medium text-contala-green">{creator.name}</h4>
-                <div className="flex items-center justify-between mt-2 text-sm text-gray-500">
-                  <span>{creator.category}</span>
-                  <span>{creator.followers} seguidores</span>
-                </div>
-                <div className="flex items-center mt-2 text-sm text-gray-500">
-                  <MapPin className="w-3 h-3 mr-1" />
-                  <span>{creator.location}</span>
-                </div>
-                <div className="mt-2 flex flex-wrap gap-1">
-                  {creator.acceptsTrade && (
-                    <Badge variant="outline" className="text-xs border-contala-pink text-contala-pink">
-                      Acepta Canje
-                    </Badge>
-                  )}
-                  <Badge variant="outline" className="text-xs border-contala-green text-contala-green">
-                    Caché Min: ${creator.minFee}
-                  </Badge>
+                  <div className="flex items-center mt-1">
+                    <StarRating rating={creator.rating} />
+                  </div>
                 </div>
                 <Button 
                   variant="outline" 
-                  className="w-full mt-3 border-contala-pink text-contala-pink hover:bg-contala-pink hover:text-contala-green"
-                  onClick={() => setSelectedCreator(creator)}
+                  className="text-contala-green border-contala-green hover:bg-contala-green hover:text-white"
+                  onClick={() => handleViewProfile(creator)}
                 >
-                  Ver perfil
+                  Ver
                 </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      {selectedCreator && (
-        <CreatorProfile 
-          creator={selectedCreator} 
-          isOpen={!!selectedCreator} 
-          onClose={() => setSelectedCreator(null)} 
-        />
+      {filteredCreators.length === 0 && (
+        <div className="text-center py-8">
+          <p className="text-gray-500">No se encontraron resultados para "{searchTerm}"</p>
+        </div>
       )}
     </div>
   );
