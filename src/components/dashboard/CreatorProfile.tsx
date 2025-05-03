@@ -52,10 +52,10 @@ export function CreatorProfile() {
     if (!files || files.length === 0) return;
     
     const newItems = Array.from(files).map(file => {
-      // Determine if it's an image or video based on file type
-      const type = file.type.startsWith('image/') ? 'image' : 'video';
+      // Explicitly cast to the correct type to satisfy TypeScript
+      const fileType: 'image' | 'video' = file.type.startsWith('image/') ? 'image' : 'video';
       return {
-        type,
+        type: fileType,
         url: URL.createObjectURL(file)
       };
     });
@@ -292,3 +292,4 @@ export function CreatorProfile() {
     </div>
   );
 }
+
