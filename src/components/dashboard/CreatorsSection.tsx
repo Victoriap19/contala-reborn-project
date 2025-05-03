@@ -1,8 +1,10 @@
 
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MapPin, Search, Users } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { MapPin, Search, User } from "lucide-react";
 import { 
   Carousel,
   CarouselContent,
@@ -10,49 +12,74 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { CreatorProfile } from "./CreatorProfile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function CreatorsSection() {
-  // Mock data for content creators
+  const [selectedCreator, setSelectedCreator] = useState<any>(null);
+  const isMobile = useIsMobile();
+  
+  // Mock data for content creators with enhanced properties
   const contentCreators = [
     {
       id: 1,
       name: "Laura Martínez",
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1523712999610-f77fbcfc3843",
       category: "Moda",
       followers: "10K",
-      location: "Buenos Aires"
+      location: "Buenos Aires",
+      minFee: 500,
+      acceptsTrade: false,
+      bio: "Influencer de moda con 5 años de experiencia trabajando con marcas nacionales e internacionales. Especializada en contenido fotográfico para redes sociales.",
+      tags: ["Fotografía", "Lifestyle"]
     },
     {
       id: 2,
       name: "Carlos Gómez",
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1485833077593-4278bba3f11f",
       category: "Tecnología",
       followers: "50K",
-      location: "Córdoba"
+      location: "Córdoba",
+      minFee: 1000,
+      acceptsTrade: true,
+      bio: "Creador de contenido tecnológico, especializado en reviews de productos y tutoriales de software. Amplia experiencia en videos para YouTube y TikTok.",
+      tags: ["Video", "Reviews"]
     },
     {
       id: 3,
       name: "Marta Sánchez",
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1501286353178-1ec881214838",
       category: "Belleza",
       followers: "25K",
-      location: "Rosario"
+      location: "Rosario",
+      minFee: 750,
+      acceptsTrade: true,
+      bio: "Maquilladora profesional y creadora de contenido de belleza. Especializada en tutoriales de maquillaje y reseñas de productos.",
+      tags: ["Tutorial", "Reseñas"]
     },
     {
       id: 4,
       name: "Juan Pérez",
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1582562124811-c09040d0a901",
       category: "Gaming",
       followers: "100K",
-      location: "Mendoza"
+      location: "Mendoza",
+      minFee: 1200,
+      acceptsTrade: false,
+      bio: "Streamer y creador de contenido de videojuegos. Especializado en gameplays y reviews de títulos populares.",
+      tags: ["Streaming", "Gameplay"]
     },
     {
       id: 5,
       name: "Ana Castro",
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
       category: "Fitness",
       followers: "75K",
-      location: "Buenos Aires"
+      location: "Buenos Aires",
+      minFee: 800,
+      acceptsTrade: true,
+      bio: "Entrenadora personal y creadora de contenido fitness. Especializada en rutinas de entrenamiento y consejos de nutrición.",
+      tags: ["Entrenamiento", "Nutrición"]
     }
   ];
 
@@ -96,9 +123,20 @@ export function CreatorsSection() {
                       <MapPin className="w-3 h-3 mr-1" />
                       <span>{creator.location}</span>
                     </div>
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {creator.acceptsTrade && (
+                        <Badge variant="outline" className="text-xs border-contala-pink text-contala-pink">
+                          Acepta Canje
+                        </Badge>
+                      )}
+                      <Badge variant="outline" className="text-xs border-contala-green text-contala-green">
+                        Caché Min: ${creator.minFee}
+                      </Badge>
+                    </div>
                     <Button 
                       variant="outline" 
                       className="w-full mt-3 border-contala-pink text-contala-pink hover:bg-contala-pink hover:text-contala-green"
+                      onClick={() => setSelectedCreator(creator)}
                     >
                       Ver perfil
                     </Button>
@@ -107,8 +145,8 @@ export function CreatorsSection() {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="-left-4 bg-contala-green text-contala-cream" />
-          <CarouselNext className="-right-4 bg-contala-green text-contala-cream" />
+          <CarouselPrevious className={`${isMobile ? "-left-2" : "-left-4"} bg-contala-green text-contala-cream`} />
+          <CarouselNext className={`${isMobile ? "-right-2" : "-right-4"} bg-contala-green text-contala-cream`} />
         </Carousel>
       </div>
 
@@ -134,9 +172,20 @@ export function CreatorsSection() {
                   <MapPin className="w-3 h-3 mr-1" />
                   <span>{creator.location}</span>
                 </div>
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {creator.acceptsTrade && (
+                    <Badge variant="outline" className="text-xs border-contala-pink text-contala-pink">
+                      Acepta Canje
+                    </Badge>
+                  )}
+                  <Badge variant="outline" className="text-xs border-contala-green text-contala-green">
+                    Caché Min: ${creator.minFee}
+                  </Badge>
+                </div>
                 <Button 
                   variant="outline" 
                   className="w-full mt-3 border-contala-pink text-contala-pink hover:bg-contala-pink hover:text-contala-green"
+                  onClick={() => setSelectedCreator(creator)}
                 >
                   Ver perfil
                 </Button>
@@ -145,6 +194,14 @@ export function CreatorsSection() {
           ))}
         </div>
       </div>
+
+      {selectedCreator && (
+        <CreatorProfile 
+          creator={selectedCreator} 
+          isOpen={!!selectedCreator} 
+          onClose={() => setSelectedCreator(null)} 
+        />
+      )}
     </div>
   );
 }
