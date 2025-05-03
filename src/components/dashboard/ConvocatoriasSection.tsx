@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { Bullhorn, Filter, PlusCircle } from "lucide-react";
+import { Megaphone, Filter, PlusCircle } from "lucide-react";
 
 type Convocatoria = {
   id: string;
@@ -102,7 +101,7 @@ export function ConvocatoriasSection() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-contala-green flex items-center">
-          <Bullhorn className="mr-2 h-5 w-5" />
+          <Megaphone className="mr-2 h-5 w-5" />
           Convocatorias
         </h2>
         <Button 

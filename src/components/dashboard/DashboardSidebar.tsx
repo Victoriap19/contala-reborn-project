@@ -5,7 +5,7 @@ import {
   FileText, 
   Users, 
   LogOut,
-  Bullhorn
+  Megaphone
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -50,7 +50,7 @@ export function DashboardSidebar() {
       path: "/dashboard/creadores",
     },
     {
-      icon: Bullhorn,
+      icon: Megaphone,
       title: "Convocatorias",
       path: "/dashboard/convocatorias",
     },
