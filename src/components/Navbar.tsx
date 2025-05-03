@@ -104,7 +104,7 @@ export default function Navbar() {
                 className="border-contala-green bg-contala-green text-contala-cream hover:bg-contala-green/90"
                 onClick={handleCreatorRegister}
               >
-                SOY CREADOR
+                Soy Creador
               </Button>
             </>
           )}
@@ -154,7 +154,7 @@ export default function Navbar() {
                   className="border-contala-green bg-contala-green text-contala-cream hover:bg-contala-green/90 w-full"
                   onClick={handleCreatorRegister}
                 >
-                  SOY CREADOR
+                  Soy Creador
                 </Button>
               </>
             )}

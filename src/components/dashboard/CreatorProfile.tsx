@@ -1,244 +1,294 @@
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { MapPin, GalleryThumbnails, Send } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { User, Phone, Mail, MapPin, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Card } from "../ui/card";
 
-// Define schema for the proposal form
-const proposalFormSchema = z.object({
-  description: z.string().min(10, {
-    message: "La descripción debe tener al menos 10 caracteres.",
-  }),
-  offer: z.coerce.number().min(1, {
-    message: "La oferta debe ser un número válido mayor que cero.",
-  }),
-});
-
-type ProposalFormValues = z.infer<typeof proposalFormSchema>;
-
-interface CreatorProfileProps {
-  creator: {
-    id: number;
-    name: string;
-    image: string;
-    category: string;
-    followers: string;
-    location: string;
-    minFee?: number;
-    acceptsTrade?: boolean;
-    gallery?: {url: string; type: "image" | "video"}[];
-    bio?: string;
-    tags?: string[];
-  };
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-export function CreatorProfile({ creator, isOpen, onClose }: CreatorProfileProps) {
-  const [isProposalFormOpen, setIsProposalFormOpen] = useState(false);
+export function CreatorProfile() {
   const { toast } = useToast();
-  const form = useForm<ProposalFormValues>({
-    resolver: zodResolver(proposalFormSchema),
-    defaultValues: {
-      description: "",
-      offer: creator.minFee || 0,
-    },
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [portfolio, setPortfolio] = useState<{ type: 'image' | 'video', url: string }[]>([]);
+  const [creatorProfile, setCreatorProfile] = useState({
+    nombre: "",
+    apellido: "",
+    telefono: "",
+    email: "",
+    ubicacion: "",
+    descripcion: "",
+    cache: "",
+    aceptaCanje: false
   });
 
-  const onSubmitProposal = (data: ProposalFormValues) => {
-    // Validate that offer is greater than or equal to minFee if not accepting trade
-    if (!creator.acceptsTrade && data.offer < (creator.minFee || 0)) {
-      form.setError("offer", {
-        type: "manual",
-        message: `La oferta debe ser mayor o igual a ${creator.minFee}`,
-      });
-      return;
-    }
-
-    // Here you would send the proposal data to your backend
-    console.log("Sending proposal:", data);
-    
-    toast({
-      title: "Propuesta enviada",
-      description: "Tu propuesta ha sido enviada al creador.",
-      variant: "default",
-    });
-    
-    setIsProposalFormOpen(false);
-    onClose();
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setCreatorProfile(prev => ({ ...prev, [name]: value }));
   };
 
-  // Mock gallery data until we implement upload functionality
-  const galleryItems = creator.gallery || [
-    { url: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9", type: "image" },
-    { url: "https://images.unsplash.com/photo-1582562124811-c09040d0a901", type: "image" },
-    { url: "https://images.unsplash.com/photo-1501286353178-1ec881214838", type: "image" }
-  ];
+  const handleCanjeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCreatorProfile(prev => ({ ...prev, aceptaCanje: e.target.checked }));
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          setProfileImage(e.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handlePortfolioAdd = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    
+    const newItems = Array.from(files).map(file => {
+      // Determine if it's an image or video based on file type
+      const type = file.type.startsWith('image/') ? 'image' : 'video';
+      return {
+        type,
+        url: URL.createObjectURL(file)
+      };
+    });
+    
+    setPortfolio(prev => [...prev, ...newItems]);
+  };
+
+  const handleSaveProfile = () => {
+    // Aquí iría la lógica para guardar el perfil en el backend
+    console.log("Guardando perfil:", { ...creatorProfile, profileImage, portfolio });
+    toast({
+      title: "Perfil actualizado",
+      description: "Tus cambios han sido guardados correctamente",
+    });
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <div className="flex items-center gap-4">
-            <Avatar className="h-16 w-16 border-2 border-contala-green">
-              <AvatarImage src={creator.image} alt={creator.name} />
-              <AvatarFallback>{creator.name.substring(0, 2)}</AvatarFallback>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-contala-green">Tu Perfil de Creador</h2>
+        <Button 
+          className="bg-contala-pink text-contala-green hover:bg-contala-pink/90"
+          onClick={handleSaveProfile}
+        >
+          Guardar Cambios
+        </Button>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-contala-green">Información Personal</CardTitle>
+          <CardDescription>Actualiza tu información de perfil como creador</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="flex flex-col items-center space-y-4">
+            <Avatar className="h-24 w-24">
+              {profileImage ? (
+                <AvatarImage src={profileImage} alt="Profile" />
+              ) : (
+                <AvatarFallback className="bg-contala-green/10 text-contala-green">
+                  <User className="h-12 w-12" />
+                </AvatarFallback>
+              )}
             </Avatar>
-            <div>
-              <DialogTitle className="text-2xl text-contala-green">{creator.name}</DialogTitle>
-              <DialogDescription className="flex items-center gap-1 mt-1">
-                <MapPin className="w-3.5 h-3.5" /> {creator.location} · {creator.followers} seguidores
-              </DialogDescription>
-              <div className="flex gap-2 mt-2">
-                {creator.tags?.map((tag, index) => (
-                  <Badge key={index} variant="secondary" className="bg-contala-pink/20 text-contala-pink">
-                    {tag}
-                  </Badge>
-                ))}
-                <Badge variant="secondary" className="bg-contala-green/20 text-contala-green">
-                  {creator.category}
-                </Badge>
-              </div>
+            <div className="flex items-center space-x-2">
+              <Label 
+                htmlFor="picture" 
+                className="cursor-pointer bg-contala-green/10 text-contala-green px-4 py-2 rounded-md hover:bg-contala-green/20 transition"
+              >
+                Cambiar foto
+              </Label>
+              <Input 
+                id="picture" 
+                type="file" 
+                accept="image/*" 
+                className="hidden" 
+                onChange={handleImageChange} 
+              />
             </div>
           </div>
-        </DialogHeader>
 
-        {creator.bio && (
-          <div className="mt-4">
-            <h3 className="font-medium text-contala-green mb-1">Sobre mí</h3>
-            <p className="text-sm text-gray-600">{creator.bio}</p>
-          </div>
-        )}
+          <Separator />
 
-        <div className="mt-4">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="font-medium text-contala-green">Portfolio</h3>
-            <div className="flex items-center gap-2">
-              <GalleryThumbnails className="h-4 w-4 text-gray-500" />
-              <span className="text-sm text-gray-500">{galleryItems.length} elementos</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="nombre" className="text-contala-green">Nombre</Label>
+              <Input 
+                id="nombre" 
+                name="nombre"
+                value={creatorProfile.nombre}
+                onChange={handleInputChange}
+                placeholder="Tu nombre" 
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="apellido" className="text-contala-green">Apellido</Label>
+              <Input 
+                id="apellido" 
+                name="apellido"
+                value={creatorProfile.apellido}
+                onChange={handleInputChange}
+                placeholder="Tu apellido" 
+              />
             </div>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            {galleryItems.map((item, index) => (
-              <div key={index} className="aspect-square rounded-lg overflow-hidden bg-gray-100">
-                <img 
-                  src={item.url} 
-                  alt={`Portfolio item ${index + 1}`}
-                  className="w-full h-full object-cover"
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="telefono" className="text-contala-green">Teléfono</Label>
+              <div className="relative">
+                <Phone className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                <Input 
+                  id="telefono" 
+                  name="telefono"
+                  value={creatorProfile.telefono}
+                  onChange={handleInputChange}
+                  className="pl-8" 
+                  placeholder="+54 11 1234 5678" 
                 />
               </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-t border-gray-200 pt-4">
-          <div>
-            <h3 className="font-medium text-contala-green">Condiciones de trabajo</h3>
-            <div className="flex items-center gap-2 mt-1">
-              {creator.minFee && (
-                <Badge variant="outline" className="border-contala-green text-contala-green">
-                  Caché Min: ${creator.minFee}
-                </Badge>
-              )}
-              {creator.acceptsTrade && (
-                <Badge variant="outline" className="border-contala-pink text-contala-pink">
-                  Acepta Canje
-                </Badge>
-              )}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-contala-green">Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                <Input 
+                  id="email" 
+                  name="email"
+                  value={creatorProfile.email}
+                  onChange={handleInputChange}
+                  className="pl-8" 
+                  placeholder="tu@email.com" 
+                  type="email"
+                />
+              </div>
             </div>
           </div>
-          <Button 
-            onClick={() => setIsProposalFormOpen(true)} 
-            className="bg-contala-pink text-white hover:bg-contala-pink/90"
-          >
-            <Send className="mr-2 h-4 w-4" /> Enviar Propuesta
-          </Button>
-        </div>
-      </DialogContent>
 
-      <Dialog open={isProposalFormOpen} onOpenChange={setIsProposalFormOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Enviar Propuesta a {creator.name}</DialogTitle>
-            <DialogDescription>
-              Describe el tipo de contenido que buscas y haz una oferta al creador.
-            </DialogDescription>
-          </DialogHeader>
-
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmitProposal)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Descripción del Proyecto</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        placeholder="Describe el tipo de contenido que buscas, detalles sobre tu marca, plazos, etc."
-                        className="min-h-[120px]"
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Incluye todos los detalles relevantes para el creador.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
+          <div className="space-y-2">
+            <Label htmlFor="ubicacion" className="text-contala-green">Ubicación</Label>
+            <div className="relative">
+              <MapPin className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+              <Input 
+                id="ubicacion" 
+                name="ubicacion"
+                value={creatorProfile.ubicacion}
+                onChange={handleInputChange}
+                className="pl-8" 
+                placeholder="Ciudad, Provincia" 
               />
+            </div>
+          </div>
 
-              <FormField
-                control={form.control}
-                name="offer"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tu Oferta ($)</FormLabel>
-                    <FormControl>
-                      <Input type="number" min={creator.minFee || 0} {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      {creator.minFee ? (
-                        <>La oferta mínima es ${creator.minFee}.</>
+          <div className="space-y-2">
+            <Label htmlFor="descripcion" className="text-contala-green">Descripción</Label>
+            <textarea 
+              id="descripcion"
+              name="descripcion"
+              value={creatorProfile.descripcion}
+              onChange={handleInputChange}
+              className="w-full min-h-[100px] p-2 border border-input rounded-md bg-background" 
+              placeholder="Cuéntanos sobre ti y el tipo de contenido que creas..."
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="cache" className="text-contala-green">Caché aproximado</Label>
+              <div className="relative">
+                <span className="absolute left-2 top-2.5 h-4 w-4 text-gray-500">$</span>
+                <Input 
+                  id="cache" 
+                  name="cache"
+                  value={creatorProfile.cache}
+                  onChange={handleInputChange}
+                  className="pl-8" 
+                  placeholder="Valor aproximado por contenido" 
+                />
+              </div>
+            </div>
+            <div className="space-y-2 flex items-center">
+              <div className="flex items-center space-x-2 mt-8">
+                <input 
+                  id="aceptaCanje" 
+                  name="aceptaCanje"
+                  type="checkbox"
+                  checked={creatorProfile.aceptaCanje}
+                  onChange={handleCanjeChange}
+                  className="h-4 w-4" 
+                />
+                <Label htmlFor="aceptaCanje" className="text-contala-green">Acepto canje por productos</Label>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-contala-green">Portfolio</CardTitle>
+          <CardDescription>Sube ejemplos de tu trabajo para mostrar a posibles clientes</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="gallery">
+            <TabsList className="mb-4">
+              <TabsTrigger value="gallery">Galería</TabsTrigger>
+              <TabsTrigger value="upload">Subir Nuevo</TabsTrigger>
+            </TabsList>
+            <TabsContent value="gallery">
+              {portfolio.length === 0 ? (
+                <div className="text-center py-8 border border-dashed rounded-md">
+                  <p className="text-gray-500">No tienes contenido en tu portfolio. ¡Comienza a subir ejemplos de tu trabajo!</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {portfolio.map((item, index) => (
+                    <div key={index} className="aspect-square rounded-md overflow-hidden">
+                      {item.type === 'image' ? (
+                        <img src={item.url} alt={`Portfolio item ${index + 1}`} className="w-full h-full object-cover" />
                       ) : (
-                        <>Ingresa el monto que ofreces por este proyecto.</>
+                        <video src={item.url} controls className="w-full h-full object-cover">
+                          Tu navegador no soporta videos.
+                        </video>
                       )}
-                      {creator.acceptsTrade && " Este creador también acepta canje."}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <DialogFooter className="pt-4">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={() => setIsProposalFormOpen(false)}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+            <TabsContent value="upload">
+              <div className="border border-dashed rounded-md p-6 text-center">
+                <Upload className="mx-auto h-12 w-12 text-gray-400 mb-2" />
+                <h3 className="text-lg font-medium">Arrastra o selecciona archivos</h3>
+                <p className="text-sm text-gray-500 mb-4">Sube imágenes y videos de tu trabajo</p>
+                <Label 
+                  htmlFor="portfolio" 
+                  className="cursor-pointer bg-contala-green text-contala-cream px-4 py-2 rounded-md hover:bg-contala-green/90 transition inline-block"
                 >
-                  Cancelar
-                </Button>
-                <Button 
-                  type="submit"
-                  className="bg-contala-pink text-white hover:bg-contala-pink/90"
-                >
-                  Enviar Propuesta
-                </Button>
-              </DialogFooter>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
-    </Dialog>
+                  Seleccionar Archivos
+                </Label>
+                <Input 
+                  id="portfolio" 
+                  type="file" 
+                  accept="image/*,video/*"
+                  className="hidden" 
+                  multiple
+                  onChange={handlePortfolioAdd} 
+                />
+              </div>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

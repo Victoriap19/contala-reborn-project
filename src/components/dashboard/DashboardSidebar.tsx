@@ -5,9 +5,12 @@ import {
   FileText, 
   Users, 
   LogOut,
-  Megaphone
+  Megaphone,
+  Clock,
+  Globe
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "@/context/UserContext";
 import {
   Sidebar,
   SidebarContent,
@@ -31,9 +34,11 @@ type SidebarItem = {
 
 export function DashboardSidebar() {
   const navigate = useNavigate();
+  const { userType } = useUser();
   const [activeItem, setActiveItem] = useState("perfil");
   
-  const sidebarItems: SidebarItem[] = [
+  // Define sidebar items based on user type
+  const regularUserItems: SidebarItem[] = [
     {
       icon: User,
       title: "Tu Perfil",
@@ -51,10 +56,36 @@ export function DashboardSidebar() {
     },
     {
       icon: Megaphone,
-      title: "Convocatorias",
+      title: "Tus Convocatorias",
       path: "/dashboard/convocatorias",
-    },
+    }
   ];
+  
+  const creatorUserItems: SidebarItem[] = [
+    {
+      icon: User,
+      title: "Tu Perfil",
+      path: "/dashboard",
+    },
+    {
+      icon: FileText,
+      title: "Tus Proyectos",
+      path: "/dashboard/proyectos",
+    },
+    {
+      icon: Clock,
+      title: "Pendientes de Aprobación",
+      path: "/dashboard/pendientes",
+    },
+    {
+      icon: Globe,
+      title: "Generales",
+      path: "/dashboard/generales",
+    }
+  ];
+  
+  // Select items based on user type
+  const sidebarItems = userType === "creator" ? creatorUserItems : regularUserItems;
 
   const handleMenuClick = (path: string, index: number) => {
     const section = path.split("/").pop() || "perfil";
@@ -79,9 +110,7 @@ export function DashboardSidebar() {
                   <SidebarMenuButton 
                     isActive={
                       (activeItem === "perfil" && item.path === "/dashboard") ||
-                      (activeItem === "proyectos" && item.path === "/dashboard/proyectos") ||
-                      (activeItem === "creadores" && item.path === "/dashboard/creadores") ||
-                      (activeItem === "convocatorias" && item.path === "/dashboard/convocatorias")
+                      (item.path.includes(activeItem))
                     }
                     onClick={() => handleMenuClick(item.path, index)}
                   >
