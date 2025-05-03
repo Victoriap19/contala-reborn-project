@@ -1,9 +1,8 @@
 
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, UserPlus, Mail, Facebook } from "lucide-react";
 import { 
   Form,
@@ -42,8 +41,18 @@ const formSchema = z.object({
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isCreator, setIsCreator] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
+  
+  // Check if registering as a creator
+  useEffect(() => {
+    const type = searchParams.get("type");
+    if (type === "creator") {
+      setIsCreator(true);
+    }
+  }, [searchParams]);
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -58,25 +67,25 @@ export default function Register() {
   
   function onSubmit(values: z.infer<typeof formSchema>) {
     // This would normally connect to your Django backend
-    console.log("Register submitted:", values);
+    console.log("Register submitted:", values, "Is Creator:", isCreator);
     toast({
-      title: "Registro exitoso",
+      title: isCreator ? "Registro de creador exitoso" : "Registro exitoso",
       description: "¡Bienvenido a Contala!",
     });
     navigate('/dashboard'); // Redirect to dashboard after registration
   }
 
   const handleSocialLogin = (provider: string) => {
-    console.log(`Register with ${provider}`);
+    console.log(`Register with ${provider}`, "Is Creator:", isCreator);
     toast({
-      title: `Registrando con ${provider}`,
+      title: isCreator ? `Registrando como creador con ${provider}` : `Registrando con ${provider}`,
       description: "Redirigiendo...",
     });
     // In a real implementation, this would redirect to the provider's OAuth flow
     // For now, we'll just simulate a successful registration
     setTimeout(() => {
       toast({
-        title: "Registro exitoso",
+        title: isCreator ? "Registro de creador exitoso" : "Registro exitoso",
         description: "¡Bienvenido a Contala!",
       });
       navigate('/dashboard');
@@ -94,7 +103,7 @@ export default function Register() {
         
         <div className="bg-contala-green rounded-3xl p-8 md:p-10 shadow-xl">
           <h1 className="text-2xl md:text-3xl font-bold text-contala-cream mb-6 text-center">
-            Crear cuenta
+            {isCreator ? "Registro de Creador" : "Crear cuenta"}
           </h1>
           
           {/* Social Login Buttons */}
@@ -235,6 +244,15 @@ export default function Register() {
                 )}
               />
               
+              {isCreator && (
+                <div className="p-3 bg-contala-green/80 rounded-lg border border-contala-cream/20">
+                  <p className="text-contala-cream text-sm mb-2">
+                    Al registrarte como creador, aceptas nuestros términos específicos para creadores y
+                    entiendes que tu perfil estará disponible para posibles trabajos.
+                  </p>
+                </div>
+              )}
+              
               <FormField
                 control={form.control}
                 name="terms"
@@ -261,7 +279,7 @@ export default function Register() {
                 type="submit" 
                 className="w-full bg-contala-pink hover:bg-white text-contala-green font-bold py-3 rounded-lg transition-colors mt-6"
               >
-                Registrarme
+                {isCreator ? "Registrarme como Creador" : "Registrarme"}
               </Button>
             </form>
           </Form>

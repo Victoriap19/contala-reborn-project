@@ -48,6 +48,11 @@ export default function Navbar() {
     window.location.href = "/register";
   };
 
+  const handleCreatorRegister = () => {
+    // Redirigir a la página de registro de creadores
+    window.location.href = "/register?type=creator";
+  };
+
   const handleLogout = () => {
     // Implementar lógica de logout
     setIsAuthenticated(false);
@@ -94,6 +99,13 @@ export default function Navbar() {
               >
                 Registrarme
               </Button>
+              <Button 
+                variant="outline" 
+                className="border-contala-green bg-contala-green text-contala-cream hover:bg-contala-green/90"
+                onClick={handleCreatorRegister}
+              >
+                SOY CREADOR
+              </Button>
             </>
           )}
         </div>
@@ -136,6 +148,13 @@ export default function Navbar() {
                   onClick={handleRegister}
                 >
                   Registrarme
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="border-contala-green bg-contala-green text-contala-cream hover:bg-contala-green/90 w-full"
+                  onClick={handleCreatorRegister}
+                >
+                  SOY CREADOR
                 </Button>
               </>
             )}
