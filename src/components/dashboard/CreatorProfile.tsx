@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { MapPin, Gallery, Send } from "lucide-react";
+import { MapPin, GalleryThumbnails, Send } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -124,7 +124,7 @@ export function CreatorProfile({ creator, isOpen, onClose }: CreatorProfileProps
           <div className="flex items-center justify-between mb-2">
             <h3 className="font-medium text-contala-green">Portfolio</h3>
             <div className="flex items-center gap-2">
-              <Gallery className="h-4 w-4 text-gray-500" />
+              <GalleryThumbnails className="h-4 w-4 text-gray-500" />
               <span className="text-sm text-gray-500">{galleryItems.length} elementos</span>
             </div>
           </div>
