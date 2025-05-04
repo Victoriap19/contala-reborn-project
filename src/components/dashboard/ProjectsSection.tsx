@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { ProjectChat } from "./ProjectChat";
 import { toast } from "sonner";
+import { StarRating } from "./StarRating";
 
 type ProjectStatus = 'propuesta_enviada' | 'aceptado' | 'en_proceso' | 'completado';
 
@@ -38,7 +39,7 @@ const projectsData: Project[] = [
     creator: {
       id: "1",
       name: "Laura Rodríguez",
-      avatar: "https://images.unsplash.com/photo-1601412436009-d964bd02edbc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
+      avatar: "https://images.unsplash.com/photo-1601412436009-d964bd02edbc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
     },
     date: "15/04/2023",
     status: "en_proceso",
@@ -53,7 +54,7 @@ const projectsData: Project[] = [
     creator: {
       id: "2",
       name: "Carlos Gómez",
-      avatar: "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
+      avatar: "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
     },
     date: "02/05/2023",
     status: "completado",
@@ -68,7 +69,7 @@ const projectsData: Project[] = [
     creator: {
       id: "3",
       name: "Ana Martínez",
-      avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
+      avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
     },
     date: "10/05/2023",
     status: "propuesta_enviada",
@@ -83,7 +84,7 @@ const projectsData: Project[] = [
     creator: {
       id: "4",
       name: "Daniel López",
-      avatar: "https://images.unsplash.com/photo-1619380061814-58f03707f082?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
+      avatar: "https://images.unsplash.com/photo-1619380061814-58f03707f082?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
     },
     date: "20/05/2023",
     status: "aceptado",
@@ -177,10 +178,10 @@ export function ProjectsSection() {
         <div className="flex items-center space-x-2">
           <Filter className="h-4 w-4 text-gray-400" />
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] bg-contala-cream border-contala-green/20 focus:border-contala-green">
               <SelectValue placeholder="Filtrar por estado" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-contala-cream">
               <SelectItem value="todos">Todos los estados</SelectItem>
               <SelectItem value="propuesta_enviada">Propuesta enviada</SelectItem>
               <SelectItem value="aceptado">Aceptado</SelectItem>
@@ -192,11 +193,11 @@ export function ProjectsSection() {
       </div>
 
       {filteredProjects.length > 0 ? (
-        <Card className="bg-gray-50">
-          <CardContent className="p-0">
+        <Card className="bg-contala-cream/50 border-contala-green/20">
+          <CardContent className="p-0 overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-100">
+                <TableRow className="bg-contala-green/5">
                   <TableHead>Proyecto</TableHead>
                   <TableHead>Creador</TableHead>
                   <TableHead>Fecha</TableHead>
@@ -206,7 +207,7 @@ export function ProjectsSection() {
               </TableHeader>
               <TableBody>
                 {filteredProjects.map((project) => (
-                  <TableRow key={project.id}>
+                  <TableRow key={project.id} className="border-contala-green/10">
                     <TableCell className="font-medium">
                       <div>
                         <p className="font-medium text-contala-green">{project.title}</p>
@@ -216,7 +217,7 @@ export function ProjectsSection() {
                     <TableCell>
                       <div className="flex items-center space-x-2">
                         <Avatar className="h-8 w-8">
-                          <AvatarImage src={project.creator.avatar} />
+                          <AvatarImage src={project.creator.avatar} alt={project.creator.name} />
                           <AvatarFallback>{project.creator.name.substring(0, 2)}</AvatarFallback>
                         </Avatar>
                         <span>{project.creator.name}</span>
@@ -231,17 +232,17 @@ export function ProjectsSection() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        {(project.status === "en_proceso" || project.status === "aceptado") && (
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            className="text-purple-600 border-purple-200 hover:bg-purple-50"
-                            onClick={() => openChat(project)}
-                          >
-                            <MessageSquare className="h-4 w-4 mr-1" />
-                            Chat
-                          </Button>
-                        )}
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          className="text-purple-600 border-purple-200 hover:bg-purple-50"
+                          onClick={() => openChat(project)}
+                          disabled={project.status !== "aceptado" && project.status !== "en_proceso"}
+                        >
+                          <MessageSquare className="h-4 w-4 mr-1" />
+                          Chat
+                        </Button>
+                        
                         {project.status === "en_proceso" && (
                           <Button 
                             variant="outline" 
@@ -253,6 +254,7 @@ export function ProjectsSection() {
                             Recibido
                           </Button>
                         )}
+                        
                         <Button 
                           variant="ghost" 
                           size="sm"
@@ -270,7 +272,7 @@ export function ProjectsSection() {
           </CardContent>
         </Card>
       ) : (
-        <Card className="border-dashed border-2 bg-gray-50">
+        <Card className="border-dashed border-2 bg-contala-cream/50 border-contala-green/20">
           <CardHeader className="flex flex-row items-center justify-center p-6">
             <div className="flex flex-col items-center text-center">
               <FileText className="h-12 w-12 text-contala-green mb-2" />
@@ -286,7 +288,7 @@ export function ProjectsSection() {
       )}
 
       <Dialog open={selectedProject !== null} onOpenChange={(open) => !open && setSelectedProject(null)}>
-        <DialogContent className="sm:max-w-[600px] bg-gray-50">
+        <DialogContent className="sm:max-w-[600px] bg-contala-cream/90">
           <DialogHeader>
             <DialogTitle>{selectedProject?.title}</DialogTitle>
             <DialogDescription>
@@ -301,7 +303,7 @@ export function ProjectsSection() {
                   <p className="text-sm font-medium text-gray-500">Creador</p>
                   <div className="flex items-center space-x-2">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={selectedProject.creator.avatar} />
+                      <AvatarImage src={selectedProject.creator.avatar} alt={selectedProject.creator.name} />
                       <AvatarFallback>{selectedProject.creator.name.substring(0, 2)}</AvatarFallback>
                     </Avatar>
                     <span>{selectedProject.creator.name}</span>
@@ -332,7 +334,7 @@ export function ProjectsSection() {
                 <p className="text-sm font-medium text-gray-500">Plataformas</p>
                 <div className="flex flex-wrap gap-2">
                   {selectedProject.platforms.map((platform, index) => (
-                    <Badge key={index} variant="secondary">{platform}</Badge>
+                    <Badge key={index} variant="secondary" className="bg-contala-green/10 text-contala-green border-none">{platform}</Badge>
                   ))}
                 </div>
               </div>
@@ -355,19 +357,18 @@ export function ProjectsSection() {
                 </Button>
                 
                 <div className="space-x-3">
-                  {(selectedProject.status === "en_proceso" || selectedProject.status === "aceptado") && (
-                    <Button 
-                      variant="outline"
-                      className="text-purple-600 border-purple-200 hover:bg-purple-50"
-                      onClick={() => {
-                        setSelectedProject(null);
-                        openChat(selectedProject);
-                      }}
-                    >
-                      <MessageSquare className="h-4 w-4 mr-2" />
-                      Abrir chat
-                    </Button>
-                  )}
+                  <Button 
+                    variant="outline"
+                    className="text-purple-600 border-purple-200 hover:bg-purple-50"
+                    onClick={() => {
+                      setSelectedProject(null);
+                      openChat(selectedProject);
+                    }}
+                    disabled={selectedProject.status !== "aceptado" && selectedProject.status !== "en_proceso"}
+                  >
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    Abrir chat
+                  </Button>
                   <Button variant="outline" onClick={() => setSelectedProject(null)}>
                     Cerrar
                   </Button>
@@ -380,7 +381,7 @@ export function ProjectsSection() {
       
       {/* Chat dialog */}
       <Dialog open={chatProject !== null} onOpenChange={(open) => !open && closeChat()}>
-        <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden">
+        <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden bg-contala-cream/90">
           {chatProject && (
             <ProjectChat
               projectId={chatProject.id}
@@ -395,7 +396,7 @@ export function ProjectsSection() {
       
       {/* Rating dialog */}
       <Dialog open={ratingDialogOpen} onOpenChange={setRatingDialogOpen}>
-        <DialogContent className="sm:max-w-[500px] bg-gray-50">
+        <DialogContent className="sm:max-w-[500px] bg-contala-cream/90">
           <DialogHeader>
             <DialogTitle>Valora al creador</DialogTitle>
             <DialogDescription>
@@ -422,7 +423,7 @@ export function ProjectsSection() {
             <div className="space-y-2">
               <label className="text-sm font-medium">Recomendación (opcional)</label>
               <textarea 
-                className="w-full p-2 border rounded-md min-h-[100px] bg-white"
+                className="w-full p-2 border rounded-md min-h-[100px] bg-contala-cream border-contala-green/20"
                 placeholder="Cuenta tu experiencia con este creador..."
                 value={recommendation}
                 onChange={(e) => setRecommendation(e.target.value)}
@@ -430,10 +431,10 @@ export function ProjectsSection() {
             </div>
             
             <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setRatingDialogOpen(false)}>
+              <Button variant="outline" className="border-contala-green/20" onClick={() => setRatingDialogOpen(false)}>
                 Cancelar
               </Button>
-              <Button onClick={submitRating} disabled={currentRating === 0}>
+              <Button onClick={submitRating} disabled={currentRating === 0} className="bg-contala-green hover:bg-contala-green/80">
                 Enviar valoración
               </Button>
             </div>
