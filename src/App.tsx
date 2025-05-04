@@ -15,27 +15,53 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
+    <BrowserRouter>
       <UserProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/dashboard/proyectos" element={<Dashboard />} />
-            <Route path="/dashboard/creadores" element={<Dashboard />} />
-            <Route path="/dashboard/convocatorias" element={<Dashboard />} />
-            <Route path="/dashboard/pendientes" element={<Dashboard />} />
-            <Route path="/dashboard/generales" element={<Dashboard />} />
-            <Route path="/dashboard/descubrir" element={<Dashboard />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={
+            <TooltipProvider>
+              <Dashboard />
+            </TooltipProvider>
+          } />
+          <Route path="/dashboard/proyectos" element={
+            <TooltipProvider>
+              <Dashboard />
+            </TooltipProvider>
+          } />
+          <Route path="/dashboard/creadores" element={
+            <TooltipProvider>
+              <Dashboard />
+            </TooltipProvider>
+          } />
+          <Route path="/dashboard/convocatorias" element={
+            <TooltipProvider>
+              <Dashboard />
+            </TooltipProvider>
+          } />
+          <Route path="/dashboard/pendientes" element={
+            <TooltipProvider>
+              <Dashboard />
+            </TooltipProvider>
+          } />
+          <Route path="/dashboard/generales" element={
+            <TooltipProvider>
+              <Dashboard />
+            </TooltipProvider>
+          } />
+          <Route path="/dashboard/descubrir" element={
+            <TooltipProvider>
+              <Dashboard />
+            </TooltipProvider>
+          } />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </UserProvider>
-    </TooltipProvider>
+    </BrowserRouter>
   </QueryClientProvider>
 );
 
