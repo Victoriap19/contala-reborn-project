@@ -18,9 +18,11 @@ type Project = {
 interface ProjectDetailsProps {
   project: Project;
   onShowChat: () => void;
+  onShowProposal: () => void;
+  onModifyProposal: () => void;
 }
 
-export function ProjectDetails({ project, onShowChat }: ProjectDetailsProps) {
+export function ProjectDetails({ project, onShowChat, onShowProposal, onModifyProposal }: ProjectDetailsProps) {
   // Mock project deliverables for completed projects
   const projectDeliverables = project.status === "completed" ? [
     { name: "Propuesta_Final.pdf", type: "file", url: "#" },
@@ -84,27 +86,40 @@ export function ProjectDetails({ project, onShowChat }: ProjectDetailsProps) {
             <p className="text-sm text-gray-600">{project.description}</p>
           </div>
           
-          <div className="flex gap-2">
-            {(project.status === "accepted" || project.status === "completed") && (
+          <div className="flex flex-wrap gap-2">
+            {(project.status === "sent" || project.status === "accepted" || project.status === "completed") && (
               <Button 
                 variant="secondary" 
+                size="sm"
+                className="mt-2"
+                onClick={onShowProposal}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Ver Propuesta
+              </Button>
+            )}
+            
+            {(project.status === "sent") && (
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="mt-2 border-contala-green text-contala-green hover:bg-contala-green/10"
+                onClick={onModifyProposal}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Modificar Propuesta
+              </Button>
+            )}
+            
+            {(project.status === "accepted" || project.status === "completed") && (
+              <Button 
+                variant="outline" 
                 size="sm"
                 className="mt-2"
                 onClick={onShowChat}
               >
                 <MessageSquare className="mr-2 h-4 w-4" />
                 Chat con creador
-              </Button>
-            )}
-            
-            {project.status === "completed" && (
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="mt-2 border-contala-green text-contala-green hover:bg-contala-green/10"
-              >
-                <FileText className="mr-2 h-4 w-4" />
-                Informe Final
               </Button>
             )}
           </div>
@@ -148,7 +163,7 @@ export function ProjectDetails({ project, onShowChat }: ProjectDetailsProps) {
             <h3 className="text-lg font-bold">Archivos entregados</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               {projectDeliverables.map((file, index) => (
-                <Card key={index} className="p-3 flex items-center gap-3">
+                <Card key={index} className="p-3 flex items-center gap-3 bg-transparent border-contala-green/10">
                   {file.type === "image" ? (
                     <img 
                       src={file.url} 
@@ -176,4 +191,3 @@ export function ProjectDetails({ project, onShowChat }: ProjectDetailsProps) {
     </div>
   );
 }
-

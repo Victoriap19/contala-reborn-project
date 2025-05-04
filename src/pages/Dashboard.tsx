@@ -35,7 +35,7 @@ export default function Dashboard() {
     if (userType === "regular") {
       // Simulate a creator accepting a proposal
       const acceptanceTimer = window.setTimeout(() => {
-        toast.success(
+        toast(
           <div className="flex gap-2">
             <Check className="h-5 w-5 text-green-500" />
             <div>
@@ -54,7 +54,7 @@ export default function Dashboard() {
     if (userType === "creator") {
       // Simulate receiving a proposal from a user
       const proposalTimer = window.setTimeout(() => {
-        toast.success(
+        toast(
           <div className="flex gap-2">
             <MessageSquare className="h-5 w-5 text-blue-500" />
             <div>
@@ -98,7 +98,7 @@ export default function Dashboard() {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="flex min-h-screen w-full bg-contala-cream">
+      <div className="flex min-h-screen w-full bg-contala-cream paper-texture">
         <DashboardSidebar />
         <SidebarInset className="p-6">
           {/* Decorative background elements */}

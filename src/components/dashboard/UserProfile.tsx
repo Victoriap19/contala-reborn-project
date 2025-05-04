@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -62,7 +63,7 @@ export function UserProfile() {
         </Button>
       </div>
 
-      <Card>
+      <Card className="bg-transparent border border-contala-green/10 shadow-sm">
         <CardHeader>
           <CardTitle className="text-contala-green">Información Personal</CardTitle>
           <CardDescription>Actualiza tu información de perfil</CardDescription>
@@ -154,7 +155,7 @@ export function UserProfile() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="bg-transparent border border-contala-green/10 shadow-sm">
         <CardHeader>
           <CardTitle className="text-contala-green">Información de Marca</CardTitle>
           <CardDescription>Completa los datos de tu marca o producto</CardDescription>

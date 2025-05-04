@@ -17,9 +17,9 @@ export const Logo = ({ size = 'md', variant = 'horizontal', withText = true, cla
 
   return (
     <div className={`logo-contala ${variant === 'vertical' ? 'flex-col' : 'flex'} items-center ${className}`}>
-      <div className={`logo-circle ${sizes[size].circle} relative bg-contala-darkpink`}>
+      <div className={`logo-circle ${sizes[size].circle} relative bg-contala-darkpink shadow-md`}>
         <div 
-          className={`absolute ${sizes[size].bubble} bg-contala-green rounded-full`}
+          className={`absolute ${sizes[size].bubble} bg-contala-green rounded-full shadow-sm`}
           style={{ 
             transform: size === 'lg' 
               ? 'translateX(-4px) translateY(4px)' 
@@ -39,7 +39,7 @@ export const Logo = ({ size = 'md', variant = 'horizontal', withText = true, cla
       </div>
       {withText && (
         <div className={`font-bold ${sizes[size].text} ml-2 text-contala-darkpink`}>
-          contala
+          <span className="drop-shadow-sm">contala</span>
         </div>
       )}
     </div>

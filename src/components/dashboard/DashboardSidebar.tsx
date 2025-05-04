@@ -10,7 +10,6 @@ import {
   Globe,
   Search,
   ChevronLeft,
-  ChevronRight,
   Menu
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -106,63 +105,75 @@ export function DashboardSidebar() {
   };
 
   return (
-    <Sidebar>
-      <SidebarHeader className="border-b border-sidebar-border relative">
-        <div className="flex items-center p-4">
-          <div className="flex-1">
-            {state === "expanded" ? (
-              <Logo size="md" />
-            ) : (
-              <Logo withText={false} size="sm" />
-            )}
-          </div>
+    <>
+      {/* Mobile menu button when sidebar is collapsed */}
+      {state === "collapsed" && (
+        <div className="fixed top-4 left-4 z-20 md:hidden">
           <Button
             variant="ghost"
             size="icon"
-            className="ml-2 text-contala-darkpink hover:bg-contala-pink/20"
+            className="text-contala-darkpink hover:bg-contala-pink/20"
             onClick={toggleSidebar}
           >
-            {state === "expanded" ? (
-              <ChevronLeft className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
+            <Menu className="h-5 w-5" />
           </Button>
         </div>
-      </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {sidebarItems.map((item, index) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    isActive={
-                      (activeItem === "perfil" && item.path === "/dashboard") ||
-                      (item.path.includes(activeItem))
-                    }
-                    onClick={() => handleMenuClick(item.path, index)}
-                    tooltip={state === "collapsed" ? item.title : undefined}
-                  >
-                    <item.icon className="mr-2 h-4 w-4" />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter className="border-t border-sidebar-border p-4">
-        <Button 
-          variant="outline" 
-          className="w-full justify-start text-contala-darkpink hover:bg-contala-pink/20"
-          onClick={() => navigate("/")}
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          {state === "expanded" && <span>Cerrar Sesión</span>}
-        </Button>
-      </SidebarFooter>
-    </Sidebar>
+      )}
+    
+      <Sidebar>
+        <SidebarHeader className="border-b border-sidebar-border relative">
+          <div className="flex items-center p-4">
+            <div className="flex-1">
+              {state === "expanded" ? (
+                <Logo size="md" />
+              ) : (
+                <Logo withText={false} size="sm" />
+              )}
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="ml-2 text-contala-darkpink hover:bg-contala-pink/20"
+              onClick={toggleSidebar}
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+          </div>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {sidebarItems.map((item, index) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton 
+                      isActive={
+                        (activeItem === "perfil" && item.path === "/dashboard") ||
+                        (item.path.includes(activeItem))
+                      }
+                      onClick={() => handleMenuClick(item.path, index)}
+                      tooltip={state === "collapsed" ? item.title : undefined}
+                    >
+                      <item.icon className="mr-2 h-4 w-4" />
+                      <span>{item.title}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+        <SidebarFooter className="border-t border-sidebar-border p-4">
+          <Button 
+            variant="outline" 
+            className="w-full justify-start text-contala-darkpink hover:bg-contala-pink/20"
+            onClick={() => navigate("/")}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            {state === "expanded" && <span>Cerrar Sesión</span>}
+          </Button>
+        </SidebarFooter>
+      </Sidebar>
+    </>
   );
 }

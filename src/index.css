@@ -44,16 +44,12 @@
 
   body {
     @apply bg-contala-cream text-contala-green;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23000000' fill-opacity='0.02' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
   }
   
   /* Apply fonts */
-  h1, h2, h3, h4 {
-    font-family: 'Helvetica', 'Roboto', sans-serif;
-    font-weight: 700;
-  }
-  
-  body, p, div, button, input, textarea, select {
-    font-family: 'Helvetica', 'Roboto', sans-serif;
+  h1, h2, h3, h4, body, p, div, button, input, textarea, select {
+    font-family: 'Helvetica', 'Arial', sans-serif;
   }
 }
 
@@ -62,7 +58,8 @@
 }
 
 .feature-card {
-  @apply bg-white rounded-3xl p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+  @apply rounded-3xl p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+  background-color: transparent;
 }
 
 .nav-blur {
@@ -82,8 +79,9 @@
 
 /* Vintage card */
 .vintage-card {
-  @apply bg-white rounded-xl shadow-md border border-contala-green/10 transition-transform hover:-translate-y-1 hover:shadow-lg overflow-hidden;
+  @apply rounded-xl shadow-md border border-contala-green/10 transition-transform hover:-translate-y-1 hover:shadow-lg overflow-hidden;
   position: relative;
+  background-color: transparent;
 }
 
 .vintage-card::before {
@@ -133,7 +131,7 @@
 }
 
 .logo-bubble {
-  @apply bg-contala-pink rounded-full;
+  @apply rounded-full;
   width: 1.2rem;
   height: 1.2rem;
   position: relative;
@@ -142,7 +140,7 @@
 
 .logo-bubble::before {
   content: '';
-  @apply bg-contala-pink absolute rounded-full;
+  @apply absolute rounded-full;
   width: 0.5rem;
   height: 0.5rem;
   bottom: -0.2rem;
