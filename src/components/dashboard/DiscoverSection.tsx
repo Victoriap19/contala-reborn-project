@@ -1,19 +1,17 @@
-
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Star, Search, Users, MapPin, Filter, ChevronDown, ChevronUp, User, MessageSquare } from "lucide-react";
+import { Search, Users, MapPin, Filter, ChevronDown, ChevronUp, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/hooks/use-toast";
+import { StarRating } from "./StarRating";
+import { CreatorProfileView } from "./CreatorProfileView";
 
 type Creator = {
   id: string;
@@ -153,11 +151,9 @@ const StarRating = ({ rating }: { rating: number }) => {
 };
 
 export function DiscoverSection() {
-  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [viewingCreator, setViewingCreator] = useState<Creator | null>(null);
-  const [selectedCreator, setSelectedCreator] = useState<Creator | null>(null);
   
   // Estados para filtros
   const [ageRange, setAgeRange] = useState<[number, number]>([18, 60]);
@@ -166,15 +162,6 @@ export function DiscoverSection() {
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
   const [acceptsBarterOnly, setAcceptsBarterOnly] = useState<boolean>(false);
 
-  // Estado para propuesta
-  const [proposal, setProposal] = useState({
-    description: "",
-    platforms: "",
-    offer: "",
-    barter: ""
-  });
-  const [isBarterProposal, setIsBarterProposal] = useState(false);
-  
   // Filtrar creadores según los criterios
   const filteredCreators = creatorsData.filter(creator => {
     // Filtro por término de búsqueda
@@ -210,45 +197,6 @@ export function DiscoverSection() {
     setViewingCreator(null);
   };
 
-  const openProposalDialog = (creator: Creator) => {
-    setSelectedCreator(creator);
-  };
-  
-  const closeProposalDialog = () => {
-    setSelectedCreator(null);
-    setProposal({
-      description: "",
-      platforms: "",
-      offer: "",
-      barter: ""
-    });
-    setIsBarterProposal(false);
-  };
-  
-  const handleProposalChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setProposal(prev => ({ ...prev, [name]: value }));
-  };
-  
-  const handleSendProposal = () => {
-    // Aquí iría la lógica para enviar la propuesta al backend
-    const proposalData = {
-      creatorId: selectedCreator?.id,
-      ...proposal,
-      offerType: isBarterProposal ? 'barter' : 'monetary',
-      offerAmount: isBarterProposal ? proposal.barter : proposal.offer
-    };
-    
-    console.log("Enviando propuesta:", proposalData);
-    
-    toast({
-      title: "Propuesta enviada",
-      description: `Tu propuesta ha sido enviada a ${selectedCreator?.name}. Te notificaremos cuando responda.`,
-    });
-    
-    closeProposalDialog();
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -258,7 +206,7 @@ export function DiscoverSection() {
         </h2>
         <Button 
           variant="outline" 
-          className="flex items-center gap-1"
+          className="flex items-center gap-1 bg-contala-green/10 hover:bg-contala-green/20 border-contala-green/20"
           onClick={() => setShowFilters(!showFilters)}
         >
           <Filter className="h-4 w-4" />
@@ -271,14 +219,14 @@ export function DiscoverSection() {
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
         <Input
           placeholder="Buscar creador por nombre, categoría o ubicación..."
-          className="pl-10"
+          className="pl-10 bg-contala-green/5 border-contala-green/20 focus:border-contala-green"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
       
       {showFilters && (
-        <div className="bg-gray-50 p-4 rounded-lg space-y-4">
+        <div className="bg-contala-green/5 p-4 rounded-lg border border-contala-green/10 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label className="text-sm font-medium">Rango de Edad</Label>
@@ -299,7 +247,7 @@ export function DiscoverSection() {
             <div className="space-y-2">
               <Label className="text-sm font-medium">Género</Label>
               <Select value={genderFilter} onValueChange={setGenderFilter}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full bg-contala-cream">
                   <SelectValue placeholder="Seleccionar género" />
                 </SelectTrigger>
                 <SelectContent>
@@ -314,7 +262,8 @@ export function DiscoverSection() {
             <div className="space-y-2">
               <Label className="text-sm font-medium">Ubicación</Label>
               <Input 
-                placeholder="Ej. Buenos Aires" 
+                placeholder="Ej. Buenos Aires"
+                className="bg-contala-cream" 
                 value={locationFilter}
                 onChange={(e) => setLocationFilter(e.target.value)}
               />
@@ -352,7 +301,7 @@ export function DiscoverSection() {
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filteredCreators.map((creator) => (
-          <Card key={creator.id} className="overflow-hidden hover:shadow-md transition-shadow">
+          <Card key={creator.id} className="overflow-hidden hover:shadow-md transition-shadow bg-gradient-to-br from-contala-green/5 to-contala-cream border-contala-green/20">
             <CardContent className="p-4">
               <div className="flex items-start space-x-4">
                 <Avatar className="h-16 w-16 border-2 border-contala-green">
@@ -370,18 +319,18 @@ export function DiscoverSection() {
                     <MapPin className="h-3 w-3 mr-1" />
                     <span>{creator.location}</span>
                   </div>
-                  <div className="flex items-center justify-between mt-1">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-2 gap-2">
                     <StarRating rating={creator.rating} />
-                  </div>
-                  <div className="mt-1">
-                    {creator.acceptsBarter && (
-                      <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300 mt-1">
-                        Acepta canje
-                      </Badge>
-                    )}
-                    {!creator.acceptsBarter && (
-                      <span className="text-sm font-medium text-contala-green">${creator.price}</span>
-                    )}
+                    <div>
+                      {creator.acceptsBarter && (
+                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
+                          Acepta canje
+                        </Badge>
+                      )}
+                      {!creator.acceptsBarter && (
+                        <span className="text-sm font-medium text-contala-green">${creator.price}</span>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">
@@ -409,185 +358,13 @@ export function DiscoverSection() {
       
       {/* Dialog for viewing creator profile */}
       <Dialog open={viewingCreator !== null} onOpenChange={(open) => !open && closeCreatorProfile()}>
-        <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <div className="flex items-center space-x-4">
-              <Avatar className="h-14 w-14 border-2 border-contala-green">
-                <AvatarImage src={viewingCreator?.avatar} alt={viewingCreator?.name} />
-                <AvatarFallback>{viewingCreator?.name?.substring(0, 2)}</AvatarFallback>
-              </Avatar>
-              <div>
-                <DialogTitle className="text-xl">{viewingCreator?.name} {viewingCreator?.lastName}</DialogTitle>
-                <div className="flex items-center mt-1">
-                  <StarRating rating={viewingCreator?.rating || 0} />
-                </div>
-              </div>
-            </div>
-          </DialogHeader>
-          
+        <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto p-0">
           {viewingCreator && (
-            <div className="space-y-6 mt-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-gray-500">Edad</p>
-                  <p>{viewingCreator.age} años</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-gray-500">Género</p>
-                  <p>{viewingCreator.gender}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-gray-500">Ubicación</p>
-                  <p>{viewingCreator.location}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-gray-500">Precio / Canje</p>
-                  <p>{viewingCreator.acceptsBarter ? "Acepta canje" : `$${viewingCreator.price}`}</p>
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-gray-500">Presentación</p>
-                <p className="text-base">{viewingCreator.bio || "Este creador aún no ha añadido una presentación."}</p>
-              </div>
-              
-              <div className="space-y-3">
-                <p className="text-sm font-medium text-gray-500 pb-2 border-b">Portfolio</p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {viewingCreator.portfolio.map((item, index) => (
-                    <div key={index} className="aspect-square rounded-md overflow-hidden shadow-sm border">
-                      {item.type === 'image' ? (
-                        <img 
-                          src={item.url} 
-                          alt={item.title || `Item ${index}`}
-                          className="w-full h-full object-cover" 
-                        />
-                      ) : (
-                        <div className="w-full h-full">
-                          <iframe 
-                            src={item.url} 
-                            title={item.title || `Video ${index}`}
-                            className="w-full h-full" 
-                            allowFullScreen
-                          />
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              <div className="flex justify-end space-x-3 pt-4">
-                <Button 
-                  variant="outline"
-                  onClick={closeCreatorProfile}
-                >
-                  Volver a Descubrir
-                </Button>
-                <Button 
-                  className="bg-contala-green hover:bg-contala-green/90"
-                  onClick={() => {
-                    closeCreatorProfile();
-                    openProposalDialog(viewingCreator);
-                  }}
-                >
-                  <MessageSquare className="h-4 w-4 mr-2" />
-                  Enviar Propuesta
-                </Button>
-              </div>
-            </div>
+            <CreatorProfileView
+              creator={viewingCreator}
+              onClose={closeCreatorProfile}
+            />
           )}
-        </DialogContent>
-      </Dialog>
-      
-      {/* Dialog for sending proposal */}
-      <Dialog open={selectedCreator !== null} onOpenChange={(open) => !open && closeProposalDialog()}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Enviar propuesta a {selectedCreator?.name}</DialogTitle>
-            <DialogDescription>
-              Completa los detalles de tu propuesta para este creador.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="description">Descripción del proyecto</Label>
-              <Textarea 
-                id="description"
-                name="description"
-                placeholder="Describe qué necesitas filmar o crear..."
-                value={proposal.description}
-                onChange={handleProposalChange}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="platforms">Plataformas</Label>
-              <Input 
-                id="platforms"
-                name="platforms"
-                placeholder="Instagram, YouTube, TikTok, etc."
-                value={proposal.platforms}
-                onChange={handleProposalChange}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2 mb-2">
-                <Switch 
-                  id="isBarterProposal" 
-                  checked={isBarterProposal}
-                  onCheckedChange={setIsBarterProposal}
-                />
-                <Label htmlFor="isBarterProposal">Proponer canje</Label>
-              </div>
-              
-              {isBarterProposal ? (
-                <div className="space-y-2">
-                  <Label htmlFor="barter">Propuesta de canje</Label>
-                  <Textarea 
-                    id="barter"
-                    name="barter"
-                    placeholder="Describe los productos o servicios que ofreces a cambio"
-                    value={proposal.barter}
-                    onChange={handleProposalChange}
-                  />
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <Label htmlFor="offer">Oferta en $ARS</Label>
-                  <div className="relative">
-                    <span className="absolute left-2 top-2.5 text-gray-500">$</span>
-                    <Input 
-                      id="offer"
-                      name="offer"
-                      className="pl-6"
-                      placeholder="Monto ofrecido"
-                      value={proposal.offer}
-                      onChange={handleProposalChange}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-          
-          <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={closeProposalDialog}
-            >
-              Cancelar
-            </Button>
-            <Button 
-              onClick={handleSendProposal}
-              disabled={!proposal.description || !proposal.platforms || (isBarterProposal ? !proposal.barter : !proposal.offer)}
-              className="bg-contala-green hover:bg-contala-green/90"
-            >
-              Enviar propuesta
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

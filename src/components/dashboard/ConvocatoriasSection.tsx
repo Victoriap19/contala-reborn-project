@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, Clock, Check, Users, Filter, Calendar, Ban } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CreatorProfile } from "./CreatorProfile";
+import { CreatorProfileView } from "./CreatorProfileView";
 
 interface Creator {
   id: string;
@@ -129,10 +130,10 @@ export function ConvocatoriasSection() {
             <Card 
               key={convocatoria.id} 
               className={`overflow-hidden border-l-4 ${
-                convocatoria.status === "open" ? "border-l-blue-500 bg-gray-50" : "border-l-gray-300 bg-gray-50 opacity-75"
+                convocatoria.status === "open" ? "border-l-blue-500 bg-contala-cream/50" : "border-l-gray-300 bg-contala-cream/30 opacity-75"
               }`}
             >
-              <CardHeader className="bg-gray-100 pb-2">
+              <CardHeader className="bg-contala-green/10 pb-2">
                 <div className="flex justify-between items-start">
                   <div>
                     <CardTitle className="text-xl text-contala-green">{convocatoria.title}</CardTitle>
@@ -164,7 +165,7 @@ export function ConvocatoriasSection() {
                     <DialogTrigger asChild>
                       <Button variant="outline" size="sm">Ver interesados</Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-md">
+                    <DialogContent className="max-w-md bg-contala-cream/90">
                       <DialogHeader>
                         <DialogTitle>Creadores interesados</DialogTitle>
                         <DialogDescription>
@@ -173,7 +174,7 @@ export function ConvocatoriasSection() {
                       </DialogHeader>
                       <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
                         {convocatoria.interestedCreators.map(creator => (
-                          <div key={creator.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
+                          <div key={creator.id} className="flex items-center justify-between p-3 rounded-lg bg-contala-green/10">
                             <div className="flex items-center space-x-3">
                               <Avatar>
                                 <AvatarImage src={creator.avatar} />
@@ -211,7 +212,7 @@ export function ConvocatoriasSection() {
           ))}
         </div>
       ) : (
-        <Card className="border-dashed border-2 bg-gray-50">
+        <Card className="border-dashed border-2 bg-contala-green/5">
           <CardHeader className="flex flex-row items-center justify-center p-6">
             <div className="flex flex-col items-center text-center">
               <FileText className="h-12 w-12 text-contala-green mb-2" />
@@ -226,9 +227,9 @@ export function ConvocatoriasSection() {
       
       {/* Creator profile dialog */}
       <Dialog open={!!selectedCreator} onOpenChange={(open) => !open && setSelectedCreator(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0 bg-contala-cream/90">
           {selectedCreator && (
-            <CreatorProfile 
+            <CreatorProfileView 
               creator={selectedCreator}
               onClose={() => setSelectedCreator(null)}
             />
