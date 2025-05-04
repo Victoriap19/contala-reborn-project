@@ -1,9 +1,12 @@
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { FileText, MessageSquare, Download, File, Clock, Check } from "lucide-react";
+import { FileText, MessageSquare, Download, File, Clock, Check, Truck, Package } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ShipmentTracker } from "./ShipmentTracker";
 
 type Project = {
   id: string;
@@ -23,6 +26,8 @@ interface ProjectDetailsProps {
 }
 
 export function ProjectDetails({ project, onShowChat, onShowProposal, onModifyProposal }: ProjectDetailsProps) {
+  const [showShipmentDialog, setShowShipmentDialog] = useState<boolean>(false);
+  
   // Mock project deliverables for completed projects
   const projectDeliverables = project.status === "completed" ? [
     { name: "Propuesta_Final.pdf", type: "file", url: "#" },
@@ -122,6 +127,18 @@ export function ProjectDetails({ project, onShowChat, onShowProposal, onModifyPr
                 Chat con creador
               </Button>
             )}
+            
+            {(project.status === "accepted" || project.status === "completed") && (
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="mt-2 border-contala-green text-contala-green hover:bg-contala-green/10"
+                onClick={() => setShowShipmentDialog(true)}
+              >
+                <Truck className="mr-2 h-4 w-4" />
+                Seguimiento de envío
+              </Button>
+            )}
           </div>
         </div>
         
@@ -188,6 +205,13 @@ export function ProjectDetails({ project, onShowChat, onShowProposal, onModifyPr
           </div>
         </>
       )}
+      
+      {/* Shipment Dialog */}
+      <Dialog open={showShipmentDialog} onOpenChange={setShowShipmentDialog}>
+        <DialogContent className="max-w-3xl">
+          <ShipmentTracker projectId={project.id} userRole="client" />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

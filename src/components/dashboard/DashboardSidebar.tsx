@@ -100,7 +100,7 @@ export function DashboardSidebar() {
   };
 
   return (
-    <Sidebar defaultOpen={true} collapsible="none">
+    <Sidebar>
       <SidebarHeader className="border-b border-sidebar-border relative">
         <div className="flex items-center p-4">
           <div className="flex-1">

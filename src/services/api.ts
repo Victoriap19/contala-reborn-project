@@ -1,9 +1,9 @@
 import axios from "axios";
 
-// Configuración base para axios
+// Base configuration for axios
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
-// Crear una instancia de axios con la configuración por defecto
+// Create an axios instance with default configuration
 const api = axios.create({
   baseURL: API_URL,
   headers: {
@@ -11,7 +11,7 @@ const api = axios.create({
   },
 });
 
-// Interceptor para añadir el token a todas las peticiones
+// Interceptor for adding the token to all requests
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
@@ -25,35 +25,35 @@ api.interceptors.request.use(
   }
 );
 
-// Interceptor para manejar errores de autenticación
+// Interceptor for handling authentication errors
 api.interceptors.response.use(
   (response) => {
     return response;
   },
   (error) => {
     if (error.response && error.response.status === 401) {
-      // Token expirado o no válido
+      // Token expired or invalid
       localStorage.removeItem("token");
       
-      // Intentar refrescar el token
+      // Try to refresh the token
       const refreshToken = localStorage.getItem("refreshToken");
       if (refreshToken) {
         return axios.post(`${API_URL}/token/refresh/`, { refresh: refreshToken })
           .then(response => {
             localStorage.setItem("token", response.data.access);
             
-            // Reintentar la petición original
+            // Retry the original request
             error.config.headers.Authorization = `Bearer ${response.data.access}`;
             return api.request(error.config);
           })
           .catch(refreshError => {
-            console.error("Error al refrescar el token:", refreshError);
-            // Redirigir a login
+            console.error("Error refreshing the token:", refreshError);
+            // Redirect to login
             window.location.href = "/login";
             return Promise.reject(refreshError);
           });
       } else {
-        // No hay refresh token, redirigir a login
+        // No refresh token, redirect to login
         window.location.href = "/login";
       }
     }
@@ -61,7 +61,7 @@ api.interceptors.response.use(
   }
 );
 
-// Servicios de autenticación
+// Authentication services
 export const authService = {
   login: async (username: string, password: string) => {
     const response = await api.post("/token/", { username, password });
@@ -98,34 +98,34 @@ export const authService = {
   }
 };
 
-// Servicios para usuarios/creadores
+// User/creator services
 export const userService = {
-  // Obtener perfil de usuario
+  // Obtain user profile
   getUserProfile: async (userId: number) => {
     return await api.get(`/accounts/users/${userId}/`);
   },
   
-  // Actualizar perfil de usuario
+  // Update user profile
   updateUserProfile: async (userId: number, userData: any) => {
     return await api.patch(`/accounts/users/${userId}/`, userData);
   },
   
-  // Obtener creadores
+  // Obtain creators
   getCreators: async (params?: any) => {
     return await api.get("/accounts/creators/", { params });
   },
   
-  // Obtener redes sociales
+  // Obtain social networks
   getSocialNetworks: async () => {
     return await api.get("/accounts/social-networks/");
   },
   
-  // Añadir red social
+  // Add social network
   addSocialNetwork: async (data: { network: string; url: string; username?: string }) => {
     return await api.post("/accounts/social-networks/", data);
   },
   
-  // Eliminar red social
+  // Delete social network
   deleteSocialNetwork: async (id: number) => {
     return await api.delete(`/accounts/social-networks/${id}/`);
   },
@@ -141,62 +141,62 @@ export const userService = {
   }
 };
 
-// Servicios para perfiles de creadores
+// Creator profile services
 export const creatorService = {
-  // Obtener perfil de creador
+  // Obtain creator profile
   getCreatorProfile: async (id: number) => {
     return await api.get(`/accounts/creator-profiles/${id}/`);
   },
   
-  // Actualizar perfil de creador
+  // Update creator profile
   updateCreatorProfile: async (id: number, data: any) => {
     return await api.patch(`/accounts/creator-profiles/${id}/`, data);
   },
   
-  // Obtener portafolio
+  // Obtain portfolio
   getPortfolio: async () => {
     return await api.get("/accounts/portfolio/");
   },
   
-  // Añadir ítem al portafolio
+  // Add item to portfolio
   addPortfolioItem: async (data: { type: "image" | "video"; url: string; title?: string; description?: string }) => {
     return await api.post("/accounts/portfolio/", data);
   },
   
-  // Actualizar ítem del portafolio
+  // Update item in portfolio
   updatePortfolioItem: async (id: number, data: any) => {
     return await api.patch(`/accounts/portfolio/${id}/`, data);
   },
   
-  // Eliminar ítem del portafolio
+  // Delete item from portfolio
   deletePortfolioItem: async (id: number) => {
     return await api.delete(`/accounts/portfolio/${id}/`);
   }
 };
 
-// Servicios para proyectos
+// Project services
 export const projectService = {
-  // Obtener todos los proyectos
+  // Obtain all projects
   getProjects: async () => {
     return await api.get("/projects/projects/");
   },
   
-  // Obtener un proyecto específico
+  // Obtain a specific project
   getProject: async (id: number) => {
     return await api.get(`/projects/projects/${id}/`);
   },
   
-  // Crear un proyecto
+  // Create a project
   createProject: async (data: any) => {
     return await api.post("/projects/projects/", data);
   },
   
-  // Actualizar un proyecto
+  // Update a project
   updateProject: async (id: number, data: any) => {
     return await api.patch(`/projects/projects/${id}/`, data);
   },
   
-  // Obtener propuestas para un proyecto
+  // Obtain proposals for a project
   getProjectProposals: async (projectId: number) => {
     return await api.get(`/projects/projects/${projectId}/proposals/`);
   },
@@ -229,25 +229,25 @@ export const projectService = {
     return response;
   },
   
-  // Obtener invitaciones
+  // Obtain invitations
   getInvitations: async () => {
     return await api.get("/projects/invitations/");
   },
   
-  // Aceptar una invitación
+  // Accept an invitation
   acceptInvitation: async (id: number) => {
     return await api.post(`/projects/invitations/${id}/accept/`);
   },
   
-  // Rechazar una invitación
+  // Reject an invitation
   rejectInvitation: async (id: number) => {
     return await api.post(`/projects/invitations/${id}/reject/`);
   }
 };
 
-// Servicios para mensajes
+// Message services
 export const messageService = {
-  // Obtener mensajes de un proyecto
+  // Obtain messages for a project
   getProjectMessages: async (projectId: number) => {
     return await api.get(`/projects/projects/${projectId}/messages/`);
   },
@@ -267,40 +267,40 @@ export const messageService = {
     return response;
   },
   
-  // Marcar mensaje como leído
+  // Mark message as read
   markAsRead: async (id: number) => {
     return await api.post(`/projects/messages/${id}/mark_as_read/`);
   }
 };
 
-// Servicios para convocatorias
+// Convocatoria services
 export const convocatoriaService = {
-  // Obtener todas las convocatorias
+  // Obtain all convocatorias
   getConvocatorias: async () => {
     return await api.get("/projects/convocatorias/");
   },
   
-  // Obtener una convocatoria específica
+  // Obtain a specific convocatoria
   getConvocatoria: async (id: number) => {
     return await api.get(`/projects/convocatorias/${id}/`);
   },
   
-  // Crear una convocatoria
+  // Create a convocatoria
   createConvocatoria: async (data: any) => {
     return await api.post("/projects/convocatorias/", data);
   },
   
-  // Actualizar una convocatoria
+  // Update a convocatoria
   updateConvocatoria: async (id: number, data: any) => {
     return await api.patch(`/projects/convocatorias/${id}/`, data);
   },
   
-  // Obtener aplicaciones para una convocatoria
+  // Obtain applications for a convocatoria
   getConvocatoriaApplications: async (convocatoriaId: number) => {
     return await api.get(`/projects/convocatorias/${convocatoriaId}/applications/`);
   },
   
-  // Aplicar a una convocatoria
+  // Apply to a convocatoria
   applyToConvocatoria: async (data: {
     convocatoria: number;
     cover_letter: string;
@@ -310,19 +310,85 @@ export const convocatoriaService = {
     return await api.post("/projects/applications/", data);
   },
   
-  // Preseleccionar una aplicación
+  // Preseleccionar an application
   shortlistApplication: async (id: number) => {
     return await api.post(`/projects/applications/${id}/shortlist/`);
   },
   
-  // Aceptar una aplicación
+  // Accept an application
   acceptApplication: async (id: number) => {
     return await api.post(`/projects/applications/${id}/accept/`);
   },
   
-  // Rechazar una aplicación
+  // Reject an application
   rejectApplication: async (id: number) => {
     return await api.post(`/projects/applications/${id}/reject/`);
+  }
+};
+
+// New shipping service for handling product shipments
+export const shipmentService = {
+  // Generate shipping quote from Correo Argentino
+  getShippingQuote: async (data: {
+    origin_postal_code: string;
+    destination_postal_code: string;
+    weight: number;
+    width?: number;
+    height?: number;
+    length?: number;
+    return_required: boolean;
+  }) => {
+    return await api.post("/projects/shipping/quote/", data);
+  },
+  
+  // Generate shipping label
+  createShippingLabel: async (projectId: number, data: {
+    origin_address: {
+      street: string;
+      number: string;
+      city: string;
+      state: string;
+      postal_code: string;
+      phone: string;
+    },
+    destination_address: {
+      street: string;
+      number: string;
+      city: string;
+      state: string;
+      postal_code: string;
+      phone: string;
+    },
+    weight: number;
+    dimensions?: {
+      width: number;
+      height: number;
+      length: number;
+    },
+    return_required: boolean;
+    description: string;
+  }) => {
+    return await api.post(`/projects/projects/${projectId}/shipment/label/`, data);
+  },
+  
+  // Get shipment details for a project
+  getShipmentDetails: async (projectId: number) => {
+    return await api.get(`/projects/projects/${projectId}/shipment/`);
+  },
+  
+  // Update shipment status
+  updateShipmentStatus: async (projectId: number, status: 'in_transit' | 'delivered') => {
+    return await api.post(`/projects/projects/${projectId}/shipment/status/`, { status });
+  },
+  
+  // Request return for a shipment
+  requestReturn: async (projectId: number) => {
+    return await api.post(`/projects/projects/${projectId}/shipment/return/`);
+  },
+  
+  // Confirm return received
+  confirmReturn: async (projectId: number) => {
+    return await api.post(`/projects/projects/${projectId}/shipment/returned/`);
   }
 };
 
