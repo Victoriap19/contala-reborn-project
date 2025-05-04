@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -217,7 +216,10 @@ export function ProjectsSection() {
         <DialogContent className="max-w-3xl p-0 overflow-hidden h-[80vh]">
           {selectedProject && (
             <ProjectChat 
-              project={selectedProject} 
+              projectId={selectedProject.id}
+              creatorId="creator-123"
+              creatorName={selectedProject.creator}
+              creatorAvatar="https://i.pravatar.cc/150?img=3"
               onClose={() => setChatOpen(false)} 
             />
           )}
@@ -226,42 +228,40 @@ export function ProjectsSection() {
 
       {/* Payment Dialog */}
       <Dialog open={paymentOpen} onOpenChange={setPaymentOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Pago de Proyecto</DialogTitle>
-            <DialogDescription>
-              Confirma el pago para iniciar el proyecto con {selectedProject?.creator}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="flex justify-between">
-              <span className="font-medium">Proyecto:</span>
-              <span>{selectedProject?.title}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-medium">Creador:</span>
-              <span>{selectedProject?.creator}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-medium">Monto:</span>
-              <span className="font-bold">${selectedProject?.budget?.toLocaleString()}</span>
-            </div>
-            
-            <div className="border rounded-lg p-4 bg-contala-cream/50 mt-4">
-              <h4 className="font-bold text-contala-green flex items-center mb-2">
-                <Clock className="h-4 w-4 mr-2" /> Proceso de Pago
-              </h4>
-              <p className="text-sm text-gray-600">
-                El pago se procesará a través de MercadoPago. Una vez confirmado, 
-                el creador recibirá una notificación para iniciar el proyecto.
-              </p>
-            </div>
+        <DialogHeader>
+          <DialogTitle>Pago de Proyecto</DialogTitle>
+          <DialogDescription>
+            Confirma el pago para iniciar el proyecto con {selectedProject?.creator}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4 py-4">
+          <div className="flex justify-between">
+            <span className="font-medium">Proyecto:</span>
+            <span>{selectedProject?.title}</span>
           </div>
-          <div className="flex justify-end gap-3">
-            <Button variant="outline" onClick={() => setPaymentOpen(false)}>Cancelar</Button>
-            <Button className="bg-contala-green">Proceder al Pago</Button>
+          <div className="flex justify-between">
+            <span className="font-medium">Creador:</span>
+            <span>{selectedProject?.creator}</span>
           </div>
-        </DialogContent>
+          <div className="flex justify-between">
+            <span className="font-medium">Monto:</span>
+            <span className="font-bold">${selectedProject?.budget?.toLocaleString()}</span>
+          </div>
+          
+          <div className="border rounded-lg p-4 bg-contala-cream/50 mt-4">
+            <h4 className="font-bold text-contala-green flex items-center mb-2">
+              <Clock className="h-4 w-4 mr-2" /> Proceso de Pago
+            </h4>
+            <p className="text-sm text-gray-600">
+              El pago se procesará a través de MercadoPago. Una vez confirmado, 
+              el creador recibirá una notificación para iniciar el proyecto.
+            </p>
+          </div>
+        </div>
+        <div className="flex justify-end gap-3">
+          <Button variant="outline" onClick={() => setPaymentOpen(false)}>Cancelar</Button>
+          <Button className="bg-contala-green">Proceder al Pago</Button>
+        </div>
       </Dialog>
     </div>
   );
