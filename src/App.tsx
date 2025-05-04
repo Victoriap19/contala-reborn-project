@@ -11,9 +11,58 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 
-// Save the logo as a public file
-<lov-write file_path="public/logo.svg">
-<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="100" cy="100" r="80" fill="#1B4D3E" />
-  <path d="M95 70 Q 100 60, 105 75 Q 110 85, 115 75 L 125 95 Q 105 120, 85 95 Z" fill="#F6D1C1" />
-</svg>
+const queryClient = new QueryClient();
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <BrowserRouter>
+      <UserProvider>
+        <Toaster />
+        <Sonner />
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={
+            <TooltipProvider>
+              <Dashboard />
+            </TooltipProvider>
+          } />
+          <Route path="/dashboard/proyectos" element={
+            <TooltipProvider>
+              <Dashboard />
+            </TooltipProvider>
+          } />
+          <Route path="/dashboard/creadores" element={
+            <TooltipProvider>
+              <Dashboard />
+            </TooltipProvider>
+          } />
+          <Route path="/dashboard/convocatorias" element={
+            <TooltipProvider>
+              <Dashboard />
+            </TooltipProvider>
+          } />
+          <Route path="/dashboard/pendientes" element={
+            <TooltipProvider>
+              <Dashboard />
+            </TooltipProvider>
+          } />
+          <Route path="/dashboard/generales" element={
+            <TooltipProvider>
+              <Dashboard />
+            </TooltipProvider>
+          } />
+          <Route path="/dashboard/descubrir" element={
+            <TooltipProvider>
+              <Dashboard />
+            </TooltipProvider>
+          } />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </UserProvider>
+    </BrowserRouter>
+  </QueryClientProvider>
+);
+
+export default App;
