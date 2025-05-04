@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -63,9 +64,11 @@ export function ProjectDetails({ project, onShowChat }: ProjectDetailsProps) {
               <span className="text-gray-500">Estado:</span>
               <Badge variant={
                 project.status === "completed" ? "default" :
-                project.status === "accepted" ? "success" :
+                project.status === "accepted" ? "secondary" :
                 project.status === "rejected" ? "destructive" :
-                "secondary"
+                "outline"
+              } className={
+                project.status === "accepted" ? "bg-green-500 hover:bg-green-600" : ""
               }>
                 {project.status === "draft" ? "Borrador" :
                  project.status === "sent" ? "Enviado" :
@@ -173,3 +176,4 @@ export function ProjectDetails({ project, onShowChat }: ProjectDetailsProps) {
     </div>
   );
 }
+
