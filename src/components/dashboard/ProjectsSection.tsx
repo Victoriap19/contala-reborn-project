@@ -3,16 +3,17 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { FileText, User, Filter, Check, Clock, Eye, MessageSquare, Star, AlertTriangle } from "lucide-react";
+import { FileText, User, Filter, Check, Clock, Eye, MessageSquare, Star, AlertTriangle, X } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { ProjectChat } from "./ProjectChat";
 import { toast } from "sonner";
 import { StarRating } from "./StarRating";
+import { Input } from "@/components/ui/input";
 
-type ProjectStatus = 'propuesta_enviada' | 'aceptado' | 'en_proceso' | 'completado';
+type ProjectStatus = 'propuesta_enviada' | 'rechazada' | 'aceptado' | 'en_proceso' | 'completado';
 
 interface Project {
   id: string;
@@ -26,6 +27,7 @@ interface Project {
   date: string;
   status: ProjectStatus;
   budget: string;
+  budgetAmount: number; // Added for payment processing
   platforms: string[];
   reviewsLeft?: number;
 }
@@ -44,6 +46,7 @@ const projectsData: Project[] = [
     date: "15/04/2023",
     status: "en_proceso",
     budget: "$25.000",
+    budgetAmount: 25000,
     platforms: ["Instagram", "TikTok"],
     reviewsLeft: 3
   },
@@ -59,6 +62,7 @@ const projectsData: Project[] = [
     date: "02/05/2023",
     status: "completado",
     budget: "$18.000",
+    budgetAmount: 18000,
     platforms: ["YouTube", "Facebook"],
     reviewsLeft: 0
   },
@@ -74,6 +78,7 @@ const projectsData: Project[] = [
     date: "10/05/2023",
     status: "propuesta_enviada",
     budget: "$15.000",
+    budgetAmount: 15000,
     platforms: ["Web", "Instagram"],
     reviewsLeft: 3
   },
@@ -89,7 +94,24 @@ const projectsData: Project[] = [
     date: "20/05/2023",
     status: "aceptado",
     budget: "$30.000",
+    budgetAmount: 30000,
     platforms: ["YouTube"],
+    reviewsLeft: 3
+  },
+  {
+    id: "5",
+    title: "Fotografía de productos",
+    description: "Sesión fotográfica de nuevos productos para tienda online.",
+    creator: {
+      id: "5",
+      name: "María García",
+      avatar: "https://images.unsplash.com/photo-1618151313441-bc79b11e5090?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
+    },
+    date: "25/05/2023",
+    status: "rechazada",
+    budget: "$12.000",
+    budgetAmount: 12000,
+    platforms: ["Web", "Facebook"],
     reviewsLeft: 3
   }
 ];
@@ -101,6 +123,15 @@ export function ProjectsSection() {
   const [ratingDialogOpen, setRatingDialogOpen] = useState(false);
   const [currentRating, setCurrentRating] = useState(0);
   const [recommendation, setRecommendation] = useState("");
+  
+  // New states for the added functionality
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
+  const [projectToConfirm, setProjectToConfirm] = useState<Project | null>(null);
+  const [resendDialogOpen, setResendDialogOpen] = useState(false);
+  const [rejectedProject, setRejectedProject] = useState<Project | null>(null);
+  const [newBudget, setNewBudget] = useState("");
+  const [paymentLoading, setPaymentLoading] = useState(false);
 
   const filteredProjects = statusFilter === "todos" 
     ? projectsData 
@@ -110,6 +141,8 @@ export function ProjectsSection() {
     switch (status) {
       case "propuesta_enviada":
         return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-300">Propuesta enviada</Badge>;
+      case "rechazada":
+        return <Badge variant="outline" className="bg-red-50 text-red-700 border-red-300">Rechazada</Badge>;
       case "aceptado":
         return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-300">Aceptado</Badge>;
       case "en_proceso":
@@ -125,6 +158,8 @@ export function ProjectsSection() {
     switch (status) {
       case "propuesta_enviada":
         return <Clock className="h-4 w-4 text-yellow-500" />;
+      case "rechazada":
+        return <X className="h-4 w-4 text-red-500" />;
       case "aceptado":
         return <Check className="h-4 w-4 text-blue-500" />;
       case "en_proceso":
@@ -167,6 +202,54 @@ export function ProjectsSection() {
     toast.success("Ticket de soporte enviado. Un administrador se pondrá en contacto contigo pronto.");
   };
 
+  // New functions for the added functionality
+  const handleConfirmProject = (project: Project) => {
+    setProjectToConfirm(project);
+    setConfirmDialogOpen(true);
+  };
+
+  const confirmProject = () => {
+    setConfirmDialogOpen(false);
+    setPaymentDialogOpen(true);
+    // In a real app, you would update the project status in the database
+  };
+
+  const handlePayment = async () => {
+    if (!projectToConfirm) return;
+    
+    setPaymentLoading(true);
+    
+    try {
+      // In a real app, this would call your MercadoPago API
+      // This is a mock implementation
+      setTimeout(() => {
+        toast.success("¡Pago procesado con éxito! El proyecto ha cambiado a estado 'En proceso'");
+        setPaymentLoading(false);
+        setPaymentDialogOpen(false);
+        setProjectToConfirm(null);
+        
+        // Update the project status (in a real app this would happen via API)
+        // For now we'll just show a toast
+      }, 2000);
+    } catch (error) {
+      toast.error("Error al procesar el pago. Inténtalo de nuevo.");
+      setPaymentLoading(false);
+    }
+  };
+
+  const handleResendProposal = (project: Project) => {
+    setRejectedProject(project);
+    setNewBudget(project.budgetAmount.toString());
+    setResendDialogOpen(true);
+  };
+
+  const resendProposal = () => {
+    // In a real app, this would call an API to update the project proposal
+    toast.success("¡Propuesta actualizada! Se ha enviado al creador con el nuevo presupuesto.");
+    setResendDialogOpen(false);
+    // Update the project status (in a real app this would happen via API)
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -184,6 +267,7 @@ export function ProjectsSection() {
             <SelectContent className="bg-contala-cream">
               <SelectItem value="todos">Todos los estados</SelectItem>
               <SelectItem value="propuesta_enviada">Propuesta enviada</SelectItem>
+              <SelectItem value="rechazada">Rechazada</SelectItem>
               <SelectItem value="aceptado">Aceptado</SelectItem>
               <SelectItem value="en_proceso">En proceso</SelectItem>
               <SelectItem value="completado">Completado</SelectItem>
@@ -243,6 +327,18 @@ export function ProjectsSection() {
                           Chat
                         </Button>
                         
+                        {project.status === "aceptado" && (
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                            onClick={() => handleConfirmProject(project)}
+                          >
+                            <Check className="h-4 w-4 mr-1" />
+                            Confirmar
+                          </Button>
+                        )}
+                        
                         {project.status === "en_proceso" && (
                           <Button 
                             variant="outline" 
@@ -252,6 +348,18 @@ export function ProjectsSection() {
                           >
                             <Check className="h-4 w-4 mr-1" />
                             Recibido
+                          </Button>
+                        )}
+                        
+                        {project.status === "rechazada" && (
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            className="text-yellow-600 border-yellow-200 hover:bg-yellow-50"
+                            onClick={() => handleResendProposal(project)}
+                          >
+                            <Clock className="h-4 w-4 mr-1" />
+                            Reenviar
                           </Button>
                         )}
                         
@@ -287,6 +395,7 @@ export function ProjectsSection() {
         </Card>
       )}
 
+      {/* Project Details Dialog */}
       <Dialog open={selectedProject !== null} onOpenChange={(open) => !open && setSelectedProject(null)}>
         <DialogContent className="sm:max-w-[600px] bg-contala-cream/90">
           <DialogHeader>
@@ -357,18 +466,47 @@ export function ProjectsSection() {
                 </Button>
                 
                 <div className="space-x-3">
-                  <Button 
-                    variant="outline"
-                    className="text-purple-600 border-purple-200 hover:bg-purple-50"
-                    onClick={() => {
-                      setSelectedProject(null);
-                      openChat(selectedProject);
-                    }}
-                    disabled={selectedProject.status !== "aceptado" && selectedProject.status !== "en_proceso"}
-                  >
-                    <MessageSquare className="h-4 w-4 mr-2" />
-                    Abrir chat
-                  </Button>
+                  {selectedProject.status === "aceptado" && (
+                    <Button 
+                      variant="outline"
+                      className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                      onClick={() => {
+                        setSelectedProject(null);
+                        handleConfirmProject(selectedProject);
+                      }}
+                    >
+                      <Check className="h-4 w-4 mr-2" />
+                      Confirmar
+                    </Button>
+                  )}
+                  
+                  {(selectedProject.status === "aceptado" || selectedProject.status === "en_proceso") && (
+                    <Button 
+                      variant="outline"
+                      className="text-purple-600 border-purple-200 hover:bg-purple-50"
+                      onClick={() => {
+                        setSelectedProject(null);
+                        openChat(selectedProject);
+                      }}
+                    >
+                      <MessageSquare className="h-4 w-4 mr-2" />
+                      Abrir chat
+                    </Button>
+                  )}
+                  
+                  {selectedProject.status === "rechazada" && (
+                    <Button 
+                      variant="outline"
+                      className="text-yellow-600 border-yellow-200 hover:bg-yellow-50"
+                      onClick={() => {
+                        setSelectedProject(null);
+                        handleResendProposal(selectedProject);
+                      }}
+                    >
+                      <Clock className="h-4 w-4 mr-2" />
+                      Reenviar propuesta
+                    </Button>
+                  )}
                   <Button variant="outline" onClick={() => setSelectedProject(null)}>
                     Cerrar
                   </Button>
@@ -408,15 +546,7 @@ export function ProjectsSection() {
             <div className="space-y-2">
               <label className="text-sm font-medium">Puntuación</label>
               <div className="flex space-x-2">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star
-                    key={star}
-                    className={`h-8 w-8 cursor-pointer ${
-                      star <= currentRating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
-                    }`}
-                    onClick={() => setCurrentRating(star)}
-                  />
-                ))}
+                <StarRating rating={currentRating} maxRating={5} setRating={setCurrentRating} editable />
               </div>
             </div>
             
@@ -439,6 +569,190 @@ export function ProjectsSection() {
               </Button>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirm project dialog */}
+      <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+        <DialogContent className="sm:max-w-[500px] bg-contala-cream/90">
+          <DialogHeader>
+            <DialogTitle>Confirmar Proyecto</DialogTitle>
+            <DialogDescription>
+              ¿Deseas confirmar este proyecto y proceder con el pago?
+            </DialogDescription>
+          </DialogHeader>
+          
+          {projectToConfirm && (
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <p className="font-medium text-lg text-contala-green">{projectToConfirm.title}</p>
+                <p className="text-sm">{projectToConfirm.description}</p>
+              </div>
+              
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Creador</p>
+                  <p>{projectToConfirm.creator.name}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Presupuesto</p>
+                  <p className="font-medium text-contala-green">{projectToConfirm.budget}</p>
+                </div>
+              </div>
+              
+              <DialogFooter className="flex justify-end space-x-2 pt-4">
+                <Button variant="outline" className="border-contala-green/20" onClick={() => setConfirmDialogOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button onClick={confirmProject} className="bg-contala-green hover:bg-contala-green/80">
+                  Confirmar y Pagar
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Payment dialog with MercadoPago */}
+      <Dialog open={paymentDialogOpen} onOpenChange={setPaymentDialogOpen}>
+        <DialogContent className="sm:max-w-[500px] bg-contala-cream/90">
+          <DialogHeader>
+            <DialogTitle>Realizar Pago</DialogTitle>
+            <DialogDescription>
+              Completa el pago para comenzar tu proyecto
+            </DialogDescription>
+          </DialogHeader>
+          
+          {projectToConfirm && (
+            <div className="space-y-4 py-4">
+              <div className="border rounded-md p-4 bg-white">
+                <div className="flex justify-between items-center mb-4">
+                  <div>
+                    <p className="font-medium">Proyecto</p>
+                    <p className="text-sm text-gray-500">{projectToConfirm.title}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium">Total a Pagar</p>
+                    <p className="text-xl font-bold text-contala-green">{projectToConfirm.budget}</p>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium">Número de Tarjeta</label>
+                    <Input 
+                      className="bg-white border-gray-300" 
+                      placeholder="XXXX XXXX XXXX XXXX"
+                      maxLength={19}
+                    />
+                  </div>
+                  
+                  <div className="flex gap-4">
+                    <div className="flex-1">
+                      <label className="text-sm font-medium">Fecha de Vencimiento</label>
+                      <Input 
+                        className="bg-white border-gray-300" 
+                        placeholder="MM/AA"
+                        maxLength={5}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <label className="text-sm font-medium">Código de Seguridad</label>
+                      <Input 
+                        className="bg-white border-gray-300" 
+                        placeholder="CVV"
+                        maxLength={4}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="text-sm font-medium">Nombre del Titular</label>
+                    <Input 
+                      className="bg-white border-gray-300" 
+                      placeholder="Como aparece en la tarjeta"
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex items-center mt-6 justify-center">
+                  <img 
+                    src="https://http2.mlstatic.com/frontend-assets/payment-methods-logos/payment-methods-large.png" 
+                    alt="MercadoPago" 
+                    className="h-8 object-contain" 
+                  />
+                </div>
+              </div>
+              
+              <DialogFooter className="flex justify-end space-x-2 pt-4">
+                <Button variant="outline" className="border-contala-green/20" onClick={() => setPaymentDialogOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button 
+                  onClick={handlePayment} 
+                  className="bg-contala-green hover:bg-contala-green/80"
+                  disabled={paymentLoading}
+                >
+                  {paymentLoading ? "Procesando..." : "Pagar"}
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Resend proposal dialog */}
+      <Dialog open={resendDialogOpen} onOpenChange={setResendDialogOpen}>
+        <DialogContent className="sm:max-w-[500px] bg-contala-cream/90">
+          <DialogHeader>
+            <DialogTitle>Reenviar Propuesta</DialogTitle>
+            <DialogDescription>
+              Modifica el presupuesto para reenviar tu propuesta
+            </DialogDescription>
+          </DialogHeader>
+          
+          {rejectedProject && (
+            <div className="space-y-4 py-4">
+              <div>
+                <p className="font-medium text-lg text-contala-green">{rejectedProject.title}</p>
+                <p className="text-sm text-gray-500 mb-4">{rejectedProject.description}</p>
+                
+                <div>
+                  <label className="text-sm font-medium">Creador</label>
+                  <p className="mb-4">{rejectedProject.creator.name}</p>
+                  
+                  <label className="text-sm font-medium">Presupuesto Original</label>
+                  <p className="mb-4">{rejectedProject.budget}</p>
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Nuevo Presupuesto</label>
+                  <Input 
+                    type="number"
+                    className="bg-contala-cream border-contala-green/20" 
+                    value={newBudget}
+                    onChange={(e) => setNewBudget(e.target.value)}
+                  />
+                  <p className="text-xs text-gray-500">
+                    Ajusta el presupuesto para aumentar las posibilidades de aceptación
+                  </p>
+                </div>
+              </div>
+              
+              <DialogFooter className="flex justify-end space-x-2 pt-4">
+                <Button variant="outline" className="border-contala-green/20" onClick={() => setResendDialogOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button 
+                  onClick={resendProposal} 
+                  className="bg-contala-green hover:bg-contala-green/80"
+                  disabled={!newBudget || parseFloat(newBudget) <= 0}
+                >
+                  Reenviar Propuesta
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
