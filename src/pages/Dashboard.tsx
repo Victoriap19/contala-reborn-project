@@ -9,6 +9,7 @@ import { CreatorsSection } from "@/components/dashboard/CreatorsSection";
 import { ConvocatoriasSection } from "@/components/dashboard/ConvocatoriasSection";
 import { PendientesSection } from "@/components/dashboard/PendientesSection";
 import { GeneralesSection } from "@/components/dashboard/GeneralesSection";
+import { DiscoverSection } from "@/components/dashboard/DiscoverSection";
 import { useUser } from "@/context/UserContext";
 
 export default function Dashboard() {
@@ -28,6 +29,8 @@ export default function Dashboard() {
       return "pendientes";
     } else if (path.includes("/generales")) {
       return "generales";
+    } else if (path.includes("/descubrir")) {
+      return "descubrir";
     } else {
       return "perfil";
     }
@@ -51,6 +54,7 @@ export default function Dashboard() {
           {/* Regular user sections */}
           {userType === "regular" && activeSection === "creadores" && <CreatorsSection />}
           {userType === "regular" && activeSection === "convocatorias" && <ConvocatoriasSection />}
+          {userType === "regular" && activeSection === "descubrir" && <DiscoverSection />}
           
           {/* Creator user sections */}
           {userType === "creator" && activeSection === "pendientes" && <PendientesSection />}

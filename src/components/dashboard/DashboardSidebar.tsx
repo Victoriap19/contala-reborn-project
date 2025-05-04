@@ -7,7 +7,8 @@ import {
   LogOut,
   Megaphone,
   Clock,
-  Globe
+  Globe,
+  Search
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@/context/UserContext";
@@ -48,6 +49,11 @@ export function DashboardSidebar() {
       icon: FileText,
       title: "Tus Proyectos",
       path: "/dashboard/proyectos",
+    },
+    {
+      icon: Search,
+      title: "Descubrir",
+      path: "/dashboard/descubrir",
     },
     {
       icon: Users,

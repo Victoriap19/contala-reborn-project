@@ -30,6 +30,7 @@ const App = () => (
             <Route path="/dashboard/convocatorias" element={<Dashboard />} />
             <Route path="/dashboard/pendientes" element={<Dashboard />} />
             <Route path="/dashboard/generales" element={<Dashboard />} />
+            <Route path="/dashboard/descubrir" element={<Dashboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
