@@ -1,0 +1,15 @@
+
+# Django y componentes principales
+Django==5.0.5
+djangorestframework==3.14.0
+django-cors-headers==4.3.1
+django-environ==0.11.2
+
+# Para autenticación
+djangorestframework-simplejwt==5.3.0
+
+# Utilidades
+Pillow==10.0.1  # Para manejo de imágenes
+psycopg2-binary==2.9.9  # Para PostgreSQL en producción
+whitenoise==6.6.0  # Para servir archivos estáticos en producción
+gunicorn==21.2.0  # Servidor WSGI para producción
