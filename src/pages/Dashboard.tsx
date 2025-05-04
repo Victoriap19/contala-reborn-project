@@ -1,6 +1,6 @@
 
 import { useLocation } from "react-router-dom";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { UserProfile } from "@/components/dashboard/UserProfile";
 import { CreatorProfile } from "@/components/dashboard/CreatorProfile";
@@ -100,7 +100,7 @@ export default function Dashboard() {
     <SidebarProvider defaultOpen={true}>
       <div className="flex min-h-screen w-full bg-contala-cream paper-texture">
         <DashboardSidebar />
-        <SidebarInset className="p-6">
+        <div className="flex-1 p-6">
           {/* Decorative background elements */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-contala-pink/20 rounded-full blur-3xl -z-10 animate-pulse"></div>
           <div className="absolute bottom-20 left-10 w-48 h-48 bg-contala-green/10 rounded-full blur-3xl -z-10 animate-pulse"></div>
@@ -121,7 +121,7 @@ export default function Dashboard() {
           {/* Creator user sections */}
           {userType === "creator" && activeSection === "pendientes" && <PendientesSection />}
           {userType === "creator" && activeSection === "generales" && <GeneralesSection />}
-        </SidebarInset>
+        </div>
       </div>
     </SidebarProvider>
   );

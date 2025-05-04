@@ -1,4 +1,3 @@
-
 import { useState, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -56,7 +55,7 @@ const yourCreatorsData: Creator[] = [
     age: 32,
     gender: "Masculino",
     location: "Córdoba",
-    avatar: "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
+    avatar: "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
     rating: 5,
     tag: "Gaming",
     bio: "Creador de contenido especializado en gaming y tecnología. Colaboro con marcas para promocionar productos tecnológicos y videojuegos.",
@@ -80,7 +79,7 @@ const yourCreatorsData: Creator[] = [
     lastActivity: "hace 1 semana",
     portfolio: [
       { type: 'video', url: "https://player.vimeo.com/video/414885645", title: "Rutina HIIT" },
-      { type: 'image', url: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80", title: "Antes/Después" }
+      { type: 'image', url: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80", title: "Antes/Despu��s" }
     ]
   }
 ];
@@ -136,12 +135,6 @@ export function CreatorsSection() {
             Tus Creadores
           </span>
         </h2>
-        <Button 
-          variant="outline" 
-          className="flex items-center gap-1 bg-contala-green/10 hover:bg-contala-green/20 border-contala-green/20 rounded-full px-4"
-        >
-          Nuevo Proyecto
-        </Button>
       </div>
       
       <div className="relative">

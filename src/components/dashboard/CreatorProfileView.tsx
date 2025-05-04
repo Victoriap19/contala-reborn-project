@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { StarRating } from "@/components/dashboard/StarRating";
-import { User, MapPin, Mail, Instagram, Globe, Phone, X } from "lucide-react";
+import { User, MapPin, Mail, Instagram, Globe, Phone, X, Send } from "lucide-react";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -181,9 +181,10 @@ export function CreatorProfileView({ creator, onClose, isOpen = true }: CreatorP
               
             <div className="flex justify-center sm:justify-start space-x-2">
               <Button 
-                className="bg-contala-pink text-contala-green hover:bg-contala-pink/90"
+                className="bg-contala-pink text-contala-green hover:bg-contala-pink/90 flex items-center gap-2"
               >
-                Contactar
+                <Send className="h-4 w-4" />
+                Enviar Propuesta
               </Button>
             </div>
           </div>

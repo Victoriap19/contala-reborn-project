@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, Clock, Check, Users, Filter, Calendar, Ban } from "lucide-react";
+import { FileText, Clock, Check, Users, Filter, Calendar, Ban, Plus } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CreatorProfileView } from "./CreatorProfileView";
 
@@ -113,15 +113,22 @@ export function ConvocatoriasSection() {
           Tus Convocatorias
         </h2>
         
-        <div className="flex items-center space-x-2">
-          <Filter className="h-4 w-4 text-gray-400" />
-          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "open" | "closed")}>
-            <TabsList className="grid w-[200px] grid-cols-2">
-              <TabsTrigger value="open">Abiertas</TabsTrigger>
-              <TabsTrigger value="closed">Cerradas</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
+        <Button 
+          className="bg-contala-pink text-contala-green hover:bg-contala-pink/90 flex items-center gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          Nueva Convocatoria
+        </Button>
+      </div>
+
+      <div className="flex items-center space-x-2 mt-4">
+        <Filter className="h-4 w-4 text-gray-400" />
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "open" | "closed")}>
+          <TabsList className="grid w-[200px] grid-cols-2">
+            <TabsTrigger value="open">Abiertas</TabsTrigger>
+            <TabsTrigger value="closed">Cerradas</TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
 
       {filteredConvocatorias.length > 0 ? (
