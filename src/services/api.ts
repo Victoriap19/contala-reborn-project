@@ -1,4 +1,3 @@
-
 import axios from "axios";
 
 // Configuración base para axios
@@ -129,6 +128,16 @@ export const userService = {
   // Eliminar red social
   deleteSocialNetwork: async (id: number) => {
     return await api.delete(`/accounts/social-networks/${id}/`);
+  },
+  
+  // New function to send email notifications
+  sendEmailNotification: async (data: {
+    type: 'new_message' | 'proposal_received' | 'proposal_accepted';
+    recipient_id: number;
+    content?: string;
+    project_id?: number;
+  }) => {
+    return await api.post("/accounts/notifications/email/", data);
   }
 };
 
@@ -192,24 +201,32 @@ export const projectService = {
     return await api.get(`/projects/projects/${projectId}/proposals/`);
   },
   
-  // Crear una propuesta
+  // Updated function to send proposal with notification
   createProposal: async (data: any) => {
-    return await api.post("/projects/proposals/", data);
+    const response = await api.post("/projects/proposals/", data);
+    
+    // Send email notification
+    await userService.sendEmailNotification({
+      type: 'proposal_received',
+      recipient_id: data.project_client_id, // Assuming this is part of the data
+      project_id: data.project
+    });
+    
+    return response;
   },
   
-  // Aceptar una propuesta
-  acceptProposal: async (id: number) => {
-    return await api.post(`/projects/proposals/${id}/accept/`);
-  },
-  
-  // Rechazar una propuesta
-  rejectProposal: async (id: number) => {
-    return await api.post(`/projects/proposals/${id}/reject/`);
-  },
-  
-  // Invitar a un creador a un proyecto
-  inviteCreator: async (data: { project_id: number; creator_id: number; message: string }) => {
-    return await api.post("/projects/invitations/", data);
+  // Updated function to accept proposal with notification
+  acceptProposal: async (id: number, creatorId: number) => {
+    const response = await api.post(`/projects/proposals/${id}/accept/`);
+    
+    // Send email notification
+    await userService.sendEmailNotification({
+      type: 'proposal_accepted',
+      recipient_id: creatorId,
+      project_id: id
+    });
+    
+    return response;
   },
   
   // Obtener invitaciones
@@ -235,9 +252,19 @@ export const messageService = {
     return await api.get(`/projects/projects/${projectId}/messages/`);
   },
   
-  // Enviar un mensaje
+  // Updated function to send message with notification
   sendMessage: async (data: { project: number; receiver_id: number; content: string }) => {
-    return await api.post("/projects/messages/", data);
+    const response = await api.post("/projects/messages/", data);
+    
+    // Send email notification
+    await userService.sendEmailNotification({
+      type: 'new_message',
+      recipient_id: data.receiver_id,
+      content: data.content.substring(0, 100) + (data.content.length > 100 ? '...' : ''),
+      project_id: data.project
+    });
+    
+    return response;
   },
   
   // Marcar mensaje como leído

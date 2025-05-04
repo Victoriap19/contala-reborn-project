@@ -3,12 +3,13 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { FileText, User, Filter, Check, Clock, Eye, MessageSquare } from "lucide-react";
+import { FileText, User, Filter, Check, Clock, Eye, MessageSquare, Star, AlertTriangle } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { ProjectChat } from "./ProjectChat";
+import { toast } from "sonner";
 
 type ProjectStatus = 'propuesta_enviada' | 'aceptado' | 'en_proceso' | 'completado';
 
@@ -25,6 +26,7 @@ interface Project {
   status: ProjectStatus;
   budget: string;
   platforms: string[];
+  reviewsLeft?: number;
 }
 
 // Datos de ejemplo para proyectos
@@ -41,7 +43,8 @@ const projectsData: Project[] = [
     date: "15/04/2023",
     status: "en_proceso",
     budget: "$25.000",
-    platforms: ["Instagram", "TikTok"]
+    platforms: ["Instagram", "TikTok"],
+    reviewsLeft: 3
   },
   {
     id: "2",
@@ -55,7 +58,8 @@ const projectsData: Project[] = [
     date: "02/05/2023",
     status: "completado",
     budget: "$18.000",
-    platforms: ["YouTube", "Facebook"]
+    platforms: ["YouTube", "Facebook"],
+    reviewsLeft: 0
   },
   {
     id: "3",
@@ -69,7 +73,8 @@ const projectsData: Project[] = [
     date: "10/05/2023",
     status: "propuesta_enviada",
     budget: "$15.000",
-    platforms: ["Web", "Instagram"]
+    platforms: ["Web", "Instagram"],
+    reviewsLeft: 3
   },
   {
     id: "4",
@@ -83,7 +88,8 @@ const projectsData: Project[] = [
     date: "20/05/2023",
     status: "aceptado",
     budget: "$30.000",
-    platforms: ["YouTube"]
+    platforms: ["YouTube"],
+    reviewsLeft: 3
   }
 ];
 
@@ -91,6 +97,9 @@ export function ProjectsSection() {
   const [statusFilter, setStatusFilter] = useState<string>("todos");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [chatProject, setChatProject] = useState<Project | null>(null);
+  const [ratingDialogOpen, setRatingDialogOpen] = useState(false);
+  const [currentRating, setCurrentRating] = useState(0);
+  const [recommendation, setRecommendation] = useState("");
 
   const filteredProjects = statusFilter === "todos" 
     ? projectsData 
@@ -138,6 +147,25 @@ export function ProjectsSection() {
     setChatProject(null);
   };
 
+  const markAsReceived = (projectId: string) => {
+    // This would call an API in a real app
+    toast.success("¡Proyecto marcado como recibido! Por favor, deja tu valoración.");
+    setRatingDialogOpen(true);
+  };
+
+  const submitRating = () => {
+    // This would call an API in a real app
+    toast.success("¡Gracias por tu valoración!");
+    setRatingDialogOpen(false);
+    setCurrentRating(0);
+    setRecommendation("");
+  };
+
+  const fileSupportTicket = () => {
+    // This would call an API or open a form in a real app
+    toast.success("Ticket de soporte enviado. Un administrador se pondrá en contacto contigo pronto.");
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -164,11 +192,11 @@ export function ProjectsSection() {
       </div>
 
       {filteredProjects.length > 0 ? (
-        <Card>
+        <Card className="bg-gray-50">
           <CardContent className="p-0">
             <Table>
               <TableHeader>
-                <TableRow>
+                <TableRow className="bg-gray-100">
                   <TableHead>Proyecto</TableHead>
                   <TableHead>Creador</TableHead>
                   <TableHead>Fecha</TableHead>
@@ -203,7 +231,7 @@ export function ProjectsSection() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        {(project.status === "en_proceso") && (
+                        {(project.status === "en_proceso" || project.status === "aceptado") && (
                           <Button 
                             variant="outline" 
                             size="sm"
@@ -212,6 +240,17 @@ export function ProjectsSection() {
                           >
                             <MessageSquare className="h-4 w-4 mr-1" />
                             Chat
+                          </Button>
+                        )}
+                        {project.status === "en_proceso" && (
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            className="text-green-600 border-green-200 hover:bg-green-50"
+                            onClick={() => markAsReceived(project.id)}
+                          >
+                            <Check className="h-4 w-4 mr-1" />
+                            Recibido
                           </Button>
                         )}
                         <Button 
@@ -231,7 +270,7 @@ export function ProjectsSection() {
           </CardContent>
         </Card>
       ) : (
-        <Card className="border-dashed border-2">
+        <Card className="border-dashed border-2 bg-gray-50">
           <CardHeader className="flex flex-row items-center justify-center p-6">
             <div className="flex flex-col items-center text-center">
               <FileText className="h-12 w-12 text-contala-green mb-2" />
@@ -247,7 +286,7 @@ export function ProjectsSection() {
       )}
 
       <Dialog open={selectedProject !== null} onOpenChange={(open) => !open && setSelectedProject(null)}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[600px] bg-gray-50">
           <DialogHeader>
             <DialogTitle>{selectedProject?.title}</DialogTitle>
             <DialogDescription>
@@ -298,23 +337,41 @@ export function ProjectsSection() {
                 </div>
               </div>
               
-              <div className="pt-4 flex justify-end space-x-3">
-                {selectedProject.status === "en_proceso" && (
-                  <Button 
-                    variant="outline"
-                    className="text-purple-600 border-purple-200 hover:bg-purple-50"
-                    onClick={() => {
-                      setSelectedProject(null);
-                      openChat(selectedProject);
-                    }}
-                  >
-                    <MessageSquare className="h-4 w-4 mr-2" />
-                    Abrir chat
-                  </Button>
-                )}
-                <Button variant="outline" onClick={() => setSelectedProject(null)}>
-                  Cerrar
+              {(selectedProject.status === "en_proceso" || selectedProject.status === "aceptado") && (
+                <div className="space-y-1 pt-2">
+                  <p className="text-sm font-medium text-gray-500">Reviews restantes</p>
+                  <p>{selectedProject.reviewsLeft} de 3</p>
+                </div>
+              )}
+              
+              <div className="pt-4 flex justify-between">
+                <Button 
+                  variant="outline"
+                  className="text-red-600 border-red-200 hover:bg-red-50"
+                  onClick={fileSupportTicket}
+                >
+                  <AlertTriangle className="h-4 w-4 mr-2" />
+                  Reportar problema
                 </Button>
+                
+                <div className="space-x-3">
+                  {(selectedProject.status === "en_proceso" || selectedProject.status === "aceptado") && (
+                    <Button 
+                      variant="outline"
+                      className="text-purple-600 border-purple-200 hover:bg-purple-50"
+                      onClick={() => {
+                        setSelectedProject(null);
+                        openChat(selectedProject);
+                      }}
+                    >
+                      <MessageSquare className="h-4 w-4 mr-2" />
+                      Abrir chat
+                    </Button>
+                  )}
+                  <Button variant="outline" onClick={() => setSelectedProject(null)}>
+                    Cerrar
+                  </Button>
+                </div>
               </div>
             </div>
           )}
@@ -333,6 +390,54 @@ export function ProjectsSection() {
               onClose={closeChat}
             />
           )}
+        </DialogContent>
+      </Dialog>
+      
+      {/* Rating dialog */}
+      <Dialog open={ratingDialogOpen} onOpenChange={setRatingDialogOpen}>
+        <DialogContent className="sm:max-w-[500px] bg-gray-50">
+          <DialogHeader>
+            <DialogTitle>Valora al creador</DialogTitle>
+            <DialogDescription>
+              Tu valoración ayuda a otros usuarios a encontrar buenos creadores de contenido
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Puntuación</label>
+              <div className="flex space-x-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className={`h-8 w-8 cursor-pointer ${
+                      star <= currentRating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+                    }`}
+                    onClick={() => setCurrentRating(star)}
+                  />
+                ))}
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Recomendación (opcional)</label>
+              <textarea 
+                className="w-full p-2 border rounded-md min-h-[100px] bg-white"
+                placeholder="Cuenta tu experiencia con este creador..."
+                value={recommendation}
+                onChange={(e) => setRecommendation(e.target.value)}
+              />
+            </div>
+            
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setRatingDialogOpen(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={submitRating} disabled={currentRating === 0}>
+                Enviar valoración
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

@@ -1,332 +1,179 @@
-
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, Filter } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FileText, Clock, Check, Users, Filter, Calendar, Ban } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CreatorProfile } from "./CreatorProfile";
 
-// Mock data for calls
-type Convocatoria = {
+interface Creator {
+  id: string;
+  name: string;
+  avatar: string;
+  location: string;
+}
+
+interface Convocatoria {
   id: string;
   title: string;
   description: string;
-  date: string;
   endDate: string;
-  platforms: string[];
-  budget: string;
-  interestedCreators: {
-    id: string;
-    name: string;
-    avatar: string;
-    location: string;
-    rating: number;
-  }[];
-  status: 'open' | 'closed';
-};
+  status: "open" | "closed";
+  interestedCreators: Creator[];
+}
 
+// Datos de ejemplo para convocatorias
 const convocatoriasData: Convocatoria[] = [
   {
     id: "1",
-    title: "Campaña verano 2023",
-    description: "Buscamos fotógrafo para sesión de fotos con nuestra nueva colección de verano.",
-    date: "01/05/2023",
-    endDate: "15/05/2023",
-    platforms: ["Instagram", "Web"],
-    budget: "$20.000",
+    title: "Campaña de Verano",
+    description: "Buscamos creadores para campaña de verano en redes sociales.",
+    endDate: "30/06/2023",
+    status: "open",
     interestedCreators: [
       {
         id: "1",
         name: "Laura Rodríguez",
         avatar: "https://images.unsplash.com/photo-1601412436009-d964bd02edbc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
-        location: "Buenos Aires",
-        rating: 4.8
+        location: "Madrid, España"
       },
       {
         id: "2",
         name: "Carlos Gómez",
         avatar: "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
-        location: "Córdoba",
-        rating: 4.3
+        location: "Barcelona, España"
       }
-    ],
-    status: 'open'
+    ]
   },
   {
     id: "2",
-    title: "Vídeo explicativo producto",
-    description: "Necesitamos crear un vídeo explicativo para nuestro nuevo producto, con animaciones y voz en off.",
-    date: "15/04/2023",
-    endDate: "25/04/2023",
-    platforms: ["YouTube", "Web"],
-    budget: "$35.000",
+    title: "Vídeo Promocional",
+    description: "Necesitamos un vídeo promocional para nuestro nuevo producto.",
+    endDate: "15/07/2023",
+    status: "open",
     interestedCreators: [
       {
         id: "3",
         name: "Ana Martínez",
         avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
-        location: "Rosario",
-        rating: 4.5
+        location: "Valencia, España"
       }
-    ],
-    status: 'closed'
+    ]
   },
   {
     id: "3",
-    title: "Contenido para TikTok",
-    description: "Buscamos creadores de contenido para hacer 5 vídeos para TikTok promocionando nuestros servicios.",
-    date: "10/05/2023",
-    endDate: "20/05/2023",
-    platforms: ["TikTok"],
-    budget: "$15.000",
-    interestedCreators: [],
-    status: 'open'
-  },
-  {
-    id: "4",
-    title: "Diseño de flyers",
-    description: "Necesitamos diseñador gráfico para crear flyers digitales para campañas en RRSS.",
-    date: "05/04/2023",
-    endDate: "15/04/2023",
-    platforms: ["Instagram", "Facebook"],
-    budget: "$8.000",
+    title: "Campaña de Navidad",
+    description: "Buscamos creadores para campaña de navidad en redes sociales.",
+    endDate: "30/11/2023",
+    status: "closed",
     interestedCreators: [
+      {
+        id: "1",
+        name: "Laura Rodríguez",
+        avatar: "https://images.unsplash.com/photo-1601412436009-d964bd02edbc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
+        location: "Madrid, España"
+      },
       {
         id: "4",
         name: "Daniel López",
         avatar: "https://images.unsplash.com/photo-1619380061814-58f03707f082?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
-        location: "Mendoza",
-        rating: 4.2
-      },
-      {
-        id: "5",
-        name: "Valentina Ruiz",
-        avatar: "https://images.unsplash.com/photo-1592621385612-4d7129426394?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
-        location: "Buenos Aires",
-        rating: 3.9
+        location: "Sevilla, España"
       }
-    ],
-    status: 'closed'
+    ]
   }
 ];
 
 export function ConvocatoriasSection() {
+  const [activeTab, setActiveTab] = useState<"open" | "closed">("open");
   const [selectedConvocatoria, setSelectedConvocatoria] = useState<Convocatoria | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string>("todas");
-  
-  const filteredConvocatorias = statusFilter === "todas" 
-    ? convocatoriasData 
-    : convocatoriasData.filter(conv => conv.status === statusFilter);
-  
-  const handleViewDetails = (convocatoria: Convocatoria) => {
-    setSelectedConvocatoria(convocatoria);
-  };
-  
+  const [selectedCreator, setSelectedCreator] = useState<Creator | null>(null);
+
+  const filteredConvocatorias = convocatoriasData.filter(
+    convocatoria => convocatoria.status === activeTab
+  );
+
   const handleCloseConvocatoria = (convocatoriaId: string) => {
-    // In a real app, this would update the status in the database
+    // In a real app, this would call an API to update the status
     console.log(`Closing convocatoria ${convocatoriaId}`);
-    // For demonstration, we'll just close the dialog
-    setSelectedConvocatoria(null);
   };
 
-  const StarRating = ({ rating }: { rating: number }) => {
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    
-    return (
-      <div className="flex items-center">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <svg
-            key={i}
-            className={`w-3 h-3 ${
-              i < fullStars
-                ? 'text-yellow-400'
-                : i === fullStars && hasHalfStar
-                ? 'text-yellow-400'
-                : 'text-gray-300'
-            }`}
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-          >
-            {i === fullStars && hasHalfStar ? (
-              <path
-                fillRule="evenodd"
-                d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
-                clipRule="evenodd"
-                style={{ clipPath: 'inset(0 50% 0 0)' }}
-              />
-            ) : (
-              <path
-                fillRule="evenodd"
-                d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
-                clipRule="evenodd"
-              />
-            )}
-          </svg>
-        ))}
-        <span className="ml-1 text-xs text-gray-500">{rating}</span>
-      </div>
-    );
+  const viewCreatorProfile = (creator: Creator) => {
+    setSelectedCreator(creator);
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-contala-green flex items-center gap-2">
-          <Calendar className="h-6 w-6" />
+          <FileText className="h-6 w-6" />
           Tus Convocatorias
         </h2>
         
         <div className="flex items-center space-x-2">
           <Filter className="h-4 w-4 text-gray-400" />
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="Filtrar por estado" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="todas">Todas</SelectItem>
-              <SelectItem value="open">Abiertas</SelectItem>
-              <SelectItem value="closed">Cerradas</SelectItem>
-            </SelectContent>
-          </Select>
+          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "open" | "closed")}>
+            <TabsList className="grid w-[200px] grid-cols-2">
+              <TabsTrigger value="open">Abiertas</TabsTrigger>
+              <TabsTrigger value="closed">Cerradas</TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {filteredConvocatorias.map((convocatoria) => (
-          <Card 
-            key={convocatoria.id} 
-            className={`hover:shadow-md transition-shadow ${
-              convocatoria.status === 'closed' ? 'opacity-70' : ''
-            }`}
-          >
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-start">
-                <CardTitle className="text-lg text-contala-green">
-                  {convocatoria.title}
-                </CardTitle>
-                <Badge variant={convocatoria.status === 'open' ? 'default' : 'outline'}>
-                  {convocatoria.status === 'open' ? 'Abierta' : 'Cerrada'}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <p className="text-sm text-gray-600 line-clamp-2">
-                  {convocatoria.description}
-                </p>
-                
-                <div className="flex justify-between text-sm">
+      {filteredConvocatorias.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {filteredConvocatorias.map(convocatoria => (
+            <Card 
+              key={convocatoria.id} 
+              className={`overflow-hidden border-l-4 ${
+                convocatoria.status === "open" ? "border-l-blue-500 bg-gray-50" : "border-l-gray-300 bg-gray-50 opacity-75"
+              }`}
+            >
+              <CardHeader className="bg-gray-100 pb-2">
+                <div className="flex justify-between items-start">
                   <div>
-                    <span className="text-gray-500">Fecha límite:</span>{" "}
-                    <span className="font-medium">{convocatoria.endDate}</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-500">Presupuesto:</span>{" "}
-                    <span className="font-medium">{convocatoria.budget}</span>
-                  </div>
-                </div>
-                
-                <div className="flex flex-wrap gap-1">
-                  {convocatoria.platforms.map((platform) => (
-                    <Badge key={platform} variant="secondary" className="text-xs">
-                      {platform}
-                    </Badge>
-                  ))}
-                </div>
-                
-                <div className="flex justify-between items-center pt-2">
-                  <div className="flex items-center">
-                    <span className="text-sm font-medium mr-2">
-                      {convocatoria.interestedCreators.length} creadores interesados
-                    </span>
-                    <div className="flex -space-x-2">
-                      {convocatoria.interestedCreators.slice(0, 3).map((creator) => (
-                        <Avatar key={creator.id} className="h-6 w-6 border-2 border-white">
-                          <AvatarImage src={creator.avatar} />
-                          <AvatarFallback>{creator.name.substring(0, 2)}</AvatarFallback>
-                        </Avatar>
-                      ))}
-                      {convocatoria.interestedCreators.length > 3 && (
-                        <div className="h-6 w-6 rounded-full bg-gray-200 flex items-center justify-center text-xs font-medium text-gray-600 border-2 border-white">
-                          +{convocatoria.interestedCreators.length - 3}
-                        </div>
-                      )}
+                    <CardTitle className="text-xl text-contala-green">{convocatoria.title}</CardTitle>
+                    <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
+                      <Calendar className="h-4 w-4" />
+                      <span>Hasta: {convocatoria.endDate}</span>
                     </div>
                   </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => handleViewDetails(convocatoria)}
+                  <Badge 
+                    variant={convocatoria.status === "open" ? "secondary" : "outline"}
+                    className={convocatoria.status === "open" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-500"}
                   >
-                    Ver detalles
-                  </Button>
+                    {convocatoria.status === "open" ? "Abierta" : "Cerrada"}
+                  </Badge>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-      
-      {filteredConvocatorias.length === 0 && (
-        <div className="text-center py-8">
-          <p className="text-gray-500">No tienes convocatorias {statusFilter === "open" ? "abiertas" : statusFilter === "closed" ? "cerradas" : ""} en este momento.</p>
-        </div>
-      )}
-
-      <Dialog open={selectedConvocatoria !== null} onOpenChange={(open) => !open && setSelectedConvocatoria(null)}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>{selectedConvocatoria?.title}</DialogTitle>
-            <DialogDescription>
-              Detalles de la convocatoria y creadores interesados
-            </DialogDescription>
-          </DialogHeader>
-          
-          {selectedConvocatoria && (
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <h3 className="text-sm font-medium text-gray-500">Descripción</h3>
-                <p className="text-sm">{selectedConvocatoria.description}</p>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <h3 className="text-sm font-medium text-gray-500">Fecha de creación</h3>
-                  <p className="text-sm">{selectedConvocatoria.date}</p>
-                </div>
-                <div className="space-y-1">
-                  <h3 className="text-sm font-medium text-gray-500">Fecha límite</h3>
-                  <p className="text-sm">{selectedConvocatoria.endDate}</p>
-                </div>
-                <div className="space-y-1">
-                  <h3 className="text-sm font-medium text-gray-500">Presupuesto</h3>
-                  <p className="text-sm">{selectedConvocatoria.budget}</p>
-                </div>
-                <div className="space-y-1">
-                  <h3 className="text-sm font-medium text-gray-500">Plataformas</h3>
-                  <div className="flex flex-wrap gap-1">
-                    {selectedConvocatoria.platforms.map((platform) => (
-                      <Badge key={platform} variant="secondary" className="text-xs">
-                        {platform}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              
-              <div>
-                <h3 className="text-sm font-medium text-gray-500 mb-3">Creadores interesados</h3>
+              </CardHeader>
+              <CardContent className="pt-4">
+                <p className="text-sm text-gray-700 mb-4">{convocatoria.description}</p>
                 
-                {selectedConvocatoria.interestedCreators.length > 0 ? (
-                  <div className="space-y-3">
-                    {selectedConvocatoria.interestedCreators.map((creator) => (
-                      <Card key={creator.id} className="overflow-hidden">
-                        <CardContent className="p-3">
-                          <div className="flex items-center justify-between">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <Users className="h-5 w-5 text-purple-500" />
+                    <span className="text-sm font-medium">
+                      {convocatoria.interestedCreators.length} creadores interesados
+                    </span>
+                  </div>
+                  
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm">Ver interesados</Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>Creadores interesados</DialogTitle>
+                        <DialogDescription>
+                          Estos creadores han mostrado interés en tu convocatoria "{convocatoria.title}"
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                        {convocatoria.interestedCreators.map(creator => (
+                          <div key={creator.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
                             <div className="flex items-center space-x-3">
                               <Avatar>
                                 <AvatarImage src={creator.avatar} />
@@ -334,48 +181,57 @@ export function ConvocatoriasSection() {
                               </Avatar>
                               <div>
                                 <p className="font-medium">{creator.name}</p>
-                                <div className="flex items-center text-sm text-gray-500">
-                                  <StarRating rating={creator.rating} />
-                                  <span className="mx-2">•</span>
-                                  <span>{creator.location}</span>
-                                </div>
+                                <p className="text-sm text-gray-500">{creator.location}</p>
                               </div>
                             </div>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-contala-green border-contala-green hover:bg-contala-green hover:text-white"
-                            >
+                            <Button size="sm" onClick={() => viewCreatorProfile(creator)}>
                               Ver perfil
                             </Button>
                           </div>
-                        </CardContent>
-                      </Card>
-                    ))}
+                        ))}
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+
+                {convocatoria.status === "open" && (
+                  <div className="mt-4 flex justify-end">
+                    <Button 
+                      variant="outline" 
+                      className="text-red-600 border-red-200 hover:bg-red-50"
+                      onClick={() => handleCloseConvocatoria(convocatoria.id)}
+                    >
+                      <Ban className="h-4 w-4 mr-2" />
+                      Cerrar convocatoria
+                    </Button>
                   </div>
-                ) : (
-                  <p className="text-sm text-gray-500">Aún no hay creadores interesados en esta convocatoria.</p>
                 )}
-              </div>
-              
-              <div className="flex justify-end space-x-3 pt-4">
-                {selectedConvocatoria.status === 'open' && (
-                  <Button
-                    variant="outline"
-                    className="text-red-600 border-red-200 hover:bg-red-50"
-                    onClick={() => handleCloseConvocatoria(selectedConvocatoria.id)}
-                  >
-                    Cerrar convocatoria
-                  </Button>
-                )}
-                <Button 
-                  variant="outline"
-                  onClick={() => setSelectedConvocatoria(null)}
-                >
-                  Volver
-                </Button>
-              </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <Card className="border-dashed border-2 bg-gray-50">
+          <CardHeader className="flex flex-row items-center justify-center p-6">
+            <div className="flex flex-col items-center text-center">
+              <FileText className="h-12 w-12 text-contala-green mb-2" />
+              <CardTitle className="text-contala-green">Sin convocatorias</CardTitle>
+              <CardDescription>
+                No tienes convocatorias {activeTab === "open" ? "abiertas" : "cerradas"} en este momento
+              </CardDescription>
             </div>
+          </CardHeader>
+        </Card>
+      )}
+      
+      {/* Creator profile dialog */}
+      <Dialog open={!!selectedCreator} onOpenChange={(open) => !open && setSelectedCreator(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
+          {selectedCreator && (
+            <CreatorProfile 
+              creator={selectedCreator}
+              onClose={() => setSelectedCreator(null)}
+            />
           )}
         </DialogContent>
       </Dialog>

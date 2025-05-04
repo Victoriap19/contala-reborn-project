@@ -1,4 +1,3 @@
-
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
@@ -25,6 +24,7 @@ class Project(models.Model):
     is_public = models.BooleanField(_('es público'), default=False, 
                                    help_text=_('Si está marcado, será visible en la sección Generales'))
     deadline = models.DateField(_('fecha límite'), null=True, blank=True)
+    reviews_left = models.PositiveSmallIntegerField(_('revisiones restantes'), default=3)
     
     class Meta:
         ordering = ['-created_at']
@@ -164,3 +164,25 @@ class ConvocatoriaApplication(models.Model):
     
     def __str__(self):
         return f"Aplicación de {self.creator.username} para {self.convocatoria.title}"
+
+class ProjectReview(models.Model):
+    """Reseñas de los clientes sobre los creadores"""
+    
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='reviews')
+    client = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, 
+                              related_name='client_reviews')
+    creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, 
+                               related_name='creator_reviews')
+    rating = models.PositiveSmallIntegerField(_('calificación'), choices=[(i, i) for i in range(1, 6)])
+    comment = models.TextField(_('comentario'), blank=True, null=True)
+    recommendation = models.TextField(_('recomendación'), blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = _('reseña')
+        verbose_name_plural = _('reseñas')
+        unique_together = [['project', 'client', 'creator']]
+    
+    def __str__(self):
+        return f"Reseña de {self.client.username} para {self.creator.username} en {self.project.title}"

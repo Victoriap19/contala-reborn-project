@@ -1,15 +1,17 @@
-
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Q
+from django.core.mail import send_mail
+from django.conf import settings
 from .models import (
     Project, ProjectProposal, ProjectInvitation, ProjectMessage,
-    Convocatoria, ConvocatoriaApplication
+    Convocatoria, ConvocatoriaApplication, ProjectReview
 )
 from .serializers import (
     ProjectSerializer, ProjectProposalSerializer, ProjectInvitationSerializer,
-    ProjectMessageSerializer, ConvocatoriaSerializer, ConvocatoriaApplicationSerializer
+    ProjectMessageSerializer, ConvocatoriaSerializer, ConvocatoriaApplicationSerializer,
+    ProjectReviewSerializer
 )
 from accounts.permissions import IsOwnerOrReadOnly
 
@@ -99,7 +101,20 @@ class ProjectProposalViewSet(viewsets.ModelViewSet):
         project = Project.objects.get(id=project_id)
         
         if project.is_public or ProjectInvitation.objects.filter(project=project, creator=user).exists():
-            serializer.save(creator=user)
+            proposal = serializer.save(creator=user)
+            
+            # Enviar notificación por email al cliente
+            try:
+                client = project.client
+                send_mail(
+                    f'Nueva propuesta para tu proyecto: {project.title}',
+                    f'{user.get_full_name()} ha enviado una propuesta para tu proyecto.\n\nPrecio: {proposal.price}\nTiempo estimado: {proposal.estimated_days} días\n\n{proposal.message}',
+                    settings.DEFAULT_FROM_EMAIL,
+                    [client.email],
+                    fail_silently=True,
+                )
+            except Exception as e:
+                print(f"Error al enviar email: {e}")
         else:
             return Response(
                 {"error": "No puedes proponer a este proyecto"},
@@ -124,6 +139,19 @@ class ProjectProposalViewSet(viewsets.ModelViewSet):
         # Cambiar el estado del proyecto
         project.status = 'in_progress'
         project.save()
+        
+        # Enviar notificación por email al creador
+        try:
+            creator = proposal.creator
+            send_mail(
+                f'Tu propuesta ha sido aceptada: {project.title}',
+                f'{request.user.get_full_name()} ha aceptado tu propuesta para el proyecto "{project.title}".\n\nPuedes comenzar a trabajar en él y mantener contacto a través del chat del proyecto.',
+                settings.DEFAULT_FROM_EMAIL,
+                [creator.email],
+                fail_silently=True,
+            )
+        except Exception as e:
+            print(f"Error al enviar email: {e}")
         
         serializer = self.get_serializer(proposal)
         return Response(serializer.data)
@@ -248,7 +276,21 @@ class ProjectMessageViewSet(viewsets.ModelViewSet):
         )
     
     def perform_create(self, serializer):
-        serializer.save(sender=self.request.user)
+        message = serializer.save(sender=self.request.user)
+        
+        # Enviar notificación por email al destinatario
+        try:
+            receiver = message.receiver
+            project = message.project
+            send_mail(
+                f'Nuevo mensaje en proyecto: {project.title}',
+                f'{message.sender.get_full_name()} te ha enviado un mensaje:\n\n{message.content[:100]}{"..." if len(message.content) > 100 else ""}',
+                settings.DEFAULT_FROM_EMAIL,
+                [receiver.email],
+                fail_silently=True,
+            )
+        except Exception as e:
+            print(f"Error al enviar email: {e}")
     
     @action(detail=True, methods=['post'])
     def mark_as_read(self, request, pk=None):
@@ -265,6 +307,72 @@ class ProjectMessageViewSet(viewsets.ModelViewSet):
         message.save()
         
         serializer = self.get_serializer(message)
+        return Response(serializer.data)
+
+class ProjectReviewViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint para reseñas de proyectos
+    """
+    queryset = ProjectReview.objects.all()
+    serializer_class = ProjectReviewSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_staff:
+            return ProjectReview.objects.all()
+        
+        if user.is_creator:
+            # Creadores ven reseñas sobre ellos
+            return ProjectReview.objects.filter(creator=user)
+        
+        # Clientes ven reseñas que han hecho
+        return ProjectReview.objects.filter(client=user)
+    
+    def perform_create(self, serializer):
+        review = serializer.save(client=self.request.user)
+        
+        # Enviar notificación por email al creador
+        try:
+            creator = review.creator
+            project = review.project
+            send_mail(
+                f'Nueva reseña en proyecto: {project.title}',
+                f'{review.client.get_full_name()} ha dejado una reseña de {review.rating} estrellas.\n\n{review.comment if review.comment else ""}',
+                settings.DEFAULT_FROM_EMAIL,
+                [creator.email],
+                fail_silently=True,
+            )
+        except Exception as e:
+            print(f"Error al enviar email: {e}")
+            
+    @action(detail=False, methods=['get'])
+    def my_pending_reviews(self, request):
+        """
+        Devuelve proyectos completados que aún no han sido revisados por el cliente
+        """
+        user = request.user
+        
+        # Solo para clientes
+        if user.is_creator:
+            return Response(
+                {"error": "Solo los clientes pueden ver reseñas pendientes"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+            
+        # Encontrar proyectos completados sin revisión
+        completed_projects = Project.objects.filter(
+            client=user,
+            status='completed'
+        )
+        
+        reviewed_project_ids = ProjectReview.objects.filter(
+            client=user
+        ).values_list('project_id', flat=True)
+        
+        pending_projects = completed_projects.exclude(id__in=reviewed_project_ids)
+        
+        serializer = ProjectSerializer(pending_projects, many=True)
         return Response(serializer.data)
 
 class ConvocatoriaViewSet(viewsets.ModelViewSet):
@@ -327,7 +435,7 @@ class ConvocatoriaApplicationViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         """
-        Solo permitir crear aplicaciones a creadores y verificar que la convocatoria esté abierta
+        Solo permitir crear aplicaciones a creadores y verificar que la convocatoria est�� abierta
         """
         user = self.request.user
         if not user.is_creator:

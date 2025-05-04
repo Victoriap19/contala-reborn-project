@@ -11,11 +11,69 @@ import { PendientesSection } from "@/components/dashboard/PendientesSection";
 import { GeneralesSection } from "@/components/dashboard/GeneralesSection";
 import { DiscoverSection } from "@/components/dashboard/DiscoverSection";
 import { useUser } from "@/context/UserContext";
+import { useEffect } from "react";
+import { toast } from "sonner";
+import { MessageSquare, Check } from "lucide-react";
+
+// Mock function to simulate email notifications
+const sendEmailNotification = (type: string, recipient: string) => {
+  console.log(`Email notification sent: ${type} to ${recipient}`);
+  return Promise.resolve();
+};
 
 export default function Dashboard() {
   const location = useLocation();
   const path = location.pathname;
   const { userType } = useUser();
+  
+  // Simulate email notifications when receiving messages or proposals
+  useEffect(() => {
+    // Subscription to new messages would go here in a real app
+    // For demo, we'll simulate random notifications
+    const intervals: number[] = [];
+
+    if (userType === "regular") {
+      // Simulate a creator accepting a proposal
+      const acceptanceTimer = window.setTimeout(() => {
+        toast.success(
+          <div className="flex gap-2">
+            <Check className="h-5 w-5 text-green-500" />
+            <div>
+              <p className="font-medium">Propuesta aceptada</p>
+              <p className="text-sm text-gray-500">Laura ha aceptado tu propuesta</p>
+            </div>
+          </div>,
+          { duration: 5000 }
+        );
+        sendEmailNotification("proposal_accepted", "user@example.com");
+      }, 30000);
+      
+      intervals.push(acceptanceTimer);
+    } 
+    
+    if (userType === "creator") {
+      // Simulate receiving a proposal from a user
+      const proposalTimer = window.setTimeout(() => {
+        toast.success(
+          <div className="flex gap-2">
+            <MessageSquare className="h-5 w-5 text-blue-500" />
+            <div>
+              <p className="font-medium">Nueva propuesta</p>
+              <p className="text-sm text-gray-500">Has recibido una nueva propuesta</p>
+            </div>
+          </div>,
+          { duration: 5000 }
+        );
+        sendEmailNotification("new_proposal", "creator@example.com");
+      }, 45000);
+      
+      intervals.push(proposalTimer);
+    }
+
+    return () => {
+      intervals.forEach(id => window.clearTimeout(id));
+    };
+  }, [userType]);
   
   // Determine which section to show based on the path and user type
   const getActiveSection = () => {
