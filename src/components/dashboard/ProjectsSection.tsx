@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -5,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Check, Clock, Eye, MessageSquare, Pencil, X } from "lucide-react";
+import { Check, Clock, Eye, MessageSquare, Pencil, X, FileText } from "lucide-react";
 import { ProjectChat } from "./ProjectChat";
+import { ProjectDetails } from "./ProjectDetails";
+import { ProjectProposal } from "./ProjectProposal";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 type Project = {
@@ -65,7 +68,7 @@ const ActionButton = ({ project, onAction }: { project: Project; onAction: (acti
   
   if (project.status === "sent") {
     return (
-      <Button variant="outline" size="sm" onClick={() => onAction("view", project)}>
+      <Button variant="outline" size="sm" onClick={() => onAction("viewProposal", project)}>
         <Eye className="mr-1 h-3 w-3" />
         Ver Propuesta
       </Button>
@@ -75,13 +78,13 @@ const ActionButton = ({ project, onAction }: { project: Project; onAction: (acti
   if (project.status === "accepted") {
     return (
       <div className="flex gap-2">
+        <Button variant="outline" size="sm" onClick={() => onAction("chat", project)}>
+          <MessageSquare className="mr-1 h-3 w-3" />
+          Chat
+        </Button>
         <Button variant="outline" size="sm" onClick={() => onAction("confirm", project)}>
           <Check className="mr-1 h-3 w-3" />
           Confirmar
-        </Button>
-        <Button variant="outline" size="sm" onClick={() => onAction("cancel", project)}>
-          <X className="mr-1 h-3 w-3" />
-          Cancelar
         </Button>
       </div>
     );
@@ -96,8 +99,17 @@ const ActionButton = ({ project, onAction }: { project: Project; onAction: (acti
     );
   }
   
+  if (project.status === "completed") {
+    return (
+      <Button variant="outline" size="sm" onClick={() => onAction("viewDetails", project)}>
+        <FileText className="mr-1 h-3 w-3" />
+        Ver Detalles
+      </Button>
+    );
+  }
+  
   return (
-    <Button variant="outline" size="sm" onClick={() => onAction("view", project)}>
+    <Button variant="outline" size="sm" onClick={() => onAction("viewDetails", project)}>
       <Eye className="mr-1 h-3 w-3" />
       Ver Detalles
     </Button>
@@ -108,6 +120,7 @@ export function ProjectsSection() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [chatOpen, setChatOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [proposalOpen, setProposalOpen] = useState(false);
   const [paymentOpen, setPaymentOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("all");
   
@@ -119,12 +132,23 @@ export function ProjectsSection() {
   const handleProjectAction = (action: string, project: Project) => {
     setSelectedProject(project);
     
-    if (action === "view" || action === "resend") {
-      setChatOpen(true);
-    } else if (action === "confirm") {
-      setPaymentOpen(true);
-    } else if (action === "send") {
-      setChatOpen(true);
+    switch (action) {
+      case "chat":
+        setChatOpen(true);
+        break;
+      case "viewDetails":
+        setDetailsOpen(true);
+        break;
+      case "viewProposal":
+      case "send":
+      case "resend":
+        setProposalOpen(true);
+        break;
+      case "confirm":
+        setPaymentOpen(true);
+        break;
+      default:
+        break;
     }
   };
 
@@ -132,7 +156,7 @@ export function ProjectsSection() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-3xl font-bold text-contala-green font-serif">Tus Proyectos</h2>
+          <h2 className="text-3xl font-bold text-contala-green">Tus Proyectos</h2>
           <p className="text-gray-500">Administra y haz seguimiento de tus propuestas</p>
         </div>
         <Button className="bg-contala-darkpink hover:bg-contala-darkpink/90 text-white">
@@ -151,7 +175,7 @@ export function ProjectsSection() {
         </TabsList>
         
         <TabsContent value={activeTab} className="mt-4">
-          <Card className="vintage-card texture-diagonal">
+          <Card className="vintage-card">
             <CardHeader className="pb-0">
               <CardTitle>Proyectos {activeTab !== "all" ? `- ${activeTab}` : ""}</CardTitle>
               <CardDescription>
@@ -226,42 +250,94 @@ export function ProjectsSection() {
         </DialogContent>
       </Dialog>
 
+      {/* Project Details Dialog */}
+      <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
+        <DialogContent className="max-w-3xl">
+          {selectedProject && (
+            <div>
+              <DialogHeader>
+                <DialogTitle>Detalles del Proyecto</DialogTitle>
+                <DialogDescription>
+                  {selectedProject.title} - {selectedProject.creator}
+                </DialogDescription>
+              </DialogHeader>
+              <ProjectDetails 
+                project={selectedProject} 
+                onShowChat={() => {
+                  setDetailsOpen(false);
+                  setChatOpen(true);
+                }} 
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Project Proposal Dialog */}
+      <Dialog open={proposalOpen} onOpenChange={setProposalOpen}>
+        <DialogContent className="max-w-3xl">
+          {selectedProject && (
+            <div>
+              <DialogHeader>
+                <DialogTitle>
+                  {selectedProject.status === "sent" ? "Propuesta Enviada" : 
+                   selectedProject.status === "draft" ? "Enviar Propuesta" :
+                   "Modificar Propuesta"}
+                </DialogTitle>
+                <DialogDescription>
+                  {selectedProject.title} - {selectedProject.creator}
+                </DialogDescription>
+              </DialogHeader>
+              <ProjectProposal
+                project={selectedProject}
+                onPayment={() => {
+                  setProposalOpen(false);
+                  setPaymentOpen(true);
+                }}
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Payment Dialog */}
       <Dialog open={paymentOpen} onOpenChange={setPaymentOpen}>
-        <DialogHeader>
-          <DialogTitle>Pago de Proyecto</DialogTitle>
-          <DialogDescription>
-            Confirma el pago para iniciar el proyecto con {selectedProject?.creator}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="space-y-4 py-4">
-          <div className="flex justify-between">
-            <span className="font-medium">Proyecto:</span>
-            <span>{selectedProject?.title}</span>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Pago de Proyecto</DialogTitle>
+            <DialogDescription>
+              Confirma el pago para iniciar el proyecto con {selectedProject?.creator}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="flex justify-between">
+              <span className="font-medium">Proyecto:</span>
+              <span>{selectedProject?.title}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium">Creador:</span>
+              <span>{selectedProject?.creator}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium">Monto:</span>
+              <span className="font-bold">${selectedProject?.budget?.toLocaleString()}</span>
+            </div>
+            
+            <div className="border rounded-lg p-4 bg-contala-cream/50 mt-4">
+              <h4 className="font-bold text-contala-green flex items-center mb-2">
+                <Clock className="h-4 w-4 mr-2" /> Proceso de Pago
+              </h4>
+              <p className="text-sm text-gray-600">
+                El pago se procesará a través de MercadoPago. Una vez confirmado, 
+                el creador recibirá una notificación para iniciar el proyecto.
+              </p>
+            </div>
           </div>
-          <div className="flex justify-between">
-            <span className="font-medium">Creador:</span>
-            <span>{selectedProject?.creator}</span>
+          <div className="flex justify-end gap-3">
+            <Button variant="outline" onClick={() => setPaymentOpen(false)}>Cancelar</Button>
+            <Button className="bg-contala-green">Proceder al Pago</Button>
           </div>
-          <div className="flex justify-between">
-            <span className="font-medium">Monto:</span>
-            <span className="font-bold">${selectedProject?.budget?.toLocaleString()}</span>
-          </div>
-          
-          <div className="border rounded-lg p-4 bg-contala-cream/50 mt-4">
-            <h4 className="font-bold text-contala-green flex items-center mb-2">
-              <Clock className="h-4 w-4 mr-2" /> Proceso de Pago
-            </h4>
-            <p className="text-sm text-gray-600">
-              El pago se procesará a través de MercadoPago. Una vez confirmado, 
-              el creador recibirá una notificación para iniciar el proyecto.
-            </p>
-          </div>
-        </div>
-        <div className="flex justify-end gap-3">
-          <Button variant="outline" onClick={() => setPaymentOpen(false)}>Cancelar</Button>
-          <Button className="bg-contala-green">Proceder al Pago</Button>
-        </div>
+        </DialogContent>
       </Dialog>
     </div>
   );

@@ -98,7 +98,7 @@ export default function Dashboard() {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="flex min-h-screen w-full bg-contala-cream bg-cross-pattern">
+      <div className="flex min-h-screen w-full bg-contala-cream">
         <DashboardSidebar />
         <SidebarInset className="p-6">
           {/* Decorative background elements */}
