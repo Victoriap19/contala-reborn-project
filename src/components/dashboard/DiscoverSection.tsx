@@ -68,7 +68,7 @@ const creatorsData: Creator[] = [
     price: 30000,
     acceptsBarter: false,
     portfolio: [
-      { type: 'image', url: "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80", title: "Setup gaming" },
+      { type: 'image', url: "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80", title: "Setup gaming" },
       { type: 'video', url: "https://player.vimeo.com/video/248077971", title: "Review consola" }
     ]
   },
@@ -87,7 +87,7 @@ const creatorsData: Creator[] = [
     acceptsBarter: true,
     portfolio: [
       { type: 'image', url: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80", title: "Colaboración" },
-      { type: 'image', url: "https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80", title: "Rutina matutina" }
+      { type: 'image', url: "https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80", title: "Rutina matutina" }
     ]
   },
   {
@@ -97,7 +97,7 @@ const creatorsData: Creator[] = [
     age: 30,
     gender: "Masculino",
     location: "Mendoza",
-    avatar: "https://images.unsplash.com/photo-1619380061814-58f03707f082?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
+    avatar: "https://images.unsplash.com/photo-1619380061814-58f03707f082?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
     rating: 4.5,
     tag: "Fitness",
     bio: "Entrenador personal y creador de contenido fitness. Especializado en rutinas de entrenamiento y nutrición deportiva.",
@@ -105,7 +105,7 @@ const creatorsData: Creator[] = [
     acceptsBarter: true,
     portfolio: [
       { type: 'video', url: "https://player.vimeo.com/video/414885645", title: "Rutina HIIT" },
-      { type: 'image', url: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80", title: "Antes/Después" }
+      { type: 'image', url: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80", title: "Antes/Después" }
     ]
   },
   {
@@ -122,33 +122,11 @@ const creatorsData: Creator[] = [
     price: 20000,
     acceptsBarter: false,
     portfolio: [
-      { type: 'image', url: "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80", title: "Plato gourmet" },
+      { type: 'image', url: "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80", title: "Plato gourmet" },
       { type: 'video', url: "https://player.vimeo.com/video/369662061", title: "Receta navideña" }
     ]
   },
 ];
-
-// Componente para el rating de estrellas
-const StarRating = ({ rating }: { rating: number }) => {
-  // Redondear a 0.5 más cercano
-  const roundedRating = Math.round(rating * 2) / 2;
-  return (
-    <div className="flex">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <span key={star}>
-          {star <= roundedRating ? (
-            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-          ) : star - 0.5 === roundedRating ? (
-            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400 fill-[50%]" />
-          ) : (
-            <Star className="w-4 h-4 text-gray-300" />
-          )}
-        </span>
-      ))}
-      <span className="ml-1 text-xs text-gray-500">{rating}</span>
-    </div>
-  );
-};
 
 export function DiscoverSection() {
   const [searchTerm, setSearchTerm] = useState("");
