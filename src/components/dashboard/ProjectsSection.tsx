@@ -159,9 +159,6 @@ export function ProjectsSection() {
           <h2 className="text-3xl font-bold text-contala-green">Tus Proyectos</h2>
           <p className="text-gray-500">Administra y haz seguimiento de tus propuestas</p>
         </div>
-        <Button className="bg-contala-darkpink hover:bg-contala-darkpink/90 text-white">
-          Nuevo Proyecto
-        </Button>
       </div>
       
       <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
@@ -266,6 +263,14 @@ export function ProjectsSection() {
                 onShowChat={() => {
                   setDetailsOpen(false);
                   setChatOpen(true);
+                }}
+                onShowProposal={() => {
+                  setDetailsOpen(false);
+                  setProposalOpen(true);
+                }}
+                onModifyProposal={() => {
+                  setDetailsOpen(false);
+                  setProposalOpen(true);
                 }} 
               />
             </div>
