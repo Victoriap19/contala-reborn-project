@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Star, Search, Users, MapPin, Filter, ChevronDown, ChevronUp } from "lucide-react";
+import { Star, Search, Users, MapPin, Filter, ChevronDown, ChevronUp, User, MessageSquare } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
 type Creator = {
@@ -155,7 +156,7 @@ export function DiscoverSection() {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
-  const [expandedCreator, setExpandedCreator] = useState<string | null>(null);
+  const [viewingCreator, setViewingCreator] = useState<Creator | null>(null);
   const [selectedCreator, setSelectedCreator] = useState<Creator | null>(null);
   
   // Estados para filtros
@@ -201,12 +202,12 @@ export function DiscoverSection() {
     return searchMatch && ageMatch && genderMatch && locationMatch && priceMatch && barterMatch;
   });
 
-  const handleExpandCreator = (creatorId: string) => {
-    if (expandedCreator === creatorId) {
-      setExpandedCreator(null);
-    } else {
-      setExpandedCreator(creatorId);
-    }
+  const viewCreatorProfile = (creator: Creator) => {
+    setViewingCreator(creator);
+  };
+  
+  const closeCreatorProfile = () => {
+    setViewingCreator(null);
   };
 
   const openProposalDialog = (creator: Creator) => {
@@ -351,81 +352,52 @@ export function DiscoverSection() {
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filteredCreators.map((creator) => (
-          <div key={creator.id}>
-            <Card className={`overflow-hidden hover:shadow-md transition-shadow ${expandedCreator === creator.id ? 'border-contala-green' : ''}`}>
-              <CardContent className="p-4">
-                <div className="flex items-start space-x-4" onClick={() => handleExpandCreator(creator.id)}>
-                  <Avatar className="h-16 w-16 border-2 border-contala-green">
-                    <AvatarImage src={creator.avatar} alt={creator.name} />
-                    <AvatarFallback>{creator.name.substring(0, 2)}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0 cursor-pointer">
-                    <p className="font-medium text-lg text-contala-green">{creator.name}</p>
-                    <div className="flex items-center text-sm text-gray-500 space-x-2">
-                      <span>{creator.age} años</span>
-                      <span>•</span>
-                      <span>{creator.gender}</span>
-                    </div>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <MapPin className="h-3 w-3 mr-1" />
-                      <span>{creator.location}</span>
-                    </div>
-                    <div className="flex items-center justify-between mt-1">
-                      <StarRating rating={creator.rating} />
-                      <span className="text-sm font-medium text-contala-green">
-                        {creator.acceptsBarter ? "Acepta canje" : `$${creator.price}`}
-                      </span>
-                    </div>
+          <Card key={creator.id} className="overflow-hidden hover:shadow-md transition-shadow">
+            <CardContent className="p-4">
+              <div className="flex items-start space-x-4">
+                <Avatar className="h-16 w-16 border-2 border-contala-green">
+                  <AvatarImage src={creator.avatar} alt={creator.name} />
+                  <AvatarFallback>{creator.name.substring(0, 2)}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-lg text-contala-green">{creator.name}</p>
+                  <div className="flex items-center text-sm text-gray-500 space-x-2">
+                    <span>{creator.age} años</span>
+                    <span>•</span>
+                    <span>{creator.gender}</span>
                   </div>
+                  <div className="flex items-center text-sm text-gray-500">
+                    <MapPin className="h-3 w-3 mr-1" />
+                    <span>{creator.location}</span>
+                  </div>
+                  <div className="flex items-center justify-between mt-1">
+                    <StarRating rating={creator.rating} />
+                  </div>
+                  <div className="mt-1">
+                    {creator.acceptsBarter && (
+                      <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300 mt-1">
+                        Acepta canje
+                      </Badge>
+                    )}
+                    {!creator.acceptsBarter && (
+                      <span className="text-sm font-medium text-contala-green">${creator.price}</span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-col gap-2">
                   <Button 
                     variant="outline" 
+                    size="sm"
                     className="text-contala-green border-contala-green hover:bg-contala-green hover:text-white"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openProposalDialog(creator);
-                    }}
+                    onClick={() => viewCreatorProfile(creator)}
                   >
-                    Propuesta
+                    <User className="h-4 w-4 mr-2" />
+                    Ver Perfil
                   </Button>
                 </div>
-                
-                {expandedCreator === creator.id && (
-                  <div className="mt-4 pt-4 border-t">
-                    <div className="mb-3">
-                      <h4 className="font-medium text-contala-green">Bio</h4>
-                      <p className="text-sm text-gray-600">{creator.bio}</p>
-                    </div>
-                    
-                    <div>
-                      <h4 className="font-medium text-contala-green mb-2">Portfolio</h4>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                        {creator.portfolio.map((item, index) => (
-                          <div key={index} className="aspect-square rounded overflow-hidden bg-gray-100">
-                            {item.type === 'image' ? (
-                              <img 
-                                src={item.url} 
-                                alt={item.title || `Item ${index}`}
-                                className="w-full h-full object-cover" 
-                              />
-                            ) : (
-                              <div className="w-full h-full">
-                                <iframe 
-                                  src={item.url} 
-                                  title={item.title || `Video ${index}`}
-                                  className="w-full h-full" 
-                                  allowFullScreen
-                                />
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
       
@@ -435,6 +407,100 @@ export function DiscoverSection() {
         </div>
       )}
       
+      {/* Dialog for viewing creator profile */}
+      <Dialog open={viewingCreator !== null} onOpenChange={(open) => !open && closeCreatorProfile()}>
+        <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <div className="flex items-center space-x-4">
+              <Avatar className="h-14 w-14 border-2 border-contala-green">
+                <AvatarImage src={viewingCreator?.avatar} alt={viewingCreator?.name} />
+                <AvatarFallback>{viewingCreator?.name?.substring(0, 2)}</AvatarFallback>
+              </Avatar>
+              <div>
+                <DialogTitle className="text-xl">{viewingCreator?.name} {viewingCreator?.lastName}</DialogTitle>
+                <div className="flex items-center mt-1">
+                  <StarRating rating={viewingCreator?.rating || 0} />
+                </div>
+              </div>
+            </div>
+          </DialogHeader>
+          
+          {viewingCreator && (
+            <div className="space-y-6 mt-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-gray-500">Edad</p>
+                  <p>{viewingCreator.age} años</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-gray-500">Género</p>
+                  <p>{viewingCreator.gender}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-gray-500">Ubicación</p>
+                  <p>{viewingCreator.location}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-gray-500">Precio / Canje</p>
+                  <p>{viewingCreator.acceptsBarter ? "Acepta canje" : `$${viewingCreator.price}`}</p>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-gray-500">Presentación</p>
+                <p className="text-base">{viewingCreator.bio || "Este creador aún no ha añadido una presentación."}</p>
+              </div>
+              
+              <div className="space-y-3">
+                <p className="text-sm font-medium text-gray-500 pb-2 border-b">Portfolio</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {viewingCreator.portfolio.map((item, index) => (
+                    <div key={index} className="aspect-square rounded-md overflow-hidden shadow-sm border">
+                      {item.type === 'image' ? (
+                        <img 
+                          src={item.url} 
+                          alt={item.title || `Item ${index}`}
+                          className="w-full h-full object-cover" 
+                        />
+                      ) : (
+                        <div className="w-full h-full">
+                          <iframe 
+                            src={item.url} 
+                            title={item.title || `Video ${index}`}
+                            className="w-full h-full" 
+                            allowFullScreen
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-3 pt-4">
+                <Button 
+                  variant="outline"
+                  onClick={closeCreatorProfile}
+                >
+                  Volver a Descubrir
+                </Button>
+                <Button 
+                  className="bg-contala-green hover:bg-contala-green/90"
+                  onClick={() => {
+                    closeCreatorProfile();
+                    openProposalDialog(viewingCreator);
+                  }}
+                >
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Enviar Propuesta
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+      
+      {/* Dialog for sending proposal */}
       <Dialog open={selectedCreator !== null} onOpenChange={(open) => !open && closeProposalDialog()}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>

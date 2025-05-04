@@ -3,11 +3,12 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { FileText, User, Filter, Check, Clock, Eye } from "lucide-react";
+import { FileText, User, Filter, Check, Clock, Eye, MessageSquare } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { ProjectChat } from "./ProjectChat";
 
 type ProjectStatus = 'propuesta_enviada' | 'aceptado' | 'en_proceso' | 'completado';
 
@@ -89,6 +90,7 @@ const projectsData: Project[] = [
 export function ProjectsSection() {
   const [statusFilter, setStatusFilter] = useState<string>("todos");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [chatProject, setChatProject] = useState<Project | null>(null);
 
   const filteredProjects = statusFilter === "todos" 
     ? projectsData 
@@ -126,6 +128,14 @@ export function ProjectsSection() {
 
   const viewProjectDetails = (project: Project) => {
     setSelectedProject(project);
+  };
+  
+  const openChat = (project: Project) => {
+    setChatProject(project);
+  };
+  
+  const closeChat = () => {
+    setChatProject(null);
   };
 
   return (
@@ -192,14 +202,27 @@ export function ProjectsSection() {
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        className="text-gray-500 hover:text-contala-green"
-                        onClick={() => viewProjectDetails(project)}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
+                      <div className="flex justify-end gap-2">
+                        {(project.status === "en_proceso") && (
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            className="text-purple-600 border-purple-200 hover:bg-purple-50"
+                            onClick={() => openChat(project)}
+                          >
+                            <MessageSquare className="h-4 w-4 mr-1" />
+                            Chat
+                          </Button>
+                        )}
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          className="text-gray-500 hover:text-contala-green"
+                          onClick={() => viewProjectDetails(project)}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -275,12 +298,40 @@ export function ProjectsSection() {
                 </div>
               </div>
               
-              <div className="pt-4 flex justify-end">
+              <div className="pt-4 flex justify-end space-x-3">
+                {selectedProject.status === "en_proceso" && (
+                  <Button 
+                    variant="outline"
+                    className="text-purple-600 border-purple-200 hover:bg-purple-50"
+                    onClick={() => {
+                      setSelectedProject(null);
+                      openChat(selectedProject);
+                    }}
+                  >
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    Abrir chat
+                  </Button>
+                )}
                 <Button variant="outline" onClick={() => setSelectedProject(null)}>
                   Cerrar
                 </Button>
               </div>
             </div>
+          )}
+        </DialogContent>
+      </Dialog>
+      
+      {/* Chat dialog */}
+      <Dialog open={chatProject !== null} onOpenChange={(open) => !open && closeChat()}>
+        <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden">
+          {chatProject && (
+            <ProjectChat
+              projectId={chatProject.id}
+              creatorId={chatProject.creator.id}
+              creatorName={chatProject.creator.name}
+              creatorAvatar={chatProject.creator.avatar}
+              onClose={closeChat}
+            />
           )}
         </DialogContent>
       </Dialog>
