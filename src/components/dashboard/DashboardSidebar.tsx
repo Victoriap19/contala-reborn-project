@@ -8,7 +8,10 @@ import {
   Megaphone,
   Clock,
   Globe,
-  Search
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  Menu
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@/context/UserContext";
@@ -23,9 +26,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarTrigger,
+  useSidebar
 } from "@/components/ui/sidebar";
 
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/Logo";
 
 type SidebarItem = {
   icon: React.ElementType;
@@ -37,6 +42,7 @@ export function DashboardSidebar() {
   const navigate = useNavigate();
   const { userType } = useUser();
   const [activeItem, setActiveItem] = useState("perfil");
+  const { state, toggleSidebar } = useSidebar();
   
   // Define sidebar items based on user type
   const regularUserItems: SidebarItem[] = [
@@ -101,10 +107,27 @@ export function DashboardSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader className="border-b border-sidebar-border">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-contala-green px-2">Contala</h2>
-          <SidebarTrigger />
+      <SidebarHeader className="border-b border-sidebar-border relative">
+        <div className="flex items-center p-4">
+          <div className="flex-1">
+            {state === "expanded" ? (
+              <Logo size="md" />
+            ) : (
+              <Logo withText={false} size="sm" />
+            )}
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="ml-2 text-contala-darkpink hover:bg-contala-pink/20"
+            onClick={toggleSidebar}
+          >
+            {state === "expanded" ? (
+              <ChevronLeft className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
+          </Button>
         </div>
       </SidebarHeader>
       <SidebarContent>
@@ -119,6 +142,7 @@ export function DashboardSidebar() {
                       (item.path.includes(activeItem))
                     }
                     onClick={() => handleMenuClick(item.path, index)}
+                    tooltip={state === "collapsed" ? item.title : undefined}
                   >
                     <item.icon className="mr-2 h-4 w-4" />
                     <span>{item.title}</span>
@@ -132,11 +156,11 @@ export function DashboardSidebar() {
       <SidebarFooter className="border-t border-sidebar-border p-4">
         <Button 
           variant="outline" 
-          className="w-full justify-start text-contala-pink hover:bg-contala-pink hover:text-contala-cream"
+          className="w-full justify-start text-contala-darkpink hover:bg-contala-pink/20"
           onClick={() => navigate("/")}
         >
           <LogOut className="mr-2 h-4 w-4" />
-          Cerrar Sesión
+          {state === "expanded" && <span>Cerrar Sesión</span>}
         </Button>
       </SidebarFooter>
     </Sidebar>

@@ -98,9 +98,13 @@ export default function Dashboard() {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="flex min-h-screen w-full bg-contala-cream">
+      <div className="flex min-h-screen w-full bg-contala-cream bg-cross-pattern">
         <DashboardSidebar />
         <SidebarInset className="p-6">
+          {/* Decorative background elements */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-contala-pink/20 rounded-full blur-3xl -z-10 animate-pulse"></div>
+          <div className="absolute bottom-20 left-10 w-48 h-48 bg-contala-green/10 rounded-full blur-3xl -z-10 animate-pulse"></div>
+          
           {/* Render different profile component based on user type */}
           {activeSection === "perfil" && (
             userType === "creator" ? <CreatorProfile /> : <UserProfile />

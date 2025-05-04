@@ -49,7 +49,7 @@
   }
   
   /* Import fonts */
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Helvetica:wght@400;500;700&family=Roboto:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
   
   /* Apply fonts */
   h1, h2, h3, h4, .font-serif {
@@ -57,7 +57,7 @@
   }
   
   body, p, div, button, input, textarea, select {
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Helvetica', 'Roboto', sans-serif;
   }
 }
 
@@ -112,4 +112,84 @@
 .retro-button {
   @apply px-4 py-2 bg-contala-green text-white rounded-full font-medium shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5;
   box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Texture styles */
+.texture-grain {
+  @apply bg-grain-pattern;
+}
+
+.texture-dots {
+  @apply bg-dot-pattern;
+}
+
+.texture-diagonal {
+  @apply bg-diagonal-lines;
+}
+
+.texture-cross {
+  @apply bg-cross-pattern;
+}
+
+/* Table styles */
+.table-container {
+  @apply rounded-xl overflow-hidden border border-contala-green/10 shadow-sm;
+  background-color: white;
+  background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231b4d3e' fill-opacity='0.03' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.table-container table {
+  @apply w-full;
+}
+
+.table-container th {
+  @apply bg-contala-green/5 text-contala-green font-medium p-3 text-left;
+}
+
+.table-container td {
+  @apply border-t border-contala-green/10 p-3;
+}
+
+.table-container tr:hover {
+  @apply bg-contala-cream/50;
+}
+
+/* Card styles with textures */
+.textured-card {
+  @apply relative overflow-hidden rounded-xl bg-white p-6 shadow-md border border-contala-green/10;
+}
+
+.textured-card::before {
+  content: '';
+  @apply absolute inset-0 bg-diagonal-lines opacity-50 pointer-events-none;
+}
+
+/* Logo styling */
+.logo-contala {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-circle {
+  @apply bg-contala-green rounded-full flex items-center justify-center;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.logo-bubble {
+  @apply bg-contala-pink rounded-full;
+  width: 1.2rem;
+  height: 1.2rem;
+  position: relative;
+  transform: translateX(-2px) translateY(2px);
+}
+
+.logo-bubble::before {
+  content: '';
+  @apply bg-contala-pink absolute rounded-full;
+  width: 0.5rem;
+  height: 0.5rem;
+  bottom: -0.2rem;
+  left: -0.2rem;
 }
