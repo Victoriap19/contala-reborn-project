@@ -1,8 +1,9 @@
-import { useState } from "react";
+
+import { useState, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Search, Users, MapPin, Filter, ChevronDown, ChevronUp, User } from "lucide-react";
+import { Search, Users, MapPin, Filter, ChevronDown, ChevronUp, User, Play } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -12,6 +13,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { StarRating } from "./StarRating";
 import { CreatorProfileView } from "./CreatorProfileView";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 type Creator = {
   id: string;
@@ -33,7 +35,7 @@ type Creator = {
   }>;
 };
 
-// Datos de ejemplo para creadores
+// Sample creator data
 const creatorsData: Creator[] = [
   {
     id: "1",
@@ -132,36 +134,38 @@ export function DiscoverSection() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [viewingCreator, setViewingCreator] = useState<Creator | null>(null);
+  const [activeVideo, setActiveVideo] = useState<string | null>(null);
+  const videoRefs = useRef<{[key: string]: HTMLVideoElement | null}>({});
   
-  // Estados para filtros
+  // States for filters
   const [ageRange, setAgeRange] = useState<[number, number]>([18, 60]);
   const [genderFilter, setGenderFilter] = useState<string>("todos");
   const [locationFilter, setLocationFilter] = useState<string>("");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
   const [acceptsBarterOnly, setAcceptsBarterOnly] = useState<boolean>(false);
 
-  // Filtrar creadores según los criterios
+  // Filter creators based on criteria
   const filteredCreators = creatorsData.filter(creator => {
-    // Filtro por término de búsqueda
+    // Search term filter
     const searchMatch = 
       creator.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       creator.tag.toLowerCase().includes(searchTerm.toLowerCase()) ||
       creator.location.toLowerCase().includes(searchTerm.toLowerCase());
     
-    // Filtro por edad
+    // Age filter
     const ageMatch = creator.age >= ageRange[0] && creator.age <= ageRange[1];
     
-    // Filtro por género
+    // Gender filter
     const genderMatch = genderFilter === "todos" || creator.gender === genderFilter;
     
-    // Filtro por ubicación
+    // Location filter
     const locationMatch = locationFilter === "" || 
       creator.location.toLowerCase().includes(locationFilter.toLowerCase());
     
-    // Filtro por precio
+    // Price filter
     const priceMatch = creator.price >= priceRange[0] && creator.price <= priceRange[1];
     
-    // Filtro por aceptación de canje
+    // Barter acceptance filter
     const barterMatch = !acceptsBarterOnly || creator.acceptsBarter;
     
     return searchMatch && ageMatch && genderMatch && locationMatch && priceMatch && barterMatch;
@@ -169,22 +173,46 @@ export function DiscoverSection() {
 
   const viewCreatorProfile = (creator: Creator) => {
     setViewingCreator(creator);
+    if (activeVideo) {
+      const video = videoRefs.current[activeVideo];
+      if (video) {
+        video.pause();
+      }
+    }
+    setActiveVideo(null);
   };
   
   const closeCreatorProfile = () => {
     setViewingCreator(null);
   };
+  
+  const handleVideoPlay = (creatorId: string, videoUrl: string) => {
+    // If there's already a video playing, pause it
+    if (activeVideo && activeVideo !== videoUrl) {
+      const oldVideo = videoRefs.current[activeVideo];
+      if (oldVideo) {
+        oldVideo.pause();
+      }
+    }
+    setActiveVideo(videoUrl);
+  };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-contala-green flex items-center gap-2">
-          <Users className="h-6 w-6" />
-          Descubrir Creadores
+    <div className="space-y-8 relative">
+      {/* Decorative background elements */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-contala-pink/20 rounded-full blur-3xl -z-10 animate-pulse"></div>
+      <div className="absolute bottom-20 left-10 w-48 h-48 bg-contala-green/10 rounded-full blur-3xl -z-10 animate-pulse"></div>
+      
+      <div className="flex items-center justify-between relative z-10">
+        <h2 className="text-3xl font-bold text-contala-green flex items-center gap-2 font-serif">
+          <Users className="h-7 w-7" />
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-contala-green to-contala-green/70">
+            Descubrir Creadores
+          </span>
         </h2>
         <Button 
           variant="outline" 
-          className="flex items-center gap-1 bg-contala-green/10 hover:bg-contala-green/20 border-contala-green/20"
+          className="flex items-center gap-1 bg-contala-green/10 hover:bg-contala-green/20 border-contala-green/20 rounded-full px-4"
           onClick={() => setShowFilters(!showFilters)}
         >
           <Filter className="h-4 w-4" />
@@ -197,19 +225,19 @@ export function DiscoverSection() {
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
         <Input
           placeholder="Buscar creador por nombre, categoría o ubicación..."
-          className="pl-10 bg-contala-green/5 border-contala-green/20 focus:border-contala-green"
+          className="pl-10 bg-contala-green/5 border-contala-green/20 focus:border-contala-green rounded-full"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
       
       {showFilters && (
-        <div className="bg-contala-green/5 p-4 rounded-lg border border-contala-green/10 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Rango de Edad</Label>
+        <div className="bg-gradient-to-br from-contala-cream to-contala-pink/20 p-6 rounded-2xl border border-contala-green/10 space-y-4 shadow-sm backdrop-blur-sm">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="space-y-3">
+              <Label className="text-sm font-medium text-contala-green">Rango de Edad</Label>
               <div className="flex items-center space-x-2">
-                <span className="text-xs text-gray-500">{ageRange[0]}</span>
+                <span className="text-xs text-gray-500 bg-white/70 px-2 py-1 rounded-md">{ageRange[0]}</span>
                 <Slider
                   min={18}
                   max={60}
@@ -218,14 +246,14 @@ export function DiscoverSection() {
                   onValueChange={(value) => setAgeRange(value as [number, number])}
                   className="w-full"
                 />
-                <span className="text-xs text-gray-500">{ageRange[1]}</span>
+                <span className="text-xs text-gray-500 bg-white/70 px-2 py-1 rounded-md">{ageRange[1]}</span>
               </div>
             </div>
             
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Género</Label>
+            <div className="space-y-3">
+              <Label className="text-sm font-medium text-contala-green">Género</Label>
               <Select value={genderFilter} onValueChange={setGenderFilter}>
-                <SelectTrigger className="w-full bg-contala-cream">
+                <SelectTrigger className="w-full bg-white/70 border-contala-green/20 rounded-lg">
                   <SelectValue placeholder="Seleccionar género" />
                 </SelectTrigger>
                 <SelectContent>
@@ -237,20 +265,20 @@ export function DiscoverSection() {
               </Select>
             </div>
             
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Ubicación</Label>
+            <div className="space-y-3">
+              <Label className="text-sm font-medium text-contala-green">Ubicación</Label>
               <Input 
                 placeholder="Ej. Buenos Aires"
-                className="bg-contala-cream" 
+                className="bg-white/70 border-contala-green/20 rounded-lg" 
                 value={locationFilter}
                 onChange={(e) => setLocationFilter(e.target.value)}
               />
             </div>
             
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Rango de Precios</Label>
+            <div className="space-y-3">
+              <Label className="text-sm font-medium text-contala-green">Rango de Precios</Label>
               <div className="flex items-center space-x-2">
-                <span className="text-xs text-gray-500">${priceRange[0]}</span>
+                <span className="text-xs text-gray-500 bg-white/70 px-2 py-1 rounded-md">${priceRange[0]}</span>
                 <Slider
                   min={0}
                   max={50000}
@@ -259,17 +287,17 @@ export function DiscoverSection() {
                   onValueChange={(value) => setPriceRange(value as [number, number])}
                   className="w-full"
                 />
-                <span className="text-xs text-gray-500">${priceRange[1]}</span>
+                <span className="text-xs text-gray-500 bg-white/70 px-2 py-1 rounded-md">${priceRange[1]}</span>
               </div>
             </div>
             
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 bg-white/40 p-3 rounded-lg">
               <Switch 
                 id="acceptsBarter" 
                 checked={acceptsBarterOnly}
                 onCheckedChange={setAcceptsBarterOnly}
               />
-              <Label htmlFor="acceptsBarter" className="text-sm font-medium">
+              <Label htmlFor="acceptsBarter" className="text-sm font-medium text-contala-green">
                 Solo creadores que acepten canje
               </Label>
             </div>
@@ -277,60 +305,137 @@ export function DiscoverSection() {
         </div>
       )}
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {filteredCreators.map((creator) => (
-          <Card key={creator.id} className="overflow-hidden hover:shadow-md transition-shadow bg-gradient-to-br from-contala-green/5 to-contala-cream border-contala-green/20">
-            <CardContent className="p-4">
-              <div className="flex items-start space-x-4">
-                <Avatar className="h-16 w-16 border-2 border-contala-green">
-                  <AvatarImage src={creator.avatar} alt={creator.name} />
-                  <AvatarFallback>{creator.name.substring(0, 2)}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-lg text-contala-green">{creator.name}</p>
-                  <div className="flex items-center text-sm text-gray-500 space-x-2">
-                    <span>{creator.age} años</span>
-                    <span>•</span>
-                    <span>{creator.gender}</span>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {filteredCreators.map((creator) => {
+          // Find a video to showcase, if available
+          const showcaseVideo = creator.portfolio.find(item => item.type === 'video');
+          const showcaseImage = creator.portfolio.find(item => item.type === 'image');
+          
+          return (
+            <Card key={creator.id} className="overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 bg-gradient-to-br from-white to-contala-cream border-none ring-1 ring-contala-green/10 rounded-2xl">
+              <CardContent className="p-0">
+                <div className="relative">
+                  {/* Main content area - video or image */}
+                  <div className="w-full aspect-video bg-gray-100 overflow-hidden">
+                    {showcaseVideo ? (
+                      <div className="relative w-full h-full">
+                        <video 
+                          ref={(el) => videoRefs.current[showcaseVideo.url] = el}
+                          src={showcaseVideo.url} 
+                          className="w-full h-full object-cover"
+                          loop
+                          muted
+                          onClick={(e) => {
+                            e.preventDefault();
+                            const video = e.currentTarget;
+                            if (video.paused) {
+                              video.play();
+                              handleVideoPlay(creator.id, showcaseVideo.url);
+                            } else {
+                              video.pause();
+                              setActiveVideo(null);
+                            }
+                          }}
+                        />
+                        {/* Play button overlay */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="bg-black/30 hover:bg-black/50 text-white rounded-full h-12 w-12"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              const video = videoRefs.current[showcaseVideo.url];
+                              if (video) {
+                                if (video.paused) {
+                                  video.play();
+                                  handleVideoPlay(creator.id, showcaseVideo.url);
+                                } else {
+                                  video.pause();
+                                  setActiveVideo(null);
+                                }
+                              }
+                            }}
+                          >
+                            <Play className="h-6 w-6" />
+                          </Button>
+                        </div>
+                      </div>
+                    ) : showcaseImage ? (
+                      <img 
+                        src={showcaseImage.url} 
+                        alt={creator.name} 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-contala-pink/20 to-contala-green/20"></div>
+                    )}
                   </div>
-                  <div className="flex items-center text-sm text-gray-500">
-                    <MapPin className="h-3 w-3 mr-1" />
-                    <span>{creator.location}</span>
-                  </div>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-2 gap-2">
-                    <StarRating rating={creator.rating} />
-                    <div>
-                      {creator.acceptsBarter && (
-                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
-                          Acepta canje
-                        </Badge>
-                      )}
-                      {!creator.acceptsBarter && (
-                        <span className="text-sm font-medium text-contala-green">${creator.price}</span>
-                      )}
+                  
+                  {/* Overlaid info bar at bottom */}
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 text-white">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10 border-2 border-white">
+                          <AvatarImage src={creator.avatar} alt={creator.name} />
+                          <AvatarFallback>{creator.name.substring(0, 2)}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium text-lg line-clamp-1">{creator.name}</p>
+                          <div className="flex items-center text-xs text-gray-200">
+                            <MapPin className="h-3 w-3 mr-1" />
+                            <span>{creator.location}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-end">
+                        <StarRating rating={creator.rating} />
+                        <Button 
+                          variant="default" 
+                          size="sm"
+                          className="mt-2 bg-white text-contala-green hover:bg-contala-cream hover:text-contala-green rounded-full shadow-md"
+                          onClick={() => viewCreatorProfile(creator)}
+                        >
+                          <User className="h-4 w-4 mr-2" />
+                          Ver Perfil
+                        </Button>
+                      </div>
                     </div>
                   </div>
+                  
+                  {/* Creator category badge */}
+                  <div className="absolute top-3 left-3">
+                    <Badge className="bg-white/80 text-contala-green border-none font-medium rounded-full backdrop-blur-sm">
+                      {creator.tag}
+                    </Badge>
+                  </div>
+                  
+                  {/* Price or barter badge */}
+                  <div className="absolute top-3 right-3">
+                    {creator.acceptsBarter ? (
+                      <Badge variant="outline" className="bg-green-50/80 text-green-700 border-green-300 rounded-full backdrop-blur-sm">
+                        Acepta canje
+                      </Badge>
+                    ) : (
+                      <Badge className="bg-contala-cream/80 text-contala-green border-none rounded-full backdrop-blur-sm">
+                        ${creator.price}
+                      </Badge>
+                    )}
+                  </div>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    className="text-contala-green border-contala-green hover:bg-contala-green hover:text-white"
-                    onClick={() => viewCreatorProfile(creator)}
-                  >
-                    <User className="h-4 w-4 mr-2" />
-                    Ver Perfil
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
       
       {filteredCreators.length === 0 && (
-        <div className="text-center py-8">
-          <p className="text-gray-500">No se encontraron creadores con los filtros seleccionados.</p>
+        <div className="text-center py-16 bg-white/50 rounded-2xl border border-dashed border-gray-300">
+          <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-gray-100 rounded-full">
+            <Users className="h-8 w-8 text-gray-400" />
+          </div>
+          <p className="text-gray-500 text-lg">No se encontraron creadores con los filtros seleccionados.</p>
+          <p className="text-gray-400 mt-1">Intenta con otros criterios de búsqueda.</p>
         </div>
       )}
       
