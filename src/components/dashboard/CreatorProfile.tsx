@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,14 +7,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, Phone, Mail, MapPin, Upload } from "lucide-react";
+import { User, Phone, Mail, MapPin, Upload, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { userService, creatorService } from "@/services/api";
 
 export function CreatorProfile() {
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [portfolio, setPortfolio] = useState<{ type: 'image' | 'video', url: string }[]>([]);
+  const [portfolio, setPortfolio] = useState<{ id?: number, type: 'image' | 'video', url: string, title?: string }[]>([]);
   const [creatorProfile, setCreatorProfile] = useState({
+    id: 0,
+    creatorProfileId: 0,
     nombre: "",
     apellido: "",
     telefono: "",
@@ -22,8 +27,72 @@ export function CreatorProfile() {
     ubicacion: "",
     descripcion: "",
     cache: "",
-    aceptaCanje: false
+    aceptaCanje: false,
+    specialties: "",
+    experienceYears: 0
   });
+
+  // Fetch creator profile data
+  useEffect(() => {
+    const fetchCreatorProfile = async () => {
+      try {
+        setIsLoading(true);
+        // Assuming the current user ID is stored in localStorage
+        const userId = localStorage.getItem("userId");
+        
+        if (userId) {
+          // Fetch user data
+          const userResponse = await userService.getUserProfile(parseInt(userId));
+          const userData = userResponse.data;
+          
+          // Fetch creator profile data
+          const creatorResponse = await creatorService.getCreatorProfile(userData.creator_profile.id);
+          const creatorData = creatorResponse.data;
+          
+          setCreatorProfile({
+            id: userData.id,
+            creatorProfileId: creatorData.id,
+            nombre: userData.first_name || "",
+            apellido: userData.last_name || "",
+            telefono: userData.phone || "",
+            email: userData.email || "",
+            ubicacion: creatorData.location || "",
+            descripcion: userData.bio || "",
+            cache: "",  // This might need to be stored elsewhere or calculated
+            aceptaCanje: false,  // This might need to be stored elsewhere
+            specialties: creatorData.specialties || "",
+            experienceYears: creatorData.experience_years || 0
+          });
+          
+          if (userData.profile_picture) {
+            setProfileImage(userData.profile_picture);
+          }
+          
+          // Fetch portfolio items
+          const portfolioResponse = await creatorService.getPortfolio();
+          if (portfolioResponse.data) {
+            setPortfolio(portfolioResponse.data.map((item: any) => ({
+              id: item.id,
+              type: item.type,
+              url: item.url,
+              title: item.title
+            })));
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching creator profile:", error);
+        toast({
+          title: "Error",
+          description: "No se pudo cargar la información del perfil de creador",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCreatorProfile();
+  }, [toast]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -56,21 +125,111 @@ export function CreatorProfile() {
       const fileType: 'image' | 'video' = file.type.startsWith('image/') ? 'image' : 'video';
       return {
         type: fileType,
-        url: URL.createObjectURL(file)
+        url: URL.createObjectURL(file),
+        title: file.name
       };
     });
     
     setPortfolio(prev => [...prev, ...newItems]);
   };
 
-  const handleSaveProfile = () => {
-    // Aquí iría la lógica para guardar el perfil en el backend
-    console.log("Guardando perfil:", { ...creatorProfile, profileImage, portfolio });
-    toast({
-      title: "Perfil actualizado",
-      description: "Tus cambios han sido guardados correctamente",
-    });
+  const handlePortfolioDelete = async (index: number) => {
+    const itemToDelete = portfolio[index];
+    
+    try {
+      if (itemToDelete.id) {
+        // If the item has an ID, it exists in the backend and needs to be deleted
+        await creatorService.deletePortfolioItem(itemToDelete.id);
+      }
+      
+      // Remove from local state
+      setPortfolio(prev => prev.filter((_, i) => i !== index));
+      
+      toast({
+        title: "Eliminado",
+        description: "Elemento eliminado correctamente",
+      });
+    } catch (error) {
+      console.error("Error deleting portfolio item:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo eliminar el elemento",
+        variant: "destructive"
+      });
+    }
   };
+
+  const handleSaveProfile = async () => {
+    try {
+      setIsSaving(true);
+      
+      // Update user profile
+      const userData = {
+        first_name: creatorProfile.nombre,
+        last_name: creatorProfile.apellido,
+        email: creatorProfile.email,
+        phone: creatorProfile.telefono,
+        bio: creatorProfile.descripcion,
+        profile_picture: profileImage
+      };
+      
+      await userService.updateUserProfile(creatorProfile.id, userData);
+      
+      // Update creator profile
+      const creatorData = {
+        location: creatorProfile.ubicacion,
+        specialties: creatorProfile.specialties,
+        experience_years: creatorProfile.experienceYears
+      };
+      
+      await creatorService.updateCreatorProfile(creatorProfile.creatorProfileId, creatorData);
+      
+      // Handle portfolio items - only upload new ones (without ID)
+      for (const item of portfolio) {
+        if (!item.id) {
+          await creatorService.addPortfolioItem({
+            type: item.type,
+            url: item.url,
+            title: item.title || "Sin título"
+          });
+        }
+      }
+      
+      toast({
+        title: "Perfil actualizado",
+        description: "Tus cambios han sido guardados correctamente",
+      });
+      
+      // Refresh portfolio to get the new IDs
+      const portfolioResponse = await creatorService.getPortfolio();
+      if (portfolioResponse.data) {
+        setPortfolio(portfolioResponse.data.map((item: any) => ({
+          id: item.id,
+          type: item.type,
+          url: item.url,
+          title: item.title
+        })));
+      }
+      
+    } catch (error) {
+      console.error("Error saving creator profile:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo guardar la información del perfil",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-contala-green"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -79,8 +238,9 @@ export function CreatorProfile() {
         <Button 
           className="bg-contala-pink text-contala-green hover:bg-contala-pink/90"
           onClick={handleSaveProfile}
+          disabled={isSaving}
         >
-          Guardar Cambios
+          {isSaving ? "Guardando..." : "Guardar Cambios"}
         </Button>
       </div>
 
@@ -252,14 +412,24 @@ export function CreatorProfile() {
               ) : (
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {portfolio.map((item, index) => (
-                    <div key={index} className="aspect-square rounded-md overflow-hidden">
+                    <div key={index} className="aspect-square rounded-md overflow-hidden relative group">
                       {item.type === 'image' ? (
-                        <img src={item.url} alt={`Portfolio item ${index + 1}`} className="w-full h-full object-cover" />
+                        <img src={item.url} alt={item.title || `Portfolio item ${index + 1}`} className="w-full h-full object-cover" />
                       ) : (
                         <video src={item.url} controls className="w-full h-full object-cover">
                           Tu navegador no soporta videos.
                         </video>
                       )}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
+                        <Button 
+                          variant="destructive" 
+                          size="sm" 
+                          className="rounded-full h-8 w-8 p-0"
+                          onClick={() => handlePortfolioDelete(index)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -292,4 +462,3 @@ export function CreatorProfile() {
     </div>
   );
 }
-

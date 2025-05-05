@@ -26,6 +26,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/Logo";
+import { authService } from "@/services/api";
 
 type SidebarItem = {
   icon: React.ElementType;
@@ -99,8 +100,13 @@ export function DashboardSidebar() {
     navigate(path);
   };
 
+  const handleLogout = () => {
+    authService.logout();
+    // The redirect is handled in the authService.logout function
+  };
+
   return (
-    <Sidebar>
+    <Sidebar collapsible="none">
       <SidebarHeader className="border-b border-sidebar-border relative">
         <div className="flex items-center p-4">
           <div className="flex-1">
@@ -134,7 +140,7 @@ export function DashboardSidebar() {
         <Button 
           variant="outline" 
           className="w-full justify-start text-contala-darkpink hover:bg-contala-pink/20"
-          onClick={() => navigate("/")}
+          onClick={handleLogout}
         >
           <LogOut className="mr-2 h-4 w-4" />
           <span>Cerrar Sesión</span>

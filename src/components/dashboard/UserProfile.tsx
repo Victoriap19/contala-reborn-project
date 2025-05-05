@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,11 +8,15 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { User, Phone, Mail, Link } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { userService } from "@/services/api";
 
 export function UserProfile() {
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [userProfile, setUserProfile] = useState({
+    id: 0,
     nombre: "",
     apellido: "",
     telefono: "",
@@ -23,6 +27,53 @@ export function UserProfile() {
     urlFacebook: "",
     urlTwitter: ""
   });
+
+  // Fetch user profile data
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        setIsLoading(true);
+        // Assuming the current user ID is stored in localStorage
+        // In a real app, you might get this from a context or redux store
+        const userId = localStorage.getItem("userId");
+        
+        if (userId) {
+          const response = await userService.getUserProfile(parseInt(userId));
+          
+          // Transform backend data to match our form structure
+          const userData = response.data;
+          
+          setUserProfile({
+            id: userData.id,
+            nombre: userData.first_name || "",
+            apellido: userData.last_name || "",
+            telefono: userData.phone || "",
+            email: userData.email || "",
+            marca: userData.brand_name || "",
+            urlProducto: userData.product_url || "",
+            urlInstagram: userData.social_networks?.find((s: any) => s.network === "instagram")?.url || "",
+            urlFacebook: userData.social_networks?.find((s: any) => s.network === "facebook")?.url || "",
+            urlTwitter: userData.social_networks?.find((s: any) => s.network === "twitter")?.url || "",
+          });
+          
+          if (userData.profile_picture) {
+            setProfileImage(userData.profile_picture);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+        toast({
+          title: "Error",
+          description: "No se pudo cargar la información del perfil",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, [toast]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -42,14 +93,60 @@ export function UserProfile() {
     }
   };
 
-  const handleSaveProfile = () => {
-    // Aquí iría la lógica para guardar el perfil en el backend
-    console.log("Guardando perfil:", { ...userProfile, profileImage });
-    toast({
-      title: "Perfil actualizado",
-      description: "Tus cambios han sido guardados correctamente",
-    });
+  const handleSaveProfile = async () => {
+    try {
+      setIsSaving(true);
+      
+      // Transform our form data to match backend expectations
+      const userData = {
+        first_name: userProfile.nombre,
+        last_name: userProfile.apellido,
+        email: userProfile.email,
+        phone: userProfile.telefono,
+        brand_name: userProfile.marca,
+        product_url: userProfile.urlProducto,
+        profile_picture: profileImage
+      };
+      
+      // Update user profile
+      await userService.updateUserProfile(userProfile.id, userData);
+      
+      // Handle social networks separately
+      // This is simplified - in a real app you would check if they exist and update or create as needed
+      const socialNetworks = [
+        { network: "instagram", url: userProfile.urlInstagram },
+        { network: "facebook", url: userProfile.urlFacebook },
+        { network: "twitter", url: userProfile.urlTwitter }
+      ].filter(sn => sn.url); // Only include networks with URLs
+      
+      // Update or create each social network
+      for (const sn of socialNetworks) {
+        await userService.addSocialNetwork(sn);
+      }
+      
+      toast({
+        title: "Perfil actualizado",
+        description: "Tus cambios han sido guardados correctamente",
+      });
+    } catch (error) {
+      console.error("Error saving profile:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo guardar la información del perfil",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-contala-green"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -58,8 +155,9 @@ export function UserProfile() {
         <Button 
           className="bg-contala-pink text-contala-green hover:bg-contala-pink/90"
           onClick={handleSaveProfile}
+          disabled={isSaving}
         >
-          Guardar Cambios
+          {isSaving ? "Guardando..." : "Guardar Cambios"}
         </Button>
       </div>
 

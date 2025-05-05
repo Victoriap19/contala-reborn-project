@@ -1,3 +1,4 @@
+
 import axios from "axios";
 
 // Base configuration for axios
@@ -84,6 +85,8 @@ export const authService = {
   logout: () => {
     localStorage.removeItem("token");
     localStorage.removeItem("refreshToken");
+    // Add a redirect to login page
+    window.location.href = "/login";
   },
   
   getCurrentUser: async () => {
