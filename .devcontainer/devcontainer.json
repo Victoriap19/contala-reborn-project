@@ -1,0 +1,13 @@
+
+{
+  "name": "Django+Supabase",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "forwardPorts": [8000],
+  "postCreateCommand": "pip install -r backend/requirements.txt",
+  "remoteEnv": {
+    "DATABASE_URL": "${localEnv:DATABASE_URL}",
+    "SECRET_KEY": "${localEnv:SECRET_KEY}"
+  }
+}
