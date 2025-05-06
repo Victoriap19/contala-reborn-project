@@ -1,8 +1,8 @@
 
 import { useState, useEffect } from "react";
-import { Helmet } from "react-helmet";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
+import { Helmet } from "react-helmet-async";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
 import { CurrentSubscription } from "@/components/subscription/CurrentSubscription";
 import { subscriptionService } from "@/services/api";
