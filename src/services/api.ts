@@ -1,4 +1,3 @@
-
 import axios from "axios";
 
 // Base configuration for axios
@@ -329,7 +328,7 @@ export const convocatoriaService = {
   }
 };
 
-// New shipping service for handling product shipments
+// Enhanced shipping service for handling product shipments
 export const shipmentService = {
   // Generate shipping quote from Correo Argentino
   getShippingQuote: async (data: {
@@ -392,6 +391,16 @@ export const shipmentService = {
   // Confirm return received
   confirmReturn: async (projectId: number) => {
     return await api.post(`/projects/projects/${projectId}/shipment/returned/`);
+  },
+  
+  // Print return label
+  getReturnLabel: async (projectId: number) => {
+    return await api.get(`/projects/projects/${projectId}/shipment/return-label/`);
+  },
+  
+  // Verify shipment status from Correo Argentino
+  verifyShipmentStatus: async (trackingNumber: string) => {
+    return await api.post(`/projects/shipping/verify/`, { tracking_number: trackingNumber });
   }
 };
 

@@ -13,9 +13,11 @@ import {
   AlertTriangle, 
   ArrowRight,
   Loader2,
-  Download
+  Download,
+  Return
 } from "lucide-react";
 import { useUser } from "@/context/UserContext";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface ShipmentData {
   id: number;
@@ -224,13 +226,13 @@ export function ShipmentTracker({ projectId, userRole }: ShipmentTrackerProps) {
               isCompleted={['delivered', 'return_requested', 'returned'].includes(shipment.status)} 
             />
             
-            {/* Show return steps if return required */}
-            {shipment.return_required && (
+            {/* Show return steps if return required or if already in process */}
+            {(shipment.return_required || ['return_requested', 'returned'].includes(shipment.status)) && (
               <>
                 <TimelineStep 
-                  icon={<ArrowRight />} 
+                  icon={<Return />} 
                   title="Devolución Solicitada" 
-                  date={shipment.status === 'return_requested' ? new Date().toLocaleDateString() : undefined}
+                  date={shipment.status === 'return_requested' || shipment.status === 'returned' ? new Date().toLocaleDateString() : undefined}
                   isCompleted={['return_requested', 'returned'].includes(shipment.status)} 
                 />
                 <TimelineStep 
@@ -244,6 +246,17 @@ export function ShipmentTracker({ projectId, userRole }: ShipmentTrackerProps) {
           </div>
         </div>
         
+        {/* Return info alert */}
+        {shipment.return_required && shipment.status !== 'return_requested' && shipment.status !== 'returned' && (
+          <Alert className="bg-blue-50 border-blue-200">
+            <AlertDescription>
+              {userRole === 'creator' ? 
+                "Al finalizar el proyecto, deberás devolver el producto al cliente. Se generará automáticamente una etiqueta de devolución." : 
+                "El creador deberá devolver el producto una vez finalizado el proyecto. La etiqueta de devolución ya está incluida."}
+            </AlertDescription>
+          </Alert>
+        )}
+        
         {/* Action buttons based on status and user role */}
         <div className="space-y-2">
           {/* Download labels */}
@@ -254,8 +267,12 @@ export function ShipmentTracker({ projectId, userRole }: ShipmentTrackerProps) {
                 Descargar etiqueta de envío
               </Button>
               
-              {shipment.return_label_url && shipment.return_required && (
-                <Button variant="outline" className="flex-1" onClick={() => window.open(shipment.return_label_url, '_blank')}>
+              {shipment.return_label_url && (shipment.return_required || shipment.status === 'return_requested') && (
+                <Button 
+                  variant="outline" 
+                  className="flex-1" 
+                  onClick={() => window.open(shipment.return_label_url, '_blank')}
+                >
                   <Download className="mr-2 h-4 w-4" />
                   Descargar etiqueta de devolución
                 </Button>
@@ -286,18 +303,20 @@ export function ShipmentTracker({ projectId, userRole }: ShipmentTrackerProps) {
             </Button>
           )}
           
-          {isClient && shipment.status === 'delivered' && shipment.return_required && (
+          {/* For creator - request return after delivery */}
+          {userRole === 'creator' && shipment.status === 'delivered' && shipment.return_required && (
             <Button 
               className="w-full" 
               onClick={requestReturn}
               disabled={updating}
             >
-              {updating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ArrowRight className="mr-2 h-4 w-4" />}
-              Solicitar Devolución
+              {updating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Return className="mr-2 h-4 w-4" />}
+              Iniciar Devolución
             </Button>
           )}
           
-          {isClient && shipment.status === 'return_requested' && (
+          {/* For client - confirm return received */}
+          {userRole === 'client' && shipment.status === 'return_requested' && (
             <Button 
               className="w-full" 
               onClick={confirmReturn}

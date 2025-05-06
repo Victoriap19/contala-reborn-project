@@ -6,11 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Edit2, Send, DollarSign, Plus, Minus, Package, Truck } from "lucide-react";
+import { Edit2, Send, DollarSign, Plus, Minus, Package, Truck, CheckCircle2 } from "lucide-react";
 import { ShipmentForm } from "./ShipmentForm";
 import { ShipmentTracker } from "./ShipmentTracker";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { shipmentService } from "@/services/api";
+import { useUser } from "@/context/UserContext";
 
 type Project = {
   id: string;
@@ -35,6 +37,11 @@ export function ProjectProposal({ project, onPayment }: ProjectProposalProps) {
   const [showShipmentForm, setShowShipmentForm] = useState<boolean>(false);
   const [shipmentCompleted, setShipmentCompleted] = useState<boolean>(false);
   const [showShipmentDialog, setShowShipmentDialog] = useState<boolean>(false);
+  const [isPaymentProcessing, setIsPaymentProcessing] = useState<boolean>(false);
+  const [showPaymentComplete, setShowPaymentComplete] = useState<boolean>(false);
+  
+  const { userType } = useUser();
+  const isCreator = userType === "creator";
   
   const handleSendProposal = () => {
     // In a real app, this would send the proposal to the backend
@@ -52,7 +59,32 @@ export function ProjectProposal({ project, onPayment }: ProjectProposalProps) {
   };
 
   const handleProceedToPayment = () => {
-    onPayment();
+    setIsPaymentProcessing(true);
+    // Simulating payment processing
+    setTimeout(() => {
+      setIsPaymentProcessing(false);
+      setShowPaymentComplete(true);
+      // Call the parent callback
+      onPayment();
+      toast.success("¡Pago procesado con éxito! Proyecto confirmado.");
+    }, 2000);
+  };
+
+  const handleViewShipment = () => {
+    setShowShipmentDialog(true);
+  };
+
+  const handleCheckShipmentStatus = async () => {
+    try {
+      const response = await shipmentService.getShipmentDetails(parseInt(project.id));
+      if (response.data) {
+        setShipmentCompleted(true);
+        toast.success("Estado de envío actualizado");
+      }
+    } catch (error) {
+      console.error("Error al verificar el estado del envío:", error);
+      toast.error("No se pudo obtener información del envío");
+    }
   };
 
   return (
@@ -65,6 +97,9 @@ export function ProjectProposal({ project, onPayment }: ProjectProposalProps) {
           )}
           {project.status === "rejected" && (
             <Badge className="bg-red-500">Rechazada</Badge>
+          )}
+          {project.status === "accepted" && showPaymentComplete && (
+            <Badge className="bg-green-500">Proyecto confirmado</Badge>
           )}
         </div>
         
@@ -144,47 +179,106 @@ export function ProjectProposal({ project, onPayment }: ProjectProposalProps) {
             </div>
           )}
           
-          {/* Payment section (for accepted projects) */}
-          {project.status === "accepted" && !showShipmentForm && (
+          {/* Payment and Shipment section (for accepted projects) */}
+          {project.status === "accepted" && !showPaymentComplete && (
             <div className="bg-contala-green/10 p-4 rounded-lg mt-4 border border-contala-green/20">
               <h4 className="font-bold text-contala-green mb-2">Propuesta Aceptada</h4>
               <p className="text-sm mb-4">
-                El creador ha aceptado tu propuesta. Para proceder, necesitas configurar el envío del producto y proceder con el pago.
+                {isCreator ? 
+                  "El cliente ha aceptado tu propuesta. Espera a que configure el envío y realice el pago." : 
+                  "El creador ha aceptado tu propuesta. Para proceder, necesitas configurar el envío del producto y proceder con el pago."}
               </p>
-              {shipmentCompleted ? (
+              
+              {isCreator ? (
+                // Creator view
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-sm p-2 bg-green-50 border border-green-200 rounded">
-                    <Package className="h-4 w-4 text-green-600" />
-                    <span className="text-green-700">Etiqueta de envío generada correctamente</span>
-                  </div>
+                  {shipmentCompleted ? (
+                    <div className="flex items-center gap-2 text-sm p-2 bg-green-50 border border-green-200 rounded">
+                      <Package className="h-4 w-4 text-green-600" />
+                      <span className="text-green-700">Etiqueta de envío generada por el cliente</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 text-sm p-2 bg-amber-50 border border-amber-200 rounded">
+                      <Truck className="h-4 w-4 text-amber-600" />
+                      <span className="text-amber-700">Esperando que el cliente configure el envío</span>
+                    </div>
+                  )}
                   
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    <Button 
-                      variant="outline"
-                      className="flex-1"
-                      onClick={() => setShowShipmentDialog(true)}
-                    >
-                      <Truck className="mr-2 h-4 w-4" />
-                      Ver estado del envío
-                    </Button>
-                    <Button 
-                      className="flex-1 bg-contala-green"
-                      onClick={handleProceedToPayment}
-                    >
-                      Proceder al Pago
-                    </Button>
-                  </div>
+                  <Button 
+                    variant="outline"
+                    className="w-full"
+                    onClick={handleViewShipment}
+                  >
+                    <Truck className="mr-2 h-4 w-4" />
+                    Ver estado del envío
+                  </Button>
                 </div>
               ) : (
-                <Button 
-                  variant="outline"
-                  className="w-full border-contala-green text-contala-green hover:bg-contala-green/10"
-                  onClick={() => setShowShipmentForm(true)}
-                >
-                  <Package className="mr-2 h-4 w-4" />
-                  Configurar Envío
-                </Button>
+                // Client view
+                shipmentCompleted ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2 text-sm p-2 bg-green-50 border border-green-200 rounded">
+                      <Package className="h-4 w-4 text-green-600" />
+                      <span className="text-green-700">Etiqueta de envío generada correctamente</span>
+                    </div>
+                    
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Button 
+                        variant="outline"
+                        className="flex-1"
+                        onClick={handleViewShipment}
+                      >
+                        <Truck className="mr-2 h-4 w-4" />
+                        Ver estado del envío
+                      </Button>
+                      <Button 
+                        className="flex-1 bg-contala-green"
+                        onClick={handleProceedToPayment}
+                        disabled={isPaymentProcessing}
+                      >
+                        {isPaymentProcessing ? (
+                          <>Procesando...</>
+                        ) : (
+                          <>Proceder al Pago</>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <Button 
+                    variant="outline"
+                    className="w-full border-contala-green text-contala-green hover:bg-contala-green/10"
+                    onClick={() => setShowShipmentForm(true)}
+                  >
+                    <Package className="mr-2 h-4 w-4" />
+                    Configurar Envío
+                  </Button>
+                )
               )}
+            </div>
+          )}
+          
+          {/* Payment complete section */}
+          {showPaymentComplete && (
+            <div className="bg-green-50 p-4 rounded-lg mt-4 border border-green-200">
+              <h4 className="font-bold text-green-700 mb-2 flex items-center">
+                <CheckCircle2 className="mr-2 h-5 w-5" />
+                Proyecto Confirmado
+              </h4>
+              <p className="text-sm mb-4">
+                {isCreator ? 
+                  "El cliente ha completado el pago. Recibirás el producto a la dirección indicada." : 
+                  "Has completado el pago. El creador recibirá el producto y podrás hacer seguimiento del envío."}
+              </p>
+              
+              <Button 
+                variant="outline"
+                className="w-full"
+                onClick={handleViewShipment}
+              >
+                <Truck className="mr-2 h-4 w-4" />
+                Ver estado del envío
+              </Button>
             </div>
           )}
           
@@ -203,7 +297,7 @@ export function ProjectProposal({ project, onPayment }: ProjectProposalProps) {
       
       {/* Action buttons */}
       <div className="flex justify-end gap-2">
-        {project.status === "sent" && (
+        {project.status === "sent" && !isCreator && (
           <Button 
             variant="outline" 
             onClick={() => setIsEditing(true)}
@@ -213,7 +307,7 @@ export function ProjectProposal({ project, onPayment }: ProjectProposalProps) {
           </Button>
         )}
         
-        {isEditing && (
+        {isEditing && !isCreator && (
           <Button 
             className="bg-contala-darkpink hover:bg-contala-darkpink/90"
             onClick={handleSendProposal}
@@ -222,12 +316,26 @@ export function ProjectProposal({ project, onPayment }: ProjectProposalProps) {
             {project.status === "draft" ? "Enviar Propuesta" : "Actualizar Propuesta"}
           </Button>
         )}
+        
+        {shipmentCompleted && !showShipmentDialog && !showPaymentComplete && (
+          <Button
+            variant="outline"
+            onClick={handleCheckShipmentStatus}
+            className="mr-auto"
+          >
+            <Truck className="h-4 w-4 mr-2" />
+            Actualizar Estado
+          </Button>
+        )}
       </div>
       
       {/* Shipment Dialog */}
       <Dialog open={showShipmentDialog} onOpenChange={setShowShipmentDialog}>
         <DialogContent className="max-w-3xl">
-          <ShipmentTracker projectId={project.id} userRole="client" />
+          <DialogHeader>
+            <DialogTitle>Seguimiento de Envío</DialogTitle>
+          </DialogHeader>
+          <ShipmentTracker projectId={project.id} userRole={isCreator ? "creator" : "client"} />
         </DialogContent>
       </Dialog>
     </div>
