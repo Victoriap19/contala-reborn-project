@@ -8,8 +8,7 @@ export default function HeroSection() {
   const { setUserType } = useUser();
   
   const handleCreadorClick = () => {
-    setUserType("creador");
-    navigate("/register?type=creador");
+    navigate("/soy-creador");
   };
   
   const handleMarcaClick = () => {

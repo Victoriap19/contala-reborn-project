@@ -56,8 +56,7 @@ export default function Navbar() {
   };
 
   const handleCreadorClick = () => {
-    setUserType("creador");
-    navigate("/register?type=creador");
+    navigate("/soy-creador");
     setIsMenuOpen(false);
   };
   

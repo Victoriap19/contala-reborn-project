@@ -14,6 +14,7 @@ import CreadorDashboard from "./pages/CreadorDashboard";
 import MarcaDashboard from "./pages/MarcaDashboard";
 import NotFound from "./pages/NotFound";
 import Subscriptions from "./pages/Subscriptions";
+import SoyCreador from "./pages/SoyCreador";
 import AuthGuard from "./components/AuthGuard";
 
 // Create a client
@@ -34,6 +35,7 @@ const App = () => {
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
                   <Route path="/subscriptions" element={<Subscriptions />} />
+                  <Route path="/soy-creador" element={<SoyCreador />} />
                   
                   {/* Protected routes that require authentication - MARCA Dashboard */}
                   <Route path="/marca-dashboard" element={
