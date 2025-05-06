@@ -64,9 +64,10 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				contala: {
-					cream: '#FFF9F0', // Lightened cream color (was #FFF6E5)
+					cream: '#FFFFFF', // Changed to white for the background
 					green: '#1B4D3E',
 					pink: '#F6D1C1',
+					"softpink": '#FFDEE2', // Added soft pink for details
 					"darkpink": '#C8938A',
 					gold: '#D4AF37',
 					sage: '#9CAF88',

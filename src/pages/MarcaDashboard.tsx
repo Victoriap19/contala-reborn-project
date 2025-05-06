@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { SidebarProvider } from "@/components/ui/sidebar";
@@ -75,24 +74,14 @@ export default function MarcaDashboard() {
   return (
     <SidebarProvider defaultOpen={true}>
       <Helmet>
-        <title>Dashboard de Marca - Contala</title>
+        <title>Contala - Plataforma para Marcas</title>
       </Helmet>
-      <div className="flex min-h-screen w-full bg-contala-cream paper-texture">
+      <div className="flex min-h-screen w-full bg-white">
         <DashboardSidebar userType="marca" />
         <div className="flex-1 p-6">
-          {/* Decorative background elements */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-contala-pink/20 rounded-full blur-3xl -z-10 animate-pulse"></div>
-          <div className="absolute bottom-20 left-10 w-48 h-48 bg-contala-green/10 rounded-full blur-3xl -z-10 animate-pulse"></div>
-          
-          {/* Display type of dashboard */}
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-contala-green">
-              Dashboard de Marca
-            </h1>
-            <p className="text-contala-green/70">
-              Gestiona tus proyectos y conexiones con creadores
-            </p>
-          </div>
+          {/* Decorative elements - more subtle pink */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-contala-pink/10 rounded-full blur-3xl -z-10 animate-pulse"></div>
+          <div className="absolute bottom-20 left-10 w-48 h-48 bg-contala-green/5 rounded-full blur-3xl -z-10 animate-pulse"></div>
           
           {/* Render the appropriate section based on the path */}
           {activeSection === "perfil" && <UserProfile />}

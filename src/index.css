@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 40 100% 99%; /* Lightened background color even more */
+    --background: 0 0% 100%; /* Pure white background */
     --foreground: 161 47% 21%;
 
     --card: 0 0% 100%;
@@ -14,7 +14,7 @@
     --popover-foreground: 161 47% 21%;
 
     --primary: 161 47% 21%;
-    --primary-foreground: 40 100% 99%; /* Adjusted to match new background */
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 12 74% 86%;
     --secondary-foreground: 161 47% 21%;
@@ -22,7 +22,7 @@
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 12 74% 86%;
+    --accent: 350 100% 88%; /* Soft pink accent */
     --accent-foreground: 161 47% 21%;
 
     --destructive: 0 84.2% 60.2%;
@@ -42,12 +42,16 @@
   }
 
   body {
-    @apply bg-contala-cream text-contala-green;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23000000' fill-opacity='0.008' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E"); /* Lightened opacity of pattern even more */
+    @apply bg-white text-contala-green;
   }
   
   /* Apply fonts */
-  h1, h2, h3, h4, body, p, div, button, input, textarea, select {
+  h1, h2, h3, h4 {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-weight: bold;
+  }
+  
+  body, p, div, button, input, textarea, select {
     font-family: 'Helvetica', 'Arial', sans-serif;
   }
 }
@@ -66,9 +70,9 @@
   -webkit-backdrop-filter: blur(8px);
 }
 
-/* Paper texture */
+/* Paper texture - removed for clean white background */
 .paper-texture {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23000000' fill-opacity='0.03' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+  background-color: white;
 }
 
 /* Vintage filter */
