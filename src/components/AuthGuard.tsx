@@ -3,6 +3,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { useUser } from "@/context/UserContext";
 
 interface AuthGuardProps {
   children: ReactNode;
@@ -12,6 +13,7 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const { toast } = useToast();
   const location = useLocation();
+  const { userType } = useUser();
 
   useEffect(() => {
     // In a real app, this would check the auth status from your auth provider

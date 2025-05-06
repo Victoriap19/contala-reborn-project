@@ -9,6 +9,7 @@ import { subscriptionService } from "@/services/api";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "@/context/UserContext";
 
 type SubscriptionPlan = {
   id: number;
@@ -32,15 +33,23 @@ export default function Subscriptions() {
   const [currentSubscription, setCurrentSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { userType, setUserType } = useUser();
+
+  // Asegurarse de que estamos en el flujo de usuario regular
+  useEffect(() => {
+    if (userType === "creator") {
+      // Si es un creador, redirigir al registro de creador
+      navigate("/register?type=creator");
+    } else {
+      // Si no, asegurarse de que estamos en el flujo de usuario regular
+      setUserType("regular");
+    }
+  }, [userType, setUserType, navigate]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        
-        // Usar los datos reales de la API cuando estén disponibles
-        // const plansResponse = await subscriptionService.getPlans();
-        // setPlans(plansResponse.data);
         
         // Datos de ejemplo para demostración
         setPlans([
@@ -112,7 +121,8 @@ export default function Subscriptions() {
       setTimeout(() => {
         // For demo purposes, we'll simulate a successful payment and redirect to registration
         toast.success("Pago procesado correctamente");
-        navigate(`/register?plan=${planId}`);
+        // Explicitly set regular user type in the URL
+        navigate(`/register?plan=${planId}&type=regular`);
       }, 2000);
     } catch (error) {
       console.error("Error al procesar el pago:", error);

@@ -1,5 +1,6 @@
+
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, Facebook, Github } from "lucide-react";
@@ -16,6 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
+import { useUser } from "@/context/UserContext";
 
 const formSchema = z.object({
   username: z.string().min(1, {
@@ -29,7 +31,9 @@ const formSchema = z.object({
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+  const { userType, setUserType } = useUser();
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -51,8 +55,9 @@ export default function Login() {
       description: "¡Bienvenido de nuevo!",
     });
     
-    // Redirect to dashboard after login
-    navigate('/dashboard');
+    // Get the redirect path from location state or default to dashboard
+    const from = location.state?.from?.pathname || "/dashboard";
+    navigate(from);
   }
 
   const handleSocialLogin = (provider: string) => {
@@ -61,6 +66,10 @@ export default function Login() {
       title: `Iniciando sesión con ${provider}`,
       description: "Redirigiendo...",
     });
+    
+    // Save auth token to simulate login
+    localStorage.setItem("token", "fake-jwt-token");
+    
     // In a real implementation, this would redirect to the provider's OAuth flow
     // For now, we'll just simulate a successful login
     setTimeout(() => {

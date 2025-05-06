@@ -61,42 +61,42 @@ api.interceptors.response.use(
   }
 );
 
-// Authentication services
+// Authentication service
 export const authService = {
-  login: async (username: string, password: string) => {
-    const response = await api.post("/token/", { username, password });
-    localStorage.setItem("token", response.data.access);
-    localStorage.setItem("refreshToken", response.data.refresh);
-    return response.data;
+  // Login function
+  login: async (credentials: { username: string; password: string }) => {
+    // In a real app, this would call the API
+    console.log("Login with", credentials);
+    
+    // Simulate successful login
+    localStorage.setItem("token", "fake-jwt-token");
+    return { success: true };
   },
   
-  register: async (userData: {
-    username: string;
-    email: string;
-    password: string;
-    first_name?: string;
-    last_name?: string;
-    is_creator?: boolean;
-  }) => {
-    return await api.post("/accounts/users/", userData);
+  // Register function
+  register: async (userData: any) => {
+    // In a real app, this would call the API
+    console.log("Register with", userData);
+    
+    // Simulate successful registration
+    localStorage.setItem("token", "fake-jwt-token");
+    return { success: true };
   },
   
+  // Logout function
   logout: () => {
+    // Remove token from storage
     localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
-    // Add a redirect to login page
-    window.location.href = "/login";
+    
+    // In a real app, you might want to call an API to invalidate the token
+    
+    // Redirect to home page
+    window.location.href = "/";
   },
   
-  getCurrentUser: async () => {
-    return await api.get("/accounts/users/me/");
-  },
-  
-  changePassword: async (userId: number, oldPassword: string, newPassword: string) => {
-    return await api.post(`/accounts/users/${userId}/change_password/`, {
-      old_password: oldPassword,
-      new_password: newPassword
-    });
+  // Check if user is authenticated
+  isAuthenticated: () => {
+    return !!localStorage.getItem("token");
   }
 };
 

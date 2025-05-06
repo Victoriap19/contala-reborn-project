@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 
 type UserType = "regular" | "creator";
 
@@ -21,6 +21,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const savedType = localStorage.getItem('userType');
     
     if (typeParam === 'creator') return 'creator';
+    if (typeParam === 'regular') return 'regular';
     if (savedType === 'creator') return 'creator';
     return 'regular';
   };
@@ -32,6 +33,29 @@ export function UserProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('userType', type);
     setUserType(type);
   };
+
+  // Monitor URL params for changes
+  useEffect(() => {
+    const handleUrlChange = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const typeParam = urlParams.get('type');
+      
+      if (typeParam === 'creator') {
+        updateUserType('creator');
+      } else if (typeParam === 'regular') {
+        updateUserType('regular');
+      }
+    };
+
+    // Check on mount
+    handleUrlChange();
+
+    // Listen for URL changes
+    window.addEventListener('popstate', handleUrlChange);
+    return () => {
+      window.removeEventListener('popstate', handleUrlChange);
+    };
+  }, []);
 
   return (
     <UserContext.Provider value={{ userType, setUserType: updateUserType }}>

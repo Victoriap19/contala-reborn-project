@@ -13,6 +13,7 @@ export default function HeroSection() {
   };
   
   const handleStartClick = () => {
+    setUserType("regular");
     navigate("/subscriptions");
   };
   

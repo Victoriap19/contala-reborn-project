@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { useUser } from "@/context/UserContext";
 import { authService } from "@/services/api";
+import { toast } from "sonner";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -32,9 +33,13 @@ export default function Navbar() {
   }, []);
   
   const handleLogout = () => {
-    authService.logout();
+    // Remove token
+    localStorage.removeItem("token");
     setIsLoggedIn(false);
-    navigate('/'); // Redirect to home page after logout
+    
+    toast.success("Sesión cerrada correctamente");
+    // Redirect to home page after logout
+    navigate('/');
   };
   
   const toggleMenu = () => {

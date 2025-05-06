@@ -45,13 +45,19 @@ export default function Register() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
-  const { userType } = useUser();
+  const { userType, setUserType } = useUser();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   
   // Check if registering as a creator or if a plan was selected
   useEffect(() => {
     const type = searchParams.get("type");
     const plan = searchParams.get("plan");
+    
+    if (type === "creator") {
+      setUserType("creator");
+    } else if (type === "regular") {
+      setUserType("regular");
+    }
     
     if (plan) {
       setSelectedPlan(plan);
@@ -61,7 +67,7 @@ export default function Register() {
     if (!plan && type !== "creator" && userType !== "creator") {
       navigate("/subscriptions");
     }
-  }, [searchParams, navigate, userType]);
+  }, [searchParams, navigate, userType, setUserType]);
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
