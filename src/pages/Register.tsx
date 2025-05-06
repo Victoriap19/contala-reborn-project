@@ -126,7 +126,7 @@ export default function Register() {
             {userType === "creator" ? "Registro de Creador" : "Crear cuenta"}
           </h1>
           
-          {selectedPlan && !userType !== "creator" && (
+          {selectedPlan && userType !== "creator" && (
             <div className="bg-contala-pink/20 p-3 rounded-lg mb-6">
               <p className="text-contala-cream text-sm text-center">
                 Plan seleccionado: <span className="font-bold">{selectedPlan === "1" ? "Free" : selectedPlan === "2" ? "Pro Mensual" : "Pro Anual"}</span>
