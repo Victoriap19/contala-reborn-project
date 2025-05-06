@@ -1,7 +1,21 @@
 
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "@/context/UserContext";
 
 export default function HeroSection() {
+  const navigate = useNavigate();
+  const { setUserType } = useUser();
+  
+  const handleCreatorClick = () => {
+    setUserType("creator");
+    navigate("/register?type=creator");
+  };
+  
+  const handleStartClick = () => {
+    navigate("/subscriptions");
+  };
+  
   return (
     <section className="min-h-screen pt-20 hero-gradient">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
@@ -17,7 +31,7 @@ export default function HeroSection() {
               <div className="flex flex-wrap gap-4 justify-center md:justify-start pt-4">
                 <Button 
                   className="bg-contala-pink text-contala-green hover:bg-contala-pink/90 h-12 px-8 text-lg"
-                  onClick={() => window.location.href = "/register"}
+                  onClick={handleStartClick}
                 >
                   Empezar ahora
                 </Button>
@@ -27,6 +41,16 @@ export default function HeroSection() {
                   onClick={() => document.getElementById('how-it-works')?.scrollIntoView({behavior: 'smooth'})}
                 >
                   Cómo funciona
+                </Button>
+              </div>
+              <div className="pt-8 flex justify-center md:justify-start">
+                <Button 
+                  variant="link" 
+                  className="text-contala-green hover:text-contala-pink flex items-center gap-2 text-lg"
+                  onClick={handleCreatorClick}
+                >
+                  <span className="underline">Soy creador de contenido</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
                 </Button>
               </div>
             </div>

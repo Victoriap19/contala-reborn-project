@@ -14,6 +14,7 @@ import { useUser } from "@/context/UserContext";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { MessageSquare, Check } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 
 // Mock function to simulate email notifications
 const sendEmailNotification = (type: string, recipient: string) => {
@@ -79,15 +80,15 @@ export default function Dashboard() {
   const getActiveSection = () => {
     if (path.includes("/proyectos")) {
       return "proyectos";
-    } else if (path.includes("/creadores")) {
+    } else if (path.includes("/creadores") && userType !== "creator") {
       return "creadores";
-    } else if (path.includes("/convocatorias")) {
+    } else if (path.includes("/convocatorias") && userType !== "creator") {
       return "convocatorias";
-    } else if (path.includes("/pendientes")) {
+    } else if (path.includes("/pendientes") && userType === "creator") {
       return "pendientes";
-    } else if (path.includes("/generales")) {
+    } else if (path.includes("/generales") && userType === "creator") {
       return "generales";
-    } else if (path.includes("/descubrir")) {
+    } else if (path.includes("/descubrir") && userType !== "creator") {
       return "descubrir";
     } else {
       return "perfil";
@@ -95,15 +96,36 @@ export default function Dashboard() {
   };
   
   const activeSection = getActiveSection();
+  
+  // If user is trying to access a section not available for their user type, redirect or show error
 
   return (
     <SidebarProvider defaultOpen={true}>
+      <Helmet>
+        <title>
+          {userType === "creator" 
+            ? "Dashboard de Creador - Contala" 
+            : "Dashboard - Contala"}
+        </title>
+      </Helmet>
       <div className="flex min-h-screen w-full bg-contala-cream paper-texture">
         <DashboardSidebar />
         <div className="flex-1 p-6">
           {/* Decorative background elements */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-contala-pink/20 rounded-full blur-3xl -z-10 animate-pulse"></div>
           <div className="absolute bottom-20 left-10 w-48 h-48 bg-contala-green/10 rounded-full blur-3xl -z-10 animate-pulse"></div>
+          
+          {/* Display type of dashboard */}
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold text-contala-green">
+              {userType === "creator" ? "Dashboard de Creador" : "Dashboard"}
+            </h1>
+            <p className="text-contala-green/70">
+              {userType === "creator" 
+                ? "Administra tus proyectos y propuestas como creador" 
+                : "Gestiona tus proyectos y conexiones con creadores"}
+            </p>
+          </div>
           
           {/* Render different profile component based on user type */}
           {activeSection === "perfil" && (
@@ -114,9 +136,9 @@ export default function Dashboard() {
           {activeSection === "proyectos" && <ProjectsSection />}
           
           {/* Regular user sections */}
-          {userType === "regular" && activeSection === "creadores" && <CreatorsSection />}
-          {userType === "regular" && activeSection === "convocatorias" && <ConvocatoriasSection />}
-          {userType === "regular" && activeSection === "descubrir" && <DiscoverSection />}
+          {userType !== "creator" && activeSection === "creadores" && <CreatorsSection />}
+          {userType !== "creator" && activeSection === "convocatorias" && <ConvocatoriasSection />}
+          {userType !== "creator" && activeSection === "descubrir" && <DiscoverSection />}
           
           {/* Creator user sections */}
           {userType === "creator" && activeSection === "pendientes" && <PendientesSection />}

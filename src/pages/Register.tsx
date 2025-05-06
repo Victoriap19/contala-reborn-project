@@ -18,6 +18,7 @@ import { useForm } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
+import { useUser } from "@/context/UserContext";
 
 const formSchema = z.object({
   username: z.string().min(3, {
@@ -41,18 +42,26 @@ const formSchema = z.object({
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isCreator, setIsCreator] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
+  const { userType } = useUser();
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   
-  // Check if registering as a creator
+  // Check if registering as a creator or if a plan was selected
   useEffect(() => {
     const type = searchParams.get("type");
-    if (type === "creator") {
-      setIsCreator(true);
+    const plan = searchParams.get("plan");
+    
+    if (plan) {
+      setSelectedPlan(plan);
     }
-  }, [searchParams]);
+    
+    // If no plan is selected and user is not a creator, redirect to subscriptions
+    if (!plan && type !== "creator" && userType !== "creator") {
+      navigate("/subscriptions");
+    }
+  }, [searchParams, navigate, userType]);
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -67,25 +76,36 @@ export default function Register() {
   
   function onSubmit(values: z.infer<typeof formSchema>) {
     // This would normally connect to your Django backend
-    console.log("Register submitted:", values, "Is Creator:", isCreator);
+    console.log("Register submitted:", values, "Is Creator:", userType === "creator", "Selected Plan:", selectedPlan);
+    
+    // Save auth token to simulate login
+    localStorage.setItem("token", "fake-jwt-token");
+    
     toast({
-      title: isCreator ? "Registro de creador exitoso" : "Registro exitoso",
+      title: userType === "creator" ? "Registro de creador exitoso" : "Registro exitoso",
       description: "¡Bienvenido a Contala!",
     });
-    navigate('/dashboard'); // Redirect to dashboard after registration
+    
+    // Redirect to dashboard after registration
+    navigate('/dashboard');
   }
 
   const handleSocialLogin = (provider: string) => {
-    console.log(`Register with ${provider}`, "Is Creator:", isCreator);
+    console.log(`Register with ${provider}`, "Is Creator:", userType === "creator", "Selected Plan:", selectedPlan);
+    
     toast({
-      title: isCreator ? `Registrando como creador con ${provider}` : `Registrando con ${provider}`,
+      title: userType === "creator" ? `Registrando como creador con ${provider}` : `Registrando con ${provider}`,
       description: "Redirigiendo...",
     });
+    
+    // Save auth token to simulate login
+    localStorage.setItem("token", "fake-jwt-token");
+    
     // In a real implementation, this would redirect to the provider's OAuth flow
     // For now, we'll just simulate a successful registration
     setTimeout(() => {
       toast({
-        title: isCreator ? "Registro de creador exitoso" : "Registro exitoso",
+        title: userType === "creator" ? "Registro de creador exitoso" : "Registro exitoso",
         description: "¡Bienvenido a Contala!",
       });
       navigate('/dashboard');
@@ -103,8 +123,16 @@ export default function Register() {
         
         <div className="bg-contala-green rounded-3xl p-8 md:p-10 shadow-xl">
           <h1 className="text-2xl md:text-3xl font-bold text-contala-cream mb-6 text-center">
-            {isCreator ? "Registro de Creador" : "Crear cuenta"}
+            {userType === "creator" ? "Registro de Creador" : "Crear cuenta"}
           </h1>
+          
+          {selectedPlan && !userType !== "creator" && (
+            <div className="bg-contala-pink/20 p-3 rounded-lg mb-6">
+              <p className="text-contala-cream text-sm text-center">
+                Plan seleccionado: <span className="font-bold">{selectedPlan === "1" ? "Free" : selectedPlan === "2" ? "Pro Mensual" : "Pro Anual"}</span>
+              </p>
+            </div>
+          )}
           
           {/* Social Login Buttons */}
           <div className="flex flex-col space-y-3 mb-6">
@@ -244,7 +272,7 @@ export default function Register() {
                 )}
               />
               
-              {isCreator && (
+              {userType === "creator" && (
                 <div className="p-3 bg-contala-green/80 rounded-lg border border-contala-cream/20">
                   <p className="text-contala-cream text-sm mb-2">
                     Al registrarte como creador, aceptas nuestros términos específicos para creadores y
@@ -279,7 +307,7 @@ export default function Register() {
                 type="submit" 
                 className="w-full bg-contala-pink hover:bg-white text-contala-green font-bold py-3 rounded-lg transition-colors mt-6"
               >
-                {isCreator ? "Registrarme como Creador" : "Registrarme"}
+                {userType === "creator" ? "Registrarme como Creador" : "Registrarme"}
               </Button>
             </form>
           </Form>

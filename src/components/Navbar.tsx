@@ -49,6 +49,12 @@ export default function Navbar() {
     }
     setIsMenuOpen(false);
   };
+
+  const handleCreatorClick = () => {
+    setUserType("creator");
+    navigate("/register?type=creator");
+    setIsMenuOpen(false);
+  };
   
   return (
     <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? "py-3 bg-contala-cream/90 shadow-sm nav-blur" : "py-5"}`}>
@@ -86,7 +92,7 @@ export default function Navbar() {
               <Button variant="outline" className="border-contala-green text-contala-green" onClick={() => navigate("/login")}>
                 Iniciar sesión
               </Button>
-              <Button onClick={() => navigate("/register")} className="bg-contala-pink text-contala-green hover:bg-contala-pink/90">
+              <Button onClick={() => navigate("/subscriptions")} className="bg-contala-pink text-contala-green hover:bg-contala-pink/90">
                 Registrarse
               </Button>
             </>
@@ -96,12 +102,9 @@ export default function Navbar() {
             <Button 
               variant="ghost" 
               className="text-contala-green hover:text-contala-pink"
-              onClick={() => {
-                setUserType("creator");
-                navigate("/register?type=creator");
-              }}
+              onClick={handleCreatorClick}
             >
-              Para creadores
+              Soy creador
             </Button>
           )}
         </div>
@@ -175,7 +178,7 @@ export default function Navbar() {
                   <Button 
                     className="w-full bg-contala-pink text-contala-green hover:bg-contala-pink/90 mb-2" 
                     onClick={() => {
-                      navigate("/register");
+                      navigate("/subscriptions");
                       setIsMenuOpen(false);
                     }}
                   >
@@ -184,13 +187,9 @@ export default function Navbar() {
                   <Button 
                     variant="ghost" 
                     className="w-full text-contala-green hover:text-contala-pink"
-                    onClick={() => {
-                      setUserType("creator");
-                      navigate("/register?type=creator");
-                      setIsMenuOpen(false);
-                    }}
+                    onClick={handleCreatorClick}
                   >
-                    Para creadores
+                    Soy creador
                   </Button>
                 </>
               )}
