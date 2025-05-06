@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { shipmentService } from "@/services/api";
 import { Button } from "@/components/ui/button";
@@ -14,7 +13,7 @@ import {
   ArrowRight,
   Loader2,
   Download,
-  Return
+  RotateCcw
 } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -230,7 +229,7 @@ export function ShipmentTracker({ projectId, userRole }: ShipmentTrackerProps) {
             {(shipment.return_required || ['return_requested', 'returned'].includes(shipment.status)) && (
               <>
                 <TimelineStep 
-                  icon={<Return />} 
+                  icon={<RotateCcw />} 
                   title="Devolución Solicitada" 
                   date={shipment.status === 'return_requested' || shipment.status === 'returned' ? new Date().toLocaleDateString() : undefined}
                   isCompleted={['return_requested', 'returned'].includes(shipment.status)} 
@@ -310,7 +309,7 @@ export function ShipmentTracker({ projectId, userRole }: ShipmentTrackerProps) {
               onClick={requestReturn}
               disabled={updating}
             >
-              {updating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Return className="mr-2 h-4 w-4" />}
+              {updating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RotateCcw className="mr-2 h-4 w-4" />}
               Iniciar Devolución
             </Button>
           )}
