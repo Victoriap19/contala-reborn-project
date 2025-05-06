@@ -50,13 +50,18 @@ export default function Login() {
     // Save auth token to simulate login
     localStorage.setItem("token", "fake-jwt-token");
     
+    // Determine the user type based on the username (for demo purposes)
+    // In a real app, this would come from the backend response
+    const isCreator = values.username.includes("creator");
+    setUserType(isCreator ? "creator" : "regular");
+    
     toast({
       title: "Inicio de sesión exitoso",
       description: "¡Bienvenido de nuevo!",
     });
     
-    // Get the redirect path from location state or default to dashboard
-    const from = location.state?.from?.pathname || "/dashboard";
+    // Get the redirect path from location state or default to the appropriate dashboard
+    const from = location.state?.from?.pathname || (isCreator ? "/dashboard" : "/user-dashboard");
     navigate(from);
   }
 
@@ -70,6 +75,9 @@ export default function Login() {
     // Save auth token to simulate login
     localStorage.setItem("token", "fake-jwt-token");
     
+    // For demo purposes, always consider social logins as regular users
+    setUserType("regular");
+    
     // In a real implementation, this would redirect to the provider's OAuth flow
     // For now, we'll just simulate a successful login
     setTimeout(() => {
@@ -77,7 +85,7 @@ export default function Login() {
         title: "Inicio de sesión exitoso",
         description: "Bienvenido a Contala",
       });
-      navigate("/dashboard");
+      navigate("/user-dashboard");
     }, 1500);
   };
 

@@ -1,16 +1,17 @@
 
 import { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
-import { CreatorProfile } from "@/components/dashboard/CreatorProfile";
+import { UserProfile } from "@/components/dashboard/UserProfile";
 import { ProjectsSection } from "@/components/dashboard/ProjectsSection";
-import { PendientesSection } from "@/components/dashboard/PendientesSection";
-import { GeneralesSection } from "@/components/dashboard/GeneralesSection";
+import { CreatorsSection } from "@/components/dashboard/CreatorsSection";
+import { ConvocatoriasSection } from "@/components/dashboard/ConvocatoriasSection";
+import { DiscoverSection } from "@/components/dashboard/DiscoverSection";
+import { useLocation } from "react-router-dom";
 import { useUser } from "@/context/UserContext";
 import { toast } from "sonner";
-import { MessageSquare } from "lucide-react";
-import { Helmet } from "react-helmet-async";
+import { MessageSquare, Check } from "lucide-react";
 
 // Mock function to simulate email notifications
 const sendEmailNotification = (type: string, recipient: string) => {
@@ -18,52 +19,52 @@ const sendEmailNotification = (type: string, recipient: string) => {
   return Promise.resolve();
 };
 
-export default function Dashboard() {
+export default function UserDashboard() {
   const location = useLocation();
-  const navigate = useNavigate();
   const path = location.pathname;
   const { userType } = useUser();
   
-  // Route to the appropriate dashboard based on user type
+  // Ensure we're in regular user mode
   useEffect(() => {
-    if (userType === "regular" && path === "/dashboard") {
-      navigate("/user-dashboard");
+    if (userType === "creator") {
+      toast.error("Esta página es solo para usuarios. Redirigiendo al dashboard de creadores.");
+      window.location.href = "/dashboard";
     }
-  }, [userType, path, navigate]);
+  }, [userType]);
   
   // Simulate email notifications when receiving messages or proposals
   useEffect(() => {
-    // For creators only
-    if (userType !== "creator") return;
-
-    // Simulate receiving a proposal from a user
-    const proposalTimer = window.setTimeout(() => {
+    // Subscription to new messages would go here in a real app
+    // For demo, we'll simulate random notifications
+    const acceptanceTimer = window.setTimeout(() => {
       toast(
         <div className="flex gap-2">
-          <MessageSquare className="h-5 w-5 text-blue-500" />
+          <Check className="h-5 w-5 text-green-500" />
           <div>
-            <p className="font-medium">Nueva propuesta</p>
-            <p className="text-sm text-gray-500">Has recibido una nueva propuesta</p>
+            <p className="font-medium">Propuesta aceptada</p>
+            <p className="text-sm text-gray-500">Laura ha aceptado tu propuesta</p>
           </div>
         </div>,
         { duration: 5000 }
       );
-      sendEmailNotification("new_proposal", "creator@example.com");
-    }, 45000);
-    
+      sendEmailNotification("proposal_accepted", "user@example.com");
+    }, 30000);
+      
     return () => {
-      window.clearTimeout(proposalTimer);
+      window.clearTimeout(acceptanceTimer);
     };
-  }, [userType]);
+  }, []);
   
-  // Determine which section to show based on the path and user type
+  // Determine which section to show based on the path
   const getActiveSection = () => {
     if (path.includes("/proyectos")) {
       return "proyectos";
-    } else if (path.includes("/pendientes")) {
-      return "pendientes";
-    } else if (path.includes("/generales")) {
-      return "generales";
+    } else if (path.includes("/creadores")) {
+      return "creadores";
+    } else if (path.includes("/convocatorias")) {
+      return "convocatorias";
+    } else if (path.includes("/descubrir")) {
+      return "descubrir";
     } else {
       return "perfil";
     }
@@ -74,7 +75,7 @@ export default function Dashboard() {
   return (
     <SidebarProvider defaultOpen={true}>
       <Helmet>
-        <title>Dashboard de Creador - Contala</title>
+        <title>Dashboard de Usuario - Contala</title>
       </Helmet>
       <div className="flex min-h-screen w-full bg-contala-cream paper-texture">
         <DashboardSidebar />
@@ -86,20 +87,19 @@ export default function Dashboard() {
           {/* Display type of dashboard */}
           <div className="mb-6">
             <h1 className="text-3xl font-bold text-contala-green">
-              Dashboard de Creador
+              Dashboard de Usuario
             </h1>
             <p className="text-contala-green/70">
-              Administra tus proyectos y propuestas como creador
+              Gestiona tus proyectos y conexiones con creadores
             </p>
           </div>
           
-          {/* Render different profile component based on user type */}
-          {activeSection === "perfil" && <CreatorProfile />}
-          
-          {/* Creator user sections */}
+          {/* Render the appropriate section based on the path */}
+          {activeSection === "perfil" && <UserProfile />}
           {activeSection === "proyectos" && <ProjectsSection />}
-          {activeSection === "pendientes" && <PendientesSection />}
-          {activeSection === "generales" && <GeneralesSection />}
+          {activeSection === "creadores" && <CreatorsSection />}
+          {activeSection === "convocatorias" && <ConvocatoriasSection />}
+          {activeSection === "descubrir" && <DiscoverSection />}
         </div>
       </div>
     </SidebarProvider>

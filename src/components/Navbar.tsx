@@ -62,6 +62,15 @@ export default function Navbar() {
     setIsMenuOpen(false);
   };
   
+  const handleDashboardClick = () => {
+    if (userType === "creator") {
+      navigate("/dashboard");
+    } else {
+      navigate("/user-dashboard");
+    }
+    setIsMenuOpen(false);
+  };
+  
   return (
     <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? "py-3 bg-contala-cream/90 shadow-sm nav-blur" : "py-5"}`}>
       <div className="container mx-auto px-4 flex justify-between items-center">
@@ -83,7 +92,7 @@ export default function Navbar() {
               <Button variant="outline" className="border-contala-green text-contala-green" onClick={handleLogout}>
                 Cerrar sesión
               </Button>
-              <Button onClick={() => navigate("/dashboard")} className="bg-contala-pink text-contala-green hover:bg-contala-pink/90">
+              <Button onClick={handleDashboardClick} className="bg-contala-pink text-contala-green hover:bg-contala-pink/90">
                 Dashboard
               </Button>
             </>
@@ -141,10 +150,7 @@ export default function Navbar() {
                   </Button>
                   <Button 
                     className="w-full bg-contala-pink text-contala-green hover:bg-contala-pink/90" 
-                    onClick={() => {
-                      navigate("/dashboard");
-                      setIsMenuOpen(false);
-                    }}
+                    onClick={handleDashboardClick}
                   >
                     Dashboard
                   </Button>

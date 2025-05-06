@@ -1,6 +1,6 @@
 
 import { ReactNode, useEffect, useState } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { useUser } from "@/context/UserContext";
@@ -13,6 +13,7 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const { toast } = useToast();
   const location = useLocation();
+  const navigate = useNavigate();
   const { userType } = useUser();
 
   useEffect(() => {
@@ -29,8 +30,31 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
         description: "Debes iniciar sesión para acceder a esta página",
         variant: "destructive",
       });
+      return;
     }
-  }, [toast]);
+    
+    // Redirect to appropriate dashboard based on user type and current route
+    if (isLoggedIn) {
+      const currentPath = location.pathname;
+      
+      // If creator accessing user dashboard routes
+      if (userType === "creator" && currentPath.includes("/user-dashboard")) {
+        toast({
+          title: "Acceso restringido",
+          description: "Esta sección es solo para usuarios regulares",
+          variant: "destructive",
+        });
+        navigate("/dashboard");
+        return;
+      }
+      
+      // If regular user accessing creator dashboard
+      if (userType === "regular" && currentPath === "/dashboard") {
+        navigate("/user-dashboard");
+        return;
+      }
+    }
+  }, [toast, location, navigate, userType]);
 
   // Show loading state while checking authentication
   if (isAuthenticated === null) {

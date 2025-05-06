@@ -52,6 +52,7 @@ export default function Register() {
   useEffect(() => {
     const type = searchParams.get("type");
     const plan = searchParams.get("plan");
+    const email = searchParams.get("email") || sessionStorage.getItem("userEmail") || "";
     
     if (type === "creator") {
       setUserType("creator");
@@ -63,10 +64,20 @@ export default function Register() {
       setSelectedPlan(plan);
     }
     
+    // Pre-fill the email from URL params or session storage
+    if (email) {
+      form.setValue("email", email);
+    }
+    
     // If no plan is selected and user is not a creator, redirect to subscriptions
     if (!plan && type !== "creator" && userType !== "creator") {
       navigate("/subscriptions");
     }
+
+    // Clean up session storage
+    return () => {
+      sessionStorage.removeItem("userEmail");
+    };
   }, [searchParams, navigate, userType, setUserType]);
   
   const form = useForm<z.infer<typeof formSchema>>({
@@ -92,8 +103,12 @@ export default function Register() {
       description: "¡Bienvenido a Contala!",
     });
     
-    // Redirect to dashboard after registration
-    navigate('/dashboard');
+    // Redirect to appropriate dashboard after registration
+    if (userType === "creator") {
+      navigate('/dashboard');
+    } else {
+      navigate('/user-dashboard');
+    }
   }
 
   const handleSocialLogin = (provider: string) => {
@@ -114,7 +129,13 @@ export default function Register() {
         title: userType === "creator" ? "Registro de creador exitoso" : "Registro exitoso",
         description: "¡Bienvenido a Contala!",
       });
-      navigate('/dashboard');
+      
+      // Redirect to appropriate dashboard after registration
+      if (userType === "creator") {
+        navigate('/dashboard');
+      } else {
+        navigate('/user-dashboard');
+      }
     }, 1500);
   };
 
@@ -211,6 +232,7 @@ export default function Register() {
                           type="email"
                           placeholder="tu@email.com"
                           className="bg-contala-cream text-contala-green placeholder:text-contala-green/50 border-none pl-10"
+                          disabled={!!searchParams.get("email") || !!sessionStorage.getItem("userEmail")}
                         />
                       </FormControl>
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-contala-green w-5 h-5" />
