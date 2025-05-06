@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,61 +14,40 @@ import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Subscriptions from "./pages/Subscriptions";
 
+// Create a client
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <HelmetProvider>
-      <BrowserRouter>
-        <UserProvider>
-          <Toaster />
-          <Sonner />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/subscriptions" element={<Subscriptions />} />
-            <Route path="/dashboard" element={
+const App = () => {
+  return (
+    <React.StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <HelmetProvider>
+          <BrowserRouter>
+            <UserProvider>
+              <Toaster />
+              <Sonner />
               <TooltipProvider>
-                <Dashboard />
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/subscriptions" element={<Subscriptions />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/dashboard/proyectos" element={<Dashboard />} />
+                  <Route path="/dashboard/creadores" element={<Dashboard />} />
+                  <Route path="/dashboard/convocatorias" element={<Dashboard />} />
+                  <Route path="/dashboard/pendientes" element={<Dashboard />} />
+                  <Route path="/dashboard/generales" element={<Dashboard />} />
+                  <Route path="/dashboard/descubrir" element={<Dashboard />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
               </TooltipProvider>
-            } />
-            <Route path="/dashboard/proyectos" element={
-              <TooltipProvider>
-                <Dashboard />
-              </TooltipProvider>
-            } />
-            <Route path="/dashboard/creadores" element={
-              <TooltipProvider>
-                <Dashboard />
-              </TooltipProvider>
-            } />
-            <Route path="/dashboard/convocatorias" element={
-              <TooltipProvider>
-                <Dashboard />
-              </TooltipProvider>
-            } />
-            <Route path="/dashboard/pendientes" element={
-              <TooltipProvider>
-                <Dashboard />
-              </TooltipProvider>
-            } />
-            <Route path="/dashboard/generales" element={
-              <TooltipProvider>
-                <Dashboard />
-              </TooltipProvider>
-            } />
-            <Route path="/dashboard/descubrir" element={
-              <TooltipProvider>
-                <Dashboard />
-              </TooltipProvider>
-            } />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </UserProvider>
-      </BrowserRouter>
-    </HelmetProvider>
-  </QueryClientProvider>
-);
+            </UserProvider>
+          </BrowserRouter>
+        </HelmetProvider>
+      </QueryClientProvider>
+    </React.StrictMode>
+  );
+};
 
 export default App;

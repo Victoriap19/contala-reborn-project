@@ -8,7 +8,8 @@ import {
   Megaphone,
   Clock,
   Globe,
-  Search
+  Search,
+  CreditCard
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@/context/UserContext";
@@ -65,6 +66,11 @@ export function DashboardSidebar() {
       icon: Megaphone,
       title: "Tus Convocatorias",
       path: "/dashboard/convocatorias",
+    },
+    {
+      icon: CreditCard,
+      title: "Suscripciones",
+      path: "/subscriptions",
     }
   ];
   
@@ -88,6 +94,11 @@ export function DashboardSidebar() {
       icon: Globe,
       title: "Generales",
       path: "/dashboard/generales",
+    },
+    {
+      icon: CreditCard,
+      title: "Suscripciones",
+      path: "/subscriptions",
     }
   ];
   

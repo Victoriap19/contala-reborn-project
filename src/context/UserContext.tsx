@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode } from "react";
 
 type UserType = "regular" | "creator";
 
@@ -12,7 +12,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
   // Check URL param on initial load
-  const getInitialUserType = () => {
+  const getInitialUserType = (): UserType => {
     // Check if we have a type parameter in the URL
     const urlParams = new URLSearchParams(window.location.search);
     const typeParam = urlParams.get('type');
