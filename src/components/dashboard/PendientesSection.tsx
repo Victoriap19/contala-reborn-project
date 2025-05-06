@@ -3,9 +3,10 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Clock, Check, X, MessageSquare } from "lucide-react";
+import { Clock, Check, X, MessageSquare, Filter } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import { Switch } from "@/components/ui/switch";
 
 type Proyecto = {
   id: string;
@@ -22,6 +23,7 @@ export function PendientesSection() {
   const [comentario, setComentario] = useState("");
   const [proyectoActivo, setProyectoActivo] = useState<string | null>(null);
   const [mostrarComentario, setMostrarComentario] = useState(false);
+  const [ocultarRechazados, setOcultarRechazados] = useState(false);
   
   // Datos de ejemplo
   const [proyectos, setProyectos] = useState<Proyecto[]>([
@@ -42,6 +44,24 @@ export function PendientesSection() {
       fecha: '22/06/2023',
       presupuesto: '$15.000',
       status: 'pendiente'
+    },
+    {
+      id: '3',
+      titulo: 'Fotografía catálogo',
+      descripcion: 'Fotografía para catálogo de productos de otoño.',
+      marca: 'ModaFashion',
+      fecha: '10/06/2023',
+      presupuesto: '$30.000',
+      status: 'rechazado'
+    },
+    {
+      id: '4',
+      titulo: 'Video tutorial',
+      descripcion: 'Video tutorial mostrando uso de nuestra app.',
+      marca: 'TechCorp',
+      fecha: '05/06/2023',
+      presupuesto: '$20.000',
+      status: 'rechazado'
     }
   ]);
   
@@ -78,33 +98,61 @@ export function PendientesSection() {
     }
   };
 
-  const proyectosPendientes = proyectos.filter(p => p.status === 'pendiente');
+  // Filtramos los proyectos según el estado del filtro
+  const proyectosMostrados = proyectos.filter(p => 
+    p.status === 'pendiente' || (p.status === 'rechazado' && !ocultarRechazados)
+  );
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-contala-green">Pendientes de Aprobación</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-contala-green">Pendientes de Aprobación</h2>
+        
+        <div className="flex items-center space-x-2">
+          <Switch 
+            id="ocultar-rechazados" 
+            checked={ocultarRechazados} 
+            onCheckedChange={setOcultarRechazados} 
+          />
+          <label htmlFor="ocultar-rechazados" className="text-sm flex items-center cursor-pointer">
+            <Filter className="h-3.5 w-3.5 mr-1 text-contala-green" />
+            Ocultar rechazados
+          </label>
+        </div>
+      </div>
       
-      {proyectosPendientes.length === 0 ? (
+      {proyectosMostrados.length === 0 ? (
         <Card className="border-dashed border-2">
           <CardHeader className="flex flex-row items-center justify-center p-6">
             <div className="flex flex-col items-center text-center">
               <Clock className="h-12 w-12 text-contala-green mb-2" />
               <CardTitle className="text-contala-green">Sin proyectos pendientes</CardTitle>
               <CardDescription>
-                Aquí apareceran los proyectos que requieren tu aprobación
+                Aquí aparecerán los proyectos que requieren tu aprobación
               </CardDescription>
             </div>
           </CardHeader>
         </Card>
       ) : (
         <>
-          {proyectosPendientes.map((proyecto) => (
-            <Card key={proyecto.id} className={mostrarComentario && proyectoActivo === proyecto.id ? "border-contala-pink" : ""}>
+          {proyectosMostrados.map((proyecto) => (
+            <Card 
+              key={proyecto.id} 
+              className={`${mostrarComentario && proyectoActivo === proyecto.id ? "border-contala-pink" : ""} 
+                ${proyecto.status === 'rechazado' ? "border-red-200 bg-red-50/30" : ""}`}
+            >
               <CardHeader>
-                <CardTitle className="text-contala-green flex justify-between">
-                  <span>{proyecto.titulo}</span>
+                <div className="flex justify-between">
+                  <CardTitle className="text-contala-green flex gap-2 items-center">
+                    <span>{proyecto.titulo}</span>
+                    {proyecto.status === 'rechazado' && (
+                      <span className="text-xs text-red-500 font-normal bg-red-100 px-2 py-0.5 rounded-full">
+                        Rechazado
+                      </span>
+                    )}
+                  </CardTitle>
                   <span className="text-sm font-normal text-gray-500">{proyecto.fecha}</span>
-                </CardTitle>
+                </div>
                 <CardDescription>{proyecto.marca} | Presupuesto: {proyecto.presupuesto}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -143,21 +191,35 @@ export function PendientesSection() {
                   </div>
                 ) : (
                   <div className="flex justify-end space-x-2">
-                    <Button 
-                      variant="outline" 
-                      className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
-                      onClick={() => handleRechazar(proyecto.id)}
-                    >
-                      <X className="mr-1 h-4 w-4" />
-                      Rechazar
-                    </Button>
-                    <Button 
-                      className="bg-contala-green text-contala-cream hover:bg-contala-green/90"
-                      onClick={() => handleAceptar(proyecto.id)}
-                    >
-                      <Check className="mr-1 h-4 w-4" />
-                      Aceptar
-                    </Button>
+                    {proyecto.status === 'pendiente' && (
+                      <>
+                        <Button 
+                          variant="outline" 
+                          className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                          onClick={() => handleRechazar(proyecto.id)}
+                        >
+                          <X className="mr-1 h-4 w-4" />
+                          Rechazar
+                        </Button>
+                        <Button 
+                          className="bg-contala-green text-contala-cream hover:bg-contala-green/90"
+                          onClick={() => handleAceptar(proyecto.id)}
+                        >
+                          <Check className="mr-1 h-4 w-4" />
+                          Aceptar
+                        </Button>
+                      </>
+                    )}
+                    {proyecto.status === 'rechazado' && (
+                      <Button 
+                        variant="outline" 
+                        className="border-contala-green text-contala-green"
+                        onClick={() => handleAceptar(proyecto.id)}
+                      >
+                        <MessageSquare className="mr-1 h-4 w-4" />
+                        Reconsiderar
+                      </Button>
+                    )}
                   </div>
                 )}
               </CardContent>
