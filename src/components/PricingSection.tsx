@@ -12,7 +12,7 @@ export default function PricingSection() {
   const { setUserType } = useUser();
   
   useEffect(() => {
-    // Datos de ejemplo para demostración
+    // Datos actualizados según los nuevos planes
     setPlans([
       {
         id: 1,
@@ -21,9 +21,9 @@ export default function PricingSection() {
         interval: "month",
         description: "Funcionalidades básicas para comenzar",
         features: [
-          "Búsqueda de creadores",
-          "Hasta 2 propuestas o proyectos al mes",
-          "Acceso solo a proyectos públicos"
+          "1 propuesta o proyecto por mes",
+          "Acceso solo a proyectos públicos",
+          "Soporte por email"
         ]
       },
       {
@@ -33,9 +33,9 @@ export default function PricingSection() {
         interval: "month",
         description: "Para usuarios frecuentes",
         features: [
-          "Mensajes ilimitados",
+          "Hasta 10 propuestas o proyectos por mes",
           "Filtros avanzados",
-          "Recordatorios",
+          "Mensajes ilimitados",
           "Soporte rápido"
         ],
         popular: true
@@ -43,13 +43,41 @@ export default function PricingSection() {
       {
         id: 3,
         name: "Pro Anual",
-        price: 120000,
+        price: 115200, // 12000 x 12 - 20% = 115200
         interval: "year",
-        description: "La mejor relación precio-calidad (2 meses gratis)",
+        description: "Pro con 20% de descuento anual",
         features: [
           "Todo lo incluido en Pro Mensual",
-          "15% de ahorro vs mensual",
+          "20% de ahorro vs mensual",
+          "Hasta 10 propuestas o proyectos por mes",
           "Soporte prioritario"
+        ]
+      },
+      {
+        id: 4,
+        name: "Empresa Mensual",
+        price: 30000,
+        interval: "month",
+        description: "Para empresas y agencias",
+        features: [
+          "Hasta 30 propuestas o proyectos por mes",
+          "Filtros avanzados",
+          "Mensajes ilimitados",
+          "Soporte prioritario",
+          "API de integración"
+        ]
+      },
+      {
+        id: 5,
+        name: "Empresa Anual",
+        price: 288000, // 30000 x 12 - 20% = 288000
+        interval: "year",
+        description: "Empresa con 20% de descuento anual",
+        features: [
+          "Todo lo incluido en Empresa Mensual",
+          "20% de ahorro vs mensual",
+          "Hasta 30 propuestas o proyectos por mes",
+          "Soporte personalizado"
         ]
       }
     ]);
@@ -64,7 +92,7 @@ export default function PricingSection() {
   };
 
   return (
-    <section id="pricing" className="py-20 bg-contala-cream/70">
+    <section id="pricing" className="py-20 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-contala-green mb-3">Planes y Precios</h2>
@@ -84,7 +112,7 @@ export default function PricingSection() {
           <p className="text-contala-green/70 mb-4">¿Tenés alguna duda sobre nuestros planes?</p>
           <Button 
             variant="outline"
-            className="border-contala-pink text-contala-pink hover:bg-contala-pink hover:text-contala-cream"
+            className="border-contala-pink text-contala-pink hover:bg-contala-pink hover:text-white"
             onClick={() => navigate("/contact")}
           >
             Contáctanos

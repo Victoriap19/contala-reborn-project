@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import Navbar from "@/components/Navbar";
@@ -86,7 +87,7 @@ export default function Subscriptions() {
       try {
         setLoading(true);
         
-        // Datos de ejemplo para demostración
+        // Datos actualizados según los nuevos planes
         setPlans([
           {
             id: 1,
@@ -95,9 +96,9 @@ export default function Subscriptions() {
             interval: "month",
             description: "Funcionalidades básicas para comenzar",
             features: [
-              "Búsqueda de creadores",
-              "Hasta 2 propuestas o proyectos al mes",
-              "Acceso solo a proyectos públicos"
+              "1 propuesta o proyecto por mes",
+              "Acceso solo a proyectos públicos",
+              "Soporte por email"
             ]
           },
           {
@@ -107,9 +108,9 @@ export default function Subscriptions() {
             interval: "month",
             description: "Para usuarios frecuentes",
             features: [
-              "Mensajes ilimitados",
+              "Hasta 10 propuestas o proyectos por mes",
               "Filtros avanzados",
-              "Recordatorios",
+              "Mensajes ilimitados",
               "Soporte rápido"
             ],
             popular: true
@@ -117,13 +118,41 @@ export default function Subscriptions() {
           {
             id: 3,
             name: "Pro Anual",
-            price: 120000,
+            price: 115200, // 12000 x 12 - 20% = 115200
             interval: "year",
-            description: "La mejor relación precio-calidad (2 meses gratis)",
+            description: "Pro con 20% de descuento anual",
             features: [
               "Todo lo incluido en Pro Mensual",
-              "15% de ahorro vs mensual",
+              "20% de ahorro vs mensual",
+              "Hasta 10 propuestas o proyectos por mes",
               "Soporte prioritario"
+            ]
+          },
+          {
+            id: 4,
+            name: "Empresa Mensual",
+            price: 30000,
+            interval: "month",
+            description: "Para empresas y agencias",
+            features: [
+              "Hasta 30 propuestas o proyectos por mes",
+              "Filtros avanzados",
+              "Mensajes ilimitados",
+              "Soporte prioritario",
+              "API de integración"
+            ]
+          },
+          {
+            id: 5,
+            name: "Empresa Anual",
+            price: 288000, // 30000 x 12 - 20% = 288000
+            interval: "year",
+            description: "Empresa con 20% de descuento anual",
+            features: [
+              "Todo lo incluido en Empresa Mensual",
+              "20% de ahorro vs mensual",
+              "Hasta 30 propuestas o proyectos por mes",
+              "Soporte personalizado"
             ]
           }
         ]);
