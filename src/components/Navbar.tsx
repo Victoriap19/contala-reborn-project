@@ -1,163 +1,200 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Menu, X } from "lucide-react";
+import { Logo } from "@/components/Logo";
+import { useUser } from "@/context/UserContext";
+import { authService } from "@/services/api";
 
 export default function Navbar() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [username, setUsername] = useState("");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  // Simulación del estado de autenticación - en producción esto vendría de tu autenticación real
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { userType, setUserType } = useUser();
+  
+  // Update login status from localStorage
   useEffect(() => {
-    // Aquí implementarías la lógica para verificar la autenticación real
-    const checkAuth = () => {
-      // Simulación: 50% probabilidad de estar autenticado para esta demo
-      const authenticated = false; // Para producción: obtener del estado real
-      const name = authenticated ? "Usuario" : "";
-      setIsAuthenticated(authenticated);
-      setUsername(name);
-    };
-
-    checkAuth();
-  }, []);
-
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, [location]);
+  
+  // Handle scroll events to add background
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 10);
     };
-
+    
     window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const handleLogin = () => {
-    // Redirigir a la página de login
-    window.location.href = "/login";
-  };
-
-  const handleRegister = () => {
-    // Redirigir a la página de registro
-    window.location.href = "/register";
-  };
-
-  const handleCreatorRegister = () => {
-    // Redirigir a la página de registro de creadores
-    window.location.href = "/register?type=creator";
-  };
-
+  
   const handleLogout = () => {
-    // Implementar lógica de logout
-    setIsAuthenticated(false);
-    setUsername("");
-    // En producción: redirigir o ejecutar el logout real
+    authService.logout();
+    setIsLoggedIn(false);
   };
-
+  
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+  
+  const scrollToPricing = () => {
+    const pricingSection = document.getElementById('pricing');
+    if (pricingSection) {
+      pricingSection.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate('/#pricing');
+    }
+    setIsMenuOpen(false);
+  };
+  
   return (
-    <nav 
-      className={`fixed w-full top-0 z-50 transition-all duration-300 px-4 md:px-6 ${
-        isScrolled || isMobileMenuOpen ? "py-3 bg-contala-cream/90 nav-blur shadow-sm" : "py-6"
-      }`}
-    >
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <div className="flex items-center">
-          <a href="/" className="font-bold text-2xl text-contala-green">Contala</a>
-        </div>
+    <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? "py-3 bg-contala-cream/90 shadow-sm nav-blur" : "py-5"}`}>
+      <div className="container mx-auto px-4 flex justify-between items-center">
+        <Link to="/" className="flex items-center">
+          <Logo size="sm" />
+        </Link>
         
-        {/* Versión de escritorio */}
-        <div className="hidden md:flex items-center space-x-4">
-          {isAuthenticated ? (
+        {/* Desktop menu */}
+        <div className="hidden md:flex items-center space-x-6">
+          <Link to="/#features" className="text-contala-green hover:text-contala-pink transition-colors">
+            Características
+          </Link>
+          <button 
+            onClick={scrollToPricing}
+            className="text-contala-green hover:text-contala-pink transition-colors"
+          >
+            Precios
+          </button>
+          <Link to="/how-it-works" className="text-contala-green hover:text-contala-pink transition-colors">
+            Cómo funciona
+          </Link>
+          
+          {isLoggedIn ? (
             <>
-              <span className="text-contala-green">¡Hola {username}!</span>
-              <Button 
-                variant="outline" 
-                className="border-contala-pink text-contala-pink hover:bg-contala-pink hover:text-contala-green"
-                onClick={handleLogout}
-              >
+              <Button variant="outline" className="border-contala-green text-contala-green" onClick={handleLogout}>
                 Cerrar sesión
+              </Button>
+              <Button onClick={() => navigate("/dashboard")} className="bg-contala-pink text-contala-green hover:bg-contala-pink/90">
+                Dashboard
               </Button>
             </>
           ) : (
             <>
-              <Button 
-                className="bg-contala-pink text-contala-green hover:bg-contala-pink/90"
-                onClick={handleLogin}
-              >
+              <Button variant="outline" className="border-contala-green text-contala-green" onClick={() => navigate("/login")}>
                 Iniciar sesión
               </Button>
-              <Button 
-                variant="outline" 
-                className="border-contala-pink text-contala-pink hover:bg-contala-pink hover:text-contala-green"
-                onClick={handleRegister}
-              >
-                Registrarme
-              </Button>
-              <Button 
-                variant="outline" 
-                className="border-contala-green bg-contala-green text-contala-cream hover:bg-contala-green/90"
-                onClick={handleCreatorRegister}
-              >
-                Soy Creador
+              <Button onClick={() => navigate("/register")} className="bg-contala-pink text-contala-green hover:bg-contala-pink/90">
+                Registrarse
               </Button>
             </>
           )}
+          
+          {!isLoggedIn && (
+            <Button 
+              variant="ghost" 
+              className="text-contala-green hover:text-contala-pink"
+              onClick={() => {
+                setUserType("creator");
+                navigate("/register?type=creator");
+              }}
+            >
+              Para creadores
+            </Button>
+          )}
         </div>
         
-        {/* Botón móvil */}
-        <button
-          className="md:hidden text-contala-green"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          <Menu size={24} />
+        {/* Mobile menu button */}
+        <button onClick={toggleMenu} className="md:hidden text-contala-green">
+          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
-
-      {/* Menú móvil */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden bg-contala-cream/95 nav-blur mt-3 py-4 px-4 rounded-lg shadow-lg animate-fade-in">
-          <div className="flex flex-col space-y-3">
-            {isAuthenticated ? (
-              <>
-                <span className="text-contala-green text-center">¡Hola {username}!</span>
-                <Button 
-                  variant="outline" 
-                  className="border-contala-pink text-contala-pink hover:bg-contala-pink hover:text-contala-green w-full"
-                  onClick={handleLogout}
-                >
-                  Cerrar sesión
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button 
-                  className="bg-contala-pink text-contala-green hover:bg-contala-pink/90 w-full"
-                  onClick={handleLogin}
-                >
-                  Iniciar sesión
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="border-contala-pink text-contala-pink hover:bg-contala-pink hover:text-contala-green w-full"
-                  onClick={handleRegister}
-                >
-                  Registrarme
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="border-contala-green bg-contala-green text-contala-cream hover:bg-contala-green/90 w-full"
-                  onClick={handleCreatorRegister}
-                >
-                  Soy Creador
-                </Button>
-              </>
-            )}
+      
+      {/* Mobile menu */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-contala-cream/95 nav-blur shadow-md py-4 px-4 absolute w-full">
+          <div className="flex flex-col space-y-4">
+            <Link 
+              to="/#features" 
+              onClick={() => setIsMenuOpen(false)}
+              className="text-contala-green hover:text-contala-pink transition-colors py-2"
+            >
+              Características
+            </Link>
+            <button 
+              onClick={scrollToPricing}
+              className="text-contala-green hover:text-contala-pink transition-colors py-2 text-left"
+            >
+              Precios
+            </button>
+            <Link 
+              to="/how-it-works" 
+              onClick={() => setIsMenuOpen(false)}
+              className="text-contala-green hover:text-contala-pink transition-colors py-2"
+            >
+              Cómo funciona
+            </Link>
+            
+            <div className="pt-2 border-t border-contala-green/10">
+              {isLoggedIn ? (
+                <>
+                  <Button 
+                    variant="outline" 
+                    className="w-full border-contala-green text-contala-green mb-2" 
+                    onClick={() => {
+                      handleLogout();
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    Cerrar sesión
+                  </Button>
+                  <Button 
+                    className="w-full bg-contala-pink text-contala-green hover:bg-contala-pink/90" 
+                    onClick={() => {
+                      navigate("/dashboard");
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    Dashboard
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button 
+                    variant="outline" 
+                    className="w-full border-contala-green text-contala-green mb-2" 
+                    onClick={() => {
+                      navigate("/login");
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    Iniciar sesión
+                  </Button>
+                  <Button 
+                    className="w-full bg-contala-pink text-contala-green hover:bg-contala-pink/90 mb-2" 
+                    onClick={() => {
+                      navigate("/register");
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    Registrarse
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    className="w-full text-contala-green hover:text-contala-pink"
+                    onClick={() => {
+                      setUserType("creator");
+                      navigate("/register?type=creator");
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    Para creadores
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       )}

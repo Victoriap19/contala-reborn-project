@@ -1,20 +1,23 @@
 
 import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { User, Phone, Mail, Link } from "lucide-react";
+import { User, Phone, Mail, Link, CreditCard } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { userService } from "@/services/api";
+import { useNavigate } from "react-router-dom";
 
 export function UserProfile() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [subscription, setSubscription] = useState<any>(null);
   const [userProfile, setUserProfile] = useState({
     id: 0,
     nombre: "",
@@ -58,6 +61,23 @@ export function UserProfile() {
           
           if (userData.profile_picture) {
             setProfileImage(userData.profile_picture);
+          }
+          
+          // Fetch subscription data (mock data for now)
+          try {
+            // En una app real, esto vendría de la API
+            setSubscription({
+              plan: {
+                id: 2,
+                name: "Pro Mensual",
+                price: 12000,
+                interval: "month"
+              },
+              status: "active",
+              current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+            });
+          } catch (error) {
+            console.log("No hay suscripción activa");
           }
         }
       } catch (error) {
@@ -148,6 +168,10 @@ export function UserProfile() {
     );
   }
 
+  const handleManageSubscription = () => {
+    navigate('/subscriptions');
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -161,6 +185,51 @@ export function UserProfile() {
         </Button>
       </div>
 
+      {/* Subscription Card */}
+      <Card className="bg-transparent border border-contala-green/10 shadow-sm">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-contala-green">Tu Suscripción</CardTitle>
+            <CardDescription>Detalles de tu plan actual</CardDescription>
+          </div>
+          <CreditCard className="h-6 w-6 text-contala-green opacity-70" />
+        </CardHeader>
+        <CardContent>
+          {subscription ? (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="font-semibold text-lg">{subscription.plan.name}</p>
+                  <p className="text-sm text-gray-600">
+                    {subscription.status === "active" 
+                      ? `Activa hasta ${new Date(subscription.current_period_end).toLocaleDateString('es-ES')}` 
+                      : "Inactiva"}
+                  </p>
+                </div>
+                <div className="bg-contala-green/10 px-4 py-2 rounded-full">
+                  <p className="font-medium text-contala-green">
+                    ${subscription.plan.price.toLocaleString()} / {subscription.plan.interval === "month" ? "mes" : "año"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-4">
+              <p className="text-gray-600 mb-2">No tienes una suscripción activa</p>
+            </div>
+          )}
+        </CardContent>
+        <CardFooter>
+          <Button 
+            onClick={handleManageSubscription}
+            className="w-full bg-contala-green hover:bg-contala-green/90"
+          >
+            {subscription ? "Administrar suscripción" : "Ver planes disponibles"}
+          </Button>
+        </CardFooter>
+      </Card>
+
+      {/* Personal Information Card */}
       <Card className="bg-transparent border border-contala-green/10 shadow-sm">
         <CardHeader>
           <CardTitle className="text-contala-green">Información Personal</CardTitle>
@@ -253,6 +322,7 @@ export function UserProfile() {
         </CardContent>
       </Card>
 
+      {/* Brand Information Card */}
       <Card className="bg-transparent border border-contala-green/10 shadow-sm">
         <CardHeader>
           <CardTitle className="text-contala-green">Información de Marca</CardTitle>
