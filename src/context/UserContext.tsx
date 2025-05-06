@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 
-type UserType = "regular" | "creator";
+type UserType = "marca" | "creador";
 
 interface UserContextType {
   userType: UserType;
@@ -20,10 +20,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
     // Check localStorage for any saved preference
     const savedType = localStorage.getItem('userType');
     
-    if (typeParam === 'creator') return 'creator';
-    if (typeParam === 'regular') return 'regular';
-    if (savedType === 'creator') return 'creator';
-    return 'regular';
+    if (typeParam === 'creador') return 'creador';
+    if (typeParam === 'marca') return 'marca';
+    if (savedType === 'creador') return 'creador';
+    return 'marca';
   };
 
   const [userType, setUserType] = useState<UserType>(getInitialUserType());
@@ -40,10 +40,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
       const urlParams = new URLSearchParams(window.location.search);
       const typeParam = urlParams.get('type');
       
-      if (typeParam === 'creator') {
-        updateUserType('creator');
-      } else if (typeParam === 'regular') {
-        updateUserType('regular');
+      if (typeParam === 'creador') {
+        updateUserType('creador');
+      } else if (typeParam === 'marca') {
+        updateUserType('marca');
       }
     };
 

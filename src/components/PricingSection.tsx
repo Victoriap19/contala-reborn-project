@@ -4,10 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { useUser } from "@/context/UserContext";
 
 export default function PricingSection() {
   const navigate = useNavigate();
   const [plans, setPlans] = useState<any[]>([]);
+  const { setUserType } = useUser();
   
   useEffect(() => {
     // Datos de ejemplo para demostración
@@ -54,15 +56,11 @@ export default function PricingSection() {
   }, []);
 
   const handleSubscribe = (planId: number) => {
-    // Simulate redirection to MercadoPago
-    toast.info("Redirigiendo a MercadoPago para procesar el pago...");
+    // Set user type to marca
+    setUserType("marca");
     
-    // In a real scenario, we would call an API to create a payment and get the MP checkout URL
-    setTimeout(() => {
-      // For demo purposes, we'll simulate a successful payment and redirect to registration
-      toast.success("Pago procesado correctamente");
-      navigate(`/register?plan=${planId}`);
-    }, 2000);
+    // Redirect to subscriptions page
+    navigate(`/subscriptions?plan=${planId}&type=marca`);
   };
 
   return (

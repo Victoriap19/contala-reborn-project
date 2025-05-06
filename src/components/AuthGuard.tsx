@@ -7,18 +7,18 @@ import { useUser } from "@/context/UserContext";
 
 interface AuthGuardProps {
   children: ReactNode;
+  userType: "marca" | "creador";
 }
 
-const AuthGuard = ({ children }: AuthGuardProps) => {
+const AuthGuard = ({ children, userType }: AuthGuardProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const { toast } = useToast();
   const location = useLocation();
   const navigate = useNavigate();
-  const { userType } = useUser();
+  const { userType: currentUserType } = useUser();
 
   useEffect(() => {
-    // In a real app, this would check the auth status from your auth provider
-    // For this demo, we'll check localStorage or session
+    // Check if the user is authenticated
     const token = localStorage.getItem("token");
     const isLoggedIn = !!token;
     
@@ -33,28 +33,31 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
       return;
     }
     
-    // Redirect to appropriate dashboard based on user type and current route
+    // If authenticated but wrong user type, redirect to the appropriate dashboard
     if (isLoggedIn) {
-      const currentPath = location.pathname;
-      
-      // If creator accessing user dashboard routes
-      if (userType === "creator" && currentPath.includes("/user-dashboard")) {
+      // If marca tries to access creador dashboard
+      if (currentUserType === "marca" && userType === "creador") {
         toast({
           title: "Acceso restringido",
-          description: "Esta sección es solo para usuarios regulares",
+          description: "Esta sección es solo para creadores",
           variant: "destructive",
         });
-        navigate("/dashboard");
+        navigate("/marca-dashboard");
         return;
       }
       
-      // If regular user accessing creator dashboard
-      if (userType === "regular" && currentPath === "/dashboard") {
-        navigate("/user-dashboard");
+      // If creador tries to access marca dashboard
+      if (currentUserType === "creador" && userType === "marca") {
+        toast({
+          title: "Acceso restringido",
+          description: "Esta sección es solo para marcas",
+          variant: "destructive",
+        });
+        navigate("/creador-dashboard");
         return;
       }
     }
-  }, [toast, location, navigate, userType]);
+  }, [toast, location, navigate, currentUserType, userType]);
 
   // Show loading state while checking authentication
   if (isAuthenticated === null) {
@@ -71,7 +74,7 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Render children if authenticated
+  // Render children if authenticated and correct user type
   return <>{children}</>;
 };
 

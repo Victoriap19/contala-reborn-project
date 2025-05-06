@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import Navbar from "@/components/Navbar";
@@ -73,12 +72,12 @@ export default function Subscriptions() {
 
   // Asegurarse de que estamos en el flujo de usuario regular
   useEffect(() => {
-    if (userType === "creator") {
+    if (userType === "creador") {
       // Si es un creador, redirigir al registro de creador
-      navigate("/register?type=creator");
+      navigate("/register?type=creador");
     } else {
       // Si no, asegurarse de que estamos en el flujo de usuario regular
-      setUserType("regular");
+      setUserType("marca");
     }
   }, [userType, setUserType, navigate]);
 
@@ -167,8 +166,8 @@ export default function Subscriptions() {
     setTimeout(() => {
       // For demo purposes, we'll simulate a successful payment and redirect to registration
       toast.success("Pago procesado correctamente");
-      // Explicitly set regular user type in the URL
-      navigate(`/register?plan=${selectedPlanId}&type=regular&email=${encodeURIComponent(email)}`);
+      // Explicitly set marca user type in the URL
+      navigate(`/register?plan=${selectedPlanId}&type=marca&email=${encodeURIComponent(email)}`);
     }, 2000);
   };
   

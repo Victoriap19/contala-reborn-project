@@ -10,8 +10,8 @@ import { UserProvider } from "./context/UserContext";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import UserDashboard from "./pages/UserDashboard";
+import CreadorDashboard from "./pages/CreadorDashboard";
+import MarcaDashboard from "./pages/MarcaDashboard";
 import NotFound from "./pages/NotFound";
 import Subscriptions from "./pages/Subscriptions";
 import AuthGuard from "./components/AuthGuard";
@@ -35,56 +35,60 @@ const App = () => {
                   <Route path="/register" element={<Register />} />
                   <Route path="/subscriptions" element={<Subscriptions />} />
                   
-                  {/* Protected routes that require authentication */}
-                  <Route path="/dashboard" element={
-                    <AuthGuard>
-                      <Dashboard />
+                  {/* Protected routes that require authentication - MARCA Dashboard */}
+                  <Route path="/marca-dashboard" element={
+                    <AuthGuard userType="marca">
+                      <MarcaDashboard />
+                    </AuthGuard>
+                  } />
+                  <Route path="/marca-dashboard/proyectos" element={
+                    <AuthGuard userType="marca">
+                      <MarcaDashboard />
+                    </AuthGuard>
+                  } />
+                  <Route path="/marca-dashboard/creadores" element={
+                    <AuthGuard userType="marca">
+                      <MarcaDashboard />
+                    </AuthGuard>
+                  } />
+                  <Route path="/marca-dashboard/convocatorias" element={
+                    <AuthGuard userType="marca">
+                      <MarcaDashboard />
+                    </AuthGuard>
+                  } />
+                  <Route path="/marca-dashboard/descubrir" element={
+                    <AuthGuard userType="marca">
+                      <MarcaDashboard />
                     </AuthGuard>
                   } />
                   
-                  {/* User Dashboard routes */}
-                  <Route path="/user-dashboard" element={
-                    <AuthGuard>
-                      <UserDashboard />
+                  {/* Protected routes that require authentication - CREADOR Dashboard */}
+                  <Route path="/creador-dashboard" element={
+                    <AuthGuard userType="creador">
+                      <CreadorDashboard />
                     </AuthGuard>
                   } />
-                  <Route path="/user-dashboard/proyectos" element={
-                    <AuthGuard>
-                      <UserDashboard />
+                  <Route path="/creador-dashboard/proyectos" element={
+                    <AuthGuard userType="creador">
+                      <CreadorDashboard />
                     </AuthGuard>
                   } />
-                  <Route path="/user-dashboard/creadores" element={
-                    <AuthGuard>
-                      <UserDashboard />
+                  <Route path="/creador-dashboard/pendientes" element={
+                    <AuthGuard userType="creador">
+                      <CreadorDashboard />
                     </AuthGuard>
                   } />
-                  <Route path="/user-dashboard/convocatorias" element={
-                    <AuthGuard>
-                      <UserDashboard />
-                    </AuthGuard>
-                  } />
-                  <Route path="/user-dashboard/descubrir" element={
-                    <AuthGuard>
-                      <UserDashboard />
+                  <Route path="/creador-dashboard/generales" element={
+                    <AuthGuard userType="creador">
+                      <CreadorDashboard />
                     </AuthGuard>
                   } />
                   
-                  {/* Creator Dashboard specific routes */}
-                  <Route path="/dashboard/proyectos" element={
-                    <AuthGuard>
-                      <Dashboard />
-                    </AuthGuard>
-                  } />
-                  <Route path="/dashboard/pendientes" element={
-                    <AuthGuard>
-                      <Dashboard />
-                    </AuthGuard>
-                  } />
-                  <Route path="/dashboard/generales" element={
-                    <AuthGuard>
-                      <Dashboard />
-                    </AuthGuard>
-                  } />
+                  {/* Legacy redirects */}
+                  <Route path="/dashboard" element={<Navigate to="/creador-dashboard" replace />} />
+                  <Route path="/user-dashboard" element={<Navigate to="/marca-dashboard" replace />} />
+                  <Route path="/user-dashboard/*" element={<Navigate to="/marca-dashboard" replace />} />
+                  <Route path="/dashboard/*" element={<Navigate to="/creador-dashboard" replace />} />
                   
                   <Route path="*" element={<NotFound />} />
                 </Routes>

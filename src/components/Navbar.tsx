@@ -5,7 +5,6 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { useUser } from "@/context/UserContext";
-import { authService } from "@/services/api";
 import { toast } from "sonner";
 
 export default function Navbar() {
@@ -56,18 +55,29 @@ export default function Navbar() {
     setIsMenuOpen(false);
   };
 
-  const handleCreatorClick = () => {
-    setUserType("creator");
-    navigate("/register?type=creator");
+  const handleCreadorClick = () => {
+    setUserType("creador");
+    navigate("/register?type=creador");
+    setIsMenuOpen(false);
+  };
+  
+  const handleMarcaClick = () => {
+    setUserType("marca");
+    navigate("/subscriptions");
     setIsMenuOpen(false);
   };
   
   const handleDashboardClick = () => {
-    if (userType === "creator") {
-      navigate("/dashboard");
+    if (userType === "creador") {
+      navigate("/creador-dashboard");
     } else {
-      navigate("/user-dashboard");
+      navigate("/marca-dashboard");
     }
+    setIsMenuOpen(false);
+  };
+  
+  const handleLoginClick = () => {
+    navigate("/login");
     setIsMenuOpen(false);
   };
   
@@ -98,11 +108,11 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <Button variant="outline" className="border-contala-green text-contala-green" onClick={() => navigate("/login")}>
+              <Button variant="outline" className="border-contala-green text-contala-green" onClick={handleLoginClick}>
                 Iniciar sesión
               </Button>
-              <Button onClick={() => navigate("/subscriptions")} className="bg-contala-pink text-contala-green hover:bg-contala-pink/90">
-                Registrarse
+              <Button onClick={handleMarcaClick} className="bg-contala-pink text-contala-green hover:bg-contala-pink/90">
+                Soy Marca
               </Button>
             </>
           )}
@@ -111,9 +121,9 @@ export default function Navbar() {
             <Button 
               variant="ghost" 
               className="text-contala-green hover:text-contala-pink"
-              onClick={handleCreatorClick}
+              onClick={handleCreadorClick}
             >
-              Soy creador
+              Soy Creador
             </Button>
           )}
         </div>
@@ -160,28 +170,22 @@ export default function Navbar() {
                   <Button 
                     variant="outline" 
                     className="w-full border-contala-green text-contala-green mb-2" 
-                    onClick={() => {
-                      navigate("/login");
-                      setIsMenuOpen(false);
-                    }}
+                    onClick={handleLoginClick}
                   >
                     Iniciar sesión
                   </Button>
                   <Button 
                     className="w-full bg-contala-pink text-contala-green hover:bg-contala-pink/90 mb-2" 
-                    onClick={() => {
-                      navigate("/subscriptions");
-                      setIsMenuOpen(false);
-                    }}
+                    onClick={handleMarcaClick}
                   >
-                    Registrarse
+                    Soy Marca
                   </Button>
                   <Button 
                     variant="ghost" 
                     className="w-full text-contala-green hover:text-contala-pink"
-                    onClick={handleCreatorClick}
+                    onClick={handleCreadorClick}
                   >
-                    Soy creador
+                    Soy Creador
                   </Button>
                 </>
               )}

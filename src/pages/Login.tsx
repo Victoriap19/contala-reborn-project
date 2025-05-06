@@ -18,6 +18,7 @@ import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
 import { useUser } from "@/context/UserContext";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const formSchema = z.object({
   username: z.string().min(1, {
@@ -34,6 +35,7 @@ export default function Login() {
   const location = useLocation();
   const { toast } = useToast();
   const { userType, setUserType } = useUser();
+  const [activeTab, setActiveTab] = useState<"marca" | "creador">(userType);
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,28 +47,26 @@ export default function Login() {
   
   function onSubmit(values: z.infer<typeof formSchema>) {
     // This would normally connect to your Django backend
-    console.log("Login submitted:", values);
+    console.log("Login submitted:", values, "userType:", activeTab);
     
     // Save auth token to simulate login
     localStorage.setItem("token", "fake-jwt-token");
     
-    // Determine the user type based on the username (for demo purposes)
-    // In a real app, this would come from the backend response
-    const isCreator = values.username.includes("creator");
-    setUserType(isCreator ? "creator" : "regular");
+    // Set user type based on the active tab
+    setUserType(activeTab);
     
     toast({
       title: "Inicio de sesión exitoso",
       description: "¡Bienvenido de nuevo!",
     });
     
-    // Get the redirect path from location state or default to the appropriate dashboard
-    const from = location.state?.from?.pathname || (isCreator ? "/dashboard" : "/user-dashboard");
-    navigate(from);
+    // Redirect to appropriate dashboard based on user type
+    const redirectPath = activeTab === "marca" ? "/marca-dashboard" : "/creador-dashboard";
+    navigate(redirectPath);
   }
 
   const handleSocialLogin = (provider: string) => {
-    console.log(`Login with ${provider}`);
+    console.log(`Login with ${provider}`, "userType:", activeTab);
     toast({
       title: `Iniciando sesión con ${provider}`,
       description: "Redirigiendo...",
@@ -75,8 +75,8 @@ export default function Login() {
     // Save auth token to simulate login
     localStorage.setItem("token", "fake-jwt-token");
     
-    // For demo purposes, always consider social logins as regular users
-    setUserType("regular");
+    // Set user type based on the active tab
+    setUserType(activeTab);
     
     // In a real implementation, this would redirect to the provider's OAuth flow
     // For now, we'll just simulate a successful login
@@ -85,7 +85,8 @@ export default function Login() {
         title: "Inicio de sesión exitoso",
         description: "Bienvenido a Contala",
       });
-      navigate("/user-dashboard");
+      const redirectPath = activeTab === "marca" ? "/marca-dashboard" : "/creador-dashboard";
+      navigate(redirectPath);
     }, 1500);
   };
 
@@ -102,6 +103,21 @@ export default function Login() {
           <h1 className="text-2xl md:text-3xl font-bold text-contala-cream mb-6 text-center">
             Iniciar sesión
           </h1>
+          
+          <Tabs 
+            value={activeTab} 
+            onValueChange={(value) => setActiveTab(value as "marca" | "creador")}
+            className="mb-6"
+          >
+            <TabsList className="grid w-full grid-cols-2 bg-contala-green-dark">
+              <TabsTrigger value="marca" className="data-[state=active]:bg-contala-pink data-[state=active]:text-contala-green">
+                Soy Marca
+              </TabsTrigger>
+              <TabsTrigger value="creador" className="data-[state=active]:bg-contala-pink data-[state=active]:text-contala-green">
+                Soy Creador
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
           
           {/* Social Login Buttons */}
           <div className="flex flex-col space-y-3 mb-6">
@@ -197,8 +213,8 @@ export default function Login() {
           </Form>
           
           <div className="mt-6 text-center">
-            <Link to="/register" className="text-contala-pink hover:text-white hover:underline transition-colors">
-              ¿No tenés cuenta? Registrate
+            <Link to={activeTab === "marca" ? "/subscriptions" : "/register?type=creador"} className="text-contala-pink hover:text-white hover:underline transition-colors">
+              ¿No tenés cuenta? Registrate como {activeTab === "marca" ? "Marca" : "Creador"}
             </Link>
           </div>
         </div>
