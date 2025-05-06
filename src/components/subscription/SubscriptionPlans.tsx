@@ -38,7 +38,7 @@ export function SubscriptionPlans({ plans, currentPlanId, onSubscribe }: Subscri
     }
     
     if (plan.popular) {
-      return 'border-contala-pink';
+      return 'ring-2 ring-contala-green shadow-lg';
     }
     
     return 'border-gray-200';
@@ -53,10 +53,10 @@ export function SubscriptionPlans({ plans, currentPlanId, onSubscribe }: Subscri
         return (
           <Card 
             key={plan.id} 
-            className={`border-2 ${getPlanStyle(plan, isCurrentPlan)} relative flex flex-col h-full`}
+            className={`border rounded-xl ${getPlanStyle(plan, isCurrentPlan)} relative flex flex-col h-full transition-all duration-300 hover:shadow-xl`}
           >
             {plan.popular && (
-              <Badge className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/3 bg-contala-pink text-white">
+              <Badge className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/3 bg-contala-green text-white">
                 Popular
               </Badge>
             )}
@@ -73,9 +73,9 @@ export function SubscriptionPlans({ plans, currentPlanId, onSubscribe }: Subscri
             )}
             <CardHeader>
               <CardTitle className="text-2xl font-bold text-contala-green">{plan.name}</CardTitle>
-              <CardDescription>{plan.description}</CardDescription>
+              <CardDescription className="text-gray-600">{plan.description}</CardDescription>
               <div className="mt-4">
-                <span className="text-3xl font-bold">
+                <span className="text-3xl font-bold text-contala-green">
                   ${formatPrice(plan.price)}
                 </span>
                 {plan.price > 0 && (
@@ -94,11 +94,11 @@ export function SubscriptionPlans({ plans, currentPlanId, onSubscribe }: Subscri
               </div>
             </CardHeader>
             <CardContent className="flex-grow">
-              <ul className="space-y-2">
+              <ul className="space-y-3">
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex items-start">
-                    <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
-                    <span>{feature}</span>
+                    <Check className="h-5 w-5 text-contala-green mr-2 shrink-0" />
+                    <span className="text-gray-700">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -109,8 +109,8 @@ export function SubscriptionPlans({ plans, currentPlanId, onSubscribe }: Subscri
                 className={`w-full ${isCurrentPlan 
                   ? 'bg-gray-300 hover:bg-gray-300 cursor-not-allowed' 
                   : plan.popular 
-                    ? 'bg-contala-pink hover:bg-contala-pink/90' 
-                    : 'bg-contala-green hover:bg-contala-green/90'}`}
+                    ? 'bg-contala-green hover:bg-contala-green/90 text-white' 
+                    : 'bg-white border border-contala-green text-contala-green hover:bg-contala-green hover:text-white'}`}
                 disabled={isCurrentPlan}
               >
                 {isCurrentPlan ? 'Plan actual' : plan.price === 0 ? 'Seleccionar plan gratuito' : 'Suscribirse'}
