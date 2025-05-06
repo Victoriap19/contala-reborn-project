@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +10,7 @@ import { ProjectChat } from "./ProjectChat";
 import { ProjectDetails } from "./ProjectDetails";
 import { ProjectProposal } from "./ProjectProposal";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useUserContext } from "@/context/UserContext";
+import { useUser } from "@/context/UserContext";
 
 type Project = {
   id: string;
@@ -160,8 +159,8 @@ const ActionButton = ({ project, onAction, userRole }: { project: Project; onAct
 };
 
 export function ProjectsSection() {
-  const { user } = useUserContext();
-  const isCreator = user?.isCreator || false;
+  const { userType } = useUser();
+  const isCreator = userType === "creator";
   
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [chatOpen, setChatOpen] = useState(false);
