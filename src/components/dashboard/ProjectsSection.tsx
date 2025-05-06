@@ -160,7 +160,7 @@ const ActionButton = ({ project, onAction, userRole }: { project: Project; onAct
 
 export function ProjectsSection() {
   const { userType } = useUser();
-  const isCreator = userType === "creator";
+  const isCreator = userType === "creador";
   
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [chatOpen, setChatOpen] = useState(false);

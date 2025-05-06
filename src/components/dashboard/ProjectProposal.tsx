@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -41,7 +40,7 @@ export function ProjectProposal({ project, onPayment }: ProjectProposalProps) {
   const [showPaymentComplete, setShowPaymentComplete] = useState<boolean>(false);
   
   const { userType } = useUser();
-  const isCreator = userType === "creator";
+  const isCreator = userType === "creador";
   
   const handleSendProposal = () => {
     // In a real app, this would send the proposal to the backend

@@ -26,15 +26,15 @@ export default function Dashboard() {
   
   // Route to the appropriate dashboard based on user type
   useEffect(() => {
-    if (userType === "regular" && path === "/dashboard") {
-      navigate("/user-dashboard");
+    if (userType === "marca" && path === "/dashboard") {
+      navigate("/marca-dashboard");
     }
   }, [userType, path, navigate]);
   
   // Simulate email notifications when receiving messages or proposals
   useEffect(() => {
     // For creators only
-    if (userType !== "creator") return;
+    if (userType !== "creador") return;
 
     // Simulate receiving a proposal from a user
     const proposalTimer = window.setTimeout(() => {
@@ -77,7 +77,7 @@ export default function Dashboard() {
         <title>Dashboard de Creador - Contala</title>
       </Helmet>
       <div className="flex min-h-screen w-full bg-contala-cream paper-texture">
-        <DashboardSidebar />
+        <DashboardSidebar userType="creador" />
         <div className="flex-1 p-6">
           {/* Decorative background elements */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-contala-pink/20 rounded-full blur-3xl -z-10 animate-pulse"></div>

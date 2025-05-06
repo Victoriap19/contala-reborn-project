@@ -26,7 +26,7 @@ export default function UserDashboard() {
   
   // Ensure we're in regular user mode
   useEffect(() => {
-    if (userType === "creator") {
+    if (userType === "creador") {
       toast.error("Esta página es solo para usuarios. Redirigiendo al dashboard de creadores.");
       window.location.href = "/dashboard";
     }
@@ -78,7 +78,7 @@ export default function UserDashboard() {
         <title>Dashboard de Usuario - Contala</title>
       </Helmet>
       <div className="flex min-h-screen w-full bg-contala-cream paper-texture">
-        <DashboardSidebar />
+        <DashboardSidebar userType="marca" />
         <div className="flex-1 p-6">
           {/* Decorative background elements */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-contala-pink/20 rounded-full blur-3xl -z-10 animate-pulse"></div>

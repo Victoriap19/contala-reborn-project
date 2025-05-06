@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { shipmentService } from "@/services/api";
 import { Button } from "@/components/ui/button";
@@ -42,7 +43,7 @@ export function ShipmentTracker({ projectId, userRole }: ShipmentTrackerProps) {
   const [updating, setUpdating] = useState(false);
 
   const { userType } = useUser();
-  const isClient = userType !== "creator";
+  const isClient = userType !== "creador";
   
   // Fetch shipment data
   const fetchShipmentData = async () => {
@@ -187,15 +188,15 @@ export function ShipmentTracker({ projectId, userRole }: ShipmentTrackerProps) {
               <Package className="mr-2 h-5 w-5 text-contala-green" />
               Seguimiento de Envío
             </h3>
-            {shipment.tracking_number && (
+            {shipment?.tracking_number && (
               <p className="text-sm text-gray-500">
                 N° Seguimiento: <span className="font-medium">{shipment.tracking_number}</span>
               </p>
             )}
           </div>
-          <Badge className={`${getStatusColor(shipment.status)} text-white`}>
-            {getStatusIcon(shipment.status)}
-            <span className="ml-1">{getStatusLabel(shipment.status)}</span>
+          <Badge className={`${shipment ? getStatusColor(shipment.status) : ''} text-white`}>
+            {shipment && getStatusIcon(shipment.status)}
+            <span className="ml-1">{shipment ? getStatusLabel(shipment.status) : ''}</span>
           </Badge>
         </div>
         

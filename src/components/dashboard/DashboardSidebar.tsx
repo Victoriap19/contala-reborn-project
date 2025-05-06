@@ -71,7 +71,7 @@ export function DashboardSidebar({ userType }: SidebarProps) {
         <div className="flex h-full flex-col overflow-y-auto pt-5 pb-2">
           {/* Close button (mobile only) */}
           <div className="flex items-center justify-between px-4 lg:hidden">
-            <Logo size="xs" variant="light" />
+            <Logo size="sm" variant="horizontal" />
             <button
               onClick={() => setOpen(false)}
               className="text-contala-cream hover:text-contala-pink"
@@ -82,7 +82,7 @@ export function DashboardSidebar({ userType }: SidebarProps) {
           
           {/* Desktop logo */}
           <div className="hidden lg:flex justify-center mt-1 mb-8">
-            <Logo size="sm" variant="light" />
+            <Logo size="sm" variant="horizontal" />
           </div>
           
           {/* Notifications */}
