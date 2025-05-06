@@ -5,90 +5,72 @@ import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useUser } from "@/context/UserContext";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 export default function PricingSection() {
   const navigate = useNavigate();
   const [plans, setPlans] = useState<any[]>([]);
   const { setUserType } = useUser();
+  const [isAnnual, setIsAnnual] = useState(false);
   
   useEffect(() => {
-    // Datos actualizados según los nuevos planes
-    setPlans([
-      {
-        id: 1,
-        name: "Free",
-        price: 0,
-        interval: "month",
-        description: "Funcionalidades básicas para comenzar",
-        features: [
-          "1 propuesta o proyecto por mes",
-          "Acceso solo a proyectos públicos",
-          "Soporte por email"
-        ]
-      },
-      {
-        id: 2,
-        name: "Pro Mensual",
-        price: 12000,
-        interval: "month",
-        description: "Para usuarios frecuentes",
-        features: [
-          "Hasta 10 propuestas o proyectos por mes",
-          "Filtros avanzados",
-          "Mensajes ilimitados",
-          "Soporte rápido"
-        ],
-        popular: true
-      },
-      {
-        id: 3,
-        name: "Pro Anual",
-        price: 115200, // 12000 x 12 - 20% = 115200
-        interval: "year",
-        description: "Pro con 20% de descuento anual",
-        features: [
-          "Todo lo incluido en Pro Mensual",
-          "20% de ahorro vs mensual",
-          "Hasta 10 propuestas o proyectos por mes",
-          "Soporte prioritario"
-        ]
-      },
-      {
-        id: 4,
-        name: "Empresa Mensual",
-        price: 30000,
-        interval: "month",
-        description: "Para empresas y agencias",
-        features: [
-          "Hasta 30 propuestas o proyectos por mes",
-          "Filtros avanzados",
-          "Mensajes ilimitados",
-          "Soporte prioritario",
-          "API de integración"
-        ]
-      },
-      {
-        id: 5,
-        name: "Empresa Anual",
-        price: 288000, // 30000 x 12 - 20% = 288000
-        interval: "year",
-        description: "Empresa con 20% de descuento anual",
-        features: [
-          "Todo lo incluido en Empresa Mensual",
-          "20% de ahorro vs mensual",
-          "Hasta 30 propuestas o proyectos por mes",
-          "Soporte personalizado"
-        ]
-      }
-    ]);
-  }, []);
+    // Update plans based on billing period selection
+    const updatePlans = () => {
+      // Updated pricing according to the new requirements
+      setPlans([
+        {
+          id: 1,
+          name: "Free",
+          price: 0,
+          interval: "month",
+          description: "Funcionalidades básicas para comenzar",
+          features: [
+            "1 propuesta o proyecto por mes",
+            "Acceso solo a proyectos públicos",
+            "Soporte por email"
+          ]
+        },
+        {
+          id: 2,
+          name: "Pro",
+          price: isAnnual ? 192000 : 20000, // 20000 x 12 - 20% = 192000
+          interval: isAnnual ? "year" : "month",
+          description: "Para usuarios frecuentes",
+          features: [
+            "Hasta 10 propuestas o proyectos por mes",
+            "Filtros avanzados",
+            "Mensajes ilimitados",
+            "Soporte rápido"
+          ],
+          popular: true
+        },
+        {
+          id: 3,
+          name: "Empresa",
+          price: isAnnual ? 432000 : 45000, // 45000 x 12 - 20% = 432000
+          interval: isAnnual ? "year" : "month",
+          description: "Para empresas y agencias",
+          features: [
+            "Hasta 30 propuestas o proyectos por mes",
+            "Filtros avanzados",
+            "Mensajes ilimitados",
+            "Soporte prioritario",
+            "API de integración"
+          ]
+        }
+      ]);
+    };
+    
+    updatePlans();
+  }, [isAnnual]);
 
   const handleSubscribe = (planId: number) => {
     // Set user type to marca
     setUserType("marca");
     
-    // Redirect to subscriptions page
-    navigate(`/subscriptions?plan=${planId}&type=marca`);
+    // Redirect to subscriptions page with the selected plan and billing period
+    navigate(`/subscriptions?plan=${planId}&type=marca&billing=${isAnnual ? 'annual' : 'monthly'}`);
   };
 
   return (
@@ -101,7 +83,31 @@ export default function PricingSection() {
           </p>
         </div>
         
-        <div className="mt-12">
+        <div className="flex items-center justify-center mb-8">
+          <div className="flex items-center space-x-2">
+            <Label htmlFor="billing-toggle" className={`text-sm ${!isAnnual ? 'font-bold text-contala-green' : 'text-contala-green/70'}`}>
+              Facturación mensual
+            </Label>
+            
+            <Checkbox 
+              id="billing-toggle" 
+              checked={isAnnual}
+              onCheckedChange={(checked) => setIsAnnual(checked as boolean)}
+              className="data-[state=checked]:bg-contala-green data-[state=checked]:border-contala-green"
+            />
+            
+            <Label htmlFor="billing-toggle" className={`text-sm flex items-center ${isAnnual ? 'font-bold text-contala-green' : 'text-contala-green/70'}`}>
+              Facturación anual
+              {isAnnual && (
+                <span className="ml-2 text-xs font-medium bg-amber-100 text-amber-800 rounded-full px-2 py-0.5">
+                  20% OFF
+                </span>
+              )}
+            </Label>
+          </div>
+        </div>
+        
+        <div className="mt-8">
           <SubscriptionPlans 
             plans={plans} 
             onSubscribe={handleSubscribe} 

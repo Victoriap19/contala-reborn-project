@@ -41,15 +41,11 @@ export function SubscriptionPlans({ plans, currentPlanId, onSubscribe }: Subscri
       return 'border-contala-pink';
     }
     
-    if (plan.interval === "year") {
-      return 'border-amber-400';
-    }
-    
     return 'border-gray-200';
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       {plans.map((plan) => {
         const isCurrentPlan = currentPlanId === plan.id;
         const isAnnual = plan.interval === "year";
@@ -69,7 +65,7 @@ export function SubscriptionPlans({ plans, currentPlanId, onSubscribe }: Subscri
                 Tu Plan
               </Badge>
             )}
-            {isAnnual && !isCurrentPlan && !plan.popular && (
+            {isAnnual && (
               <Badge className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/3 bg-amber-400 text-white flex items-center gap-1">
                 <Sparkles className="h-3 w-3" />
                 <span>20% OFF</span>
@@ -112,11 +108,9 @@ export function SubscriptionPlans({ plans, currentPlanId, onSubscribe }: Subscri
                 onClick={() => onSubscribe(plan.id)} 
                 className={`w-full ${isCurrentPlan 
                   ? 'bg-gray-300 hover:bg-gray-300 cursor-not-allowed' 
-                  : isAnnual 
-                    ? 'bg-amber-500 hover:bg-amber-600' 
-                    : plan.popular 
-                      ? 'bg-contala-pink hover:bg-contala-pink/90' 
-                      : 'bg-contala-green hover:bg-contala-green/90'}`}
+                  : plan.popular 
+                    ? 'bg-contala-pink hover:bg-contala-pink/90' 
+                    : 'bg-contala-green hover:bg-contala-green/90'}`}
                 disabled={isCurrentPlan}
               >
                 {isCurrentPlan ? 'Plan actual' : plan.price === 0 ? 'Seleccionar plan gratuito' : 'Suscribirse'}

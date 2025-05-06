@@ -66,6 +66,11 @@ export default function Navbar() {
     setIsMenuOpen(false);
   };
   
+  const handleAboutUsClick = () => {
+    navigate("/about-us");
+    setIsMenuOpen(false);
+  };
+  
   const handleDashboardClick = () => {
     if (userType === "creador") {
       navigate("/creador-dashboard");
@@ -94,6 +99,13 @@ export default function Navbar() {
             className="text-contala-green hover:text-contala-pink transition-colors"
           >
             Precios
+          </button>
+          
+          <button 
+            onClick={handleAboutUsClick}
+            className="text-contala-green hover:text-contala-pink transition-colors"
+          >
+            Nosotros
           </button>
           
           {isLoggedIn ? (
@@ -142,6 +154,13 @@ export default function Navbar() {
               className="text-contala-green hover:text-contala-pink transition-colors py-2 text-left"
             >
               Precios
+            </button>
+            
+            <button 
+              onClick={handleAboutUsClick}
+              className="text-contala-green hover:text-contala-pink transition-colors py-2 text-left"
+            >
+              Nosotros
             </button>
             
             <div className="pt-2 border-t border-contala-green/10">

@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@/context/UserContext";
+import { ArrowRight } from "lucide-react";
 
 export default function HeroSection() {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ export default function HeroSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center pt-10 md:pt-20">
           <div className="flex flex-col space-y-6 text-center md:text-left">
             <div className="space-y-4 animate-fade-in">
-              <h1 className="text-5xl md:text-6xl font-bold tracking-tight">
+              <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-contala-green">
                 Conectá tu producto con creadores de contenido
               </h1>
               <p className="text-xl md:text-2xl text-contala-green/80">
@@ -33,7 +34,7 @@ export default function HeroSection() {
                   className="bg-contala-pink text-contala-green hover:bg-contala-pink/90 h-12 px-8 text-lg"
                   onClick={handleMarcaClick}
                 >
-                  Empezar como Marca
+                  Empezar como Marca <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </div>
               <div className="pt-8 flex justify-center md:justify-start">

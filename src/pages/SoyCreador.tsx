@@ -16,6 +16,10 @@ export default function SoyCreador() {
     navigate("/register?type=creador");
   };
   
+  const handleUgcExplainedClick = () => {
+    navigate("/ugc-explained");
+  };
+  
   return (
     <div className="min-h-screen bg-white">
       <Helmet>
@@ -34,12 +38,21 @@ export default function SoyCreador() {
             <p className="text-xl text-contala-green/80 mb-8 max-w-3xl mx-auto">
               Conecta con marcas que buscan a alguien como tú, recibe propuestas de proyectos, y genera ingresos compartiendo tu autenticidad.
             </p>
-            <Button 
-              onClick={handleRegisterClick}
-              className="bg-contala-pink text-contala-green hover:bg-contala-pink/90 h-12 px-8 text-lg"
-            >
-              Comenzar como Creador <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button 
+                onClick={handleRegisterClick}
+                className="bg-contala-pink text-contala-green hover:bg-contala-pink/90 h-12 px-8 text-lg"
+              >
+                Comenzar como Creador <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button 
+                onClick={handleUgcExplainedClick}
+                variant="outline"
+                className="border-contala-green text-contala-green hover:bg-contala-green/10 h-12 px-8 text-lg"
+              >
+                ¿Qué es UGC? 
+              </Button>
+            </div>
           </div>
         </div>
       </section>
@@ -207,12 +220,21 @@ export default function SoyCreador() {
             <p className="text-lg text-contala-green/80 mb-12">
               Tú te enfocas en crear contenido increíble, nosotros nos encargamos de todo lo demás.
             </p>
-            <Button 
-              onClick={handleRegisterClick}
-              className="bg-contala-green text-white hover:bg-contala-green/90 h-12 px-8 text-lg"
-            >
-              Registrarme como Creador <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button 
+                onClick={handleRegisterClick}
+                className="bg-contala-green text-white hover:bg-contala-green/90 h-12 px-8 text-lg"
+              >
+                Registrarme como Creador <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button 
+                onClick={handleUgcExplainedClick}
+                variant="outline"
+                className="border-contala-green text-contala-green hover:bg-contala-green/10 h-12 px-8 text-lg"
+              >
+                Descubre qué es UGC
+              </Button>
+            </div>
           </div>
         </div>
       </section>
