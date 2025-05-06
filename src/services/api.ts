@@ -244,6 +244,15 @@ export const projectService = {
   // Reject an invitation
   rejectInvitation: async (id: number) => {
     return await api.post(`/projects/invitations/${id}/reject/`);
+  },
+  
+  // Process payment for a project
+  processPayment: async (projectId: number, paymentData: {
+    amount: number;
+    description: string;
+    shipping_id?: string;
+  }) => {
+    return await api.post(`/projects/projects/${projectId}/payment/`, paymentData);
   }
 };
 
@@ -401,6 +410,45 @@ export const shipmentService = {
   // Verify shipment status from Correo Argentino
   verifyShipmentStatus: async (trackingNumber: string) => {
     return await api.post(`/projects/shipping/verify/`, { tracking_number: trackingNumber });
+  }
+};
+
+// Subscription services
+export const subscriptionService = {
+  // Get subscription plans
+  getPlans: async () => {
+    return await api.get("/accounts/subscription-plans/");
+  },
+  
+  // Get current subscription
+  getCurrentSubscription: async () => {
+    return await api.get("/accounts/subscriptions/current/");
+  },
+  
+  // Subscribe to a plan
+  subscribe: async (planId: number, paymentData: {
+    payment_method: string;
+    billing_details?: {
+      name: string;
+      tax_id?: string;
+      address?: {
+        line1: string;
+        city: string;
+        postal_code: string;
+      }
+    }
+  }) => {
+    return await api.post(`/accounts/subscriptions/subscribe/${planId}/`, paymentData);
+  },
+  
+  // Cancel subscription
+  cancelSubscription: async () => {
+    return await api.post("/accounts/subscriptions/cancel/");
+  },
+  
+  // Update subscription
+  updateSubscription: async (planId: number) => {
+    return await api.post(`/accounts/subscriptions/update/${planId}/`);
   }
 };
 

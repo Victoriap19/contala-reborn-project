@@ -11,7 +11,7 @@ import { ShipmentForm } from "./ShipmentForm";
 import { ShipmentTracker } from "./ShipmentTracker";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { shipmentService } from "@/services/api";
+import { shipmentService, projectService } from "@/services/api";
 import { useUser } from "@/context/UserContext";
 
 type Project = {
@@ -58,16 +58,30 @@ export function ProjectProposal({ project, onPayment }: ProjectProposalProps) {
     toast.success("¡Etiqueta de envío generada correctamente!");
   };
 
-  const handleProceedToPayment = () => {
-    setIsPaymentProcessing(true);
-    // Simulating payment processing
-    setTimeout(() => {
-      setIsPaymentProcessing(false);
+  const handleProceedToPayment = async () => {
+    try {
+      setIsPaymentProcessing(true);
+      
+      // Procesar el pago - Simular una llamada a API real
+      const response = await projectService.processPayment(parseInt(project.id), {
+        amount: budget,
+        description: `Pago por proyecto: ${project.title}`,
+        shipping_id: shipmentCompleted ? "shipping-123" : undefined
+      });
+      
+      // Mostrar la confirmación
       setShowPaymentComplete(true);
-      // Call the parent callback
+      
+      // Llamar al callback del padre
       onPayment();
+      
       toast.success("¡Pago procesado con éxito! Proyecto confirmado.");
-    }, 2000);
+    } catch (error) {
+      console.error("Error al procesar el pago:", error);
+      toast.error("Error al procesar el pago. Inténtalo de nuevo.");
+    } finally {
+      setIsPaymentProcessing(false);
+    }
   };
 
   const handleViewShipment = () => {
@@ -232,7 +246,7 @@ export function ProjectProposal({ project, onPayment }: ProjectProposalProps) {
                         Ver estado del envío
                       </Button>
                       <Button 
-                        className="flex-1 bg-contala-green"
+                        className="flex-1 bg-contala-green text-white"
                         onClick={handleProceedToPayment}
                         disabled={isPaymentProcessing}
                       >
