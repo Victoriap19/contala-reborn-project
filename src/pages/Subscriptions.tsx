@@ -8,6 +8,7 @@ import { CurrentSubscription } from "@/components/subscription/CurrentSubscripti
 import { subscriptionService } from "@/services/api";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 type SubscriptionPlan = {
   id: number;
@@ -30,6 +31,7 @@ export default function Subscriptions() {
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [currentSubscription, setCurrentSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -103,26 +105,18 @@ export default function Subscriptions() {
   
   const handleSubscribe = async (planId: number) => {
     try {
-      // Aquí se implementaría la lógica real para suscribirse
-      toast.success("Procesando suscripción...");
+      // Simulate redirection to MercadoPago
+      toast.info("Redirigiendo a MercadoPago para procesar el pago...");
       
-      // Simular una suscripción exitosa
+      // In a real scenario, we would call an API to create a payment and get the MP checkout URL
       setTimeout(() => {
-        toast.success("¡Suscripción activada con éxito!");
-        // Actualizar el estado local con la nueva suscripción
-        const selectedPlan = plans.find(p => p.id === planId);
-        if (selectedPlan) {
-          setCurrentSubscription({
-            id: Math.floor(Math.random() * 1000),
-            status: "active",
-            current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-            plan: selectedPlan
-          });
-        }
+        // For demo purposes, we'll simulate a successful payment and redirect to registration
+        toast.success("Pago procesado correctamente");
+        navigate(`/register?plan=${planId}`);
       }, 2000);
     } catch (error) {
-      console.error("Error al suscribirse:", error);
-      toast.error("Hubo un problema al procesar tu suscripción");
+      console.error("Error al procesar el pago:", error);
+      toast.error("Hubo un problema al procesar tu pago");
     }
   };
   

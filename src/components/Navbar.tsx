@@ -34,6 +34,7 @@ export default function Navbar() {
   const handleLogout = () => {
     authService.logout();
     setIsLoggedIn(false);
+    navigate('/'); // Redirect to home page after logout
   };
   
   const toggleMenu = () => {
@@ -65,18 +66,12 @@ export default function Navbar() {
         
         {/* Desktop menu */}
         <div className="hidden md:flex items-center space-x-6">
-          <Link to="/#features" className="text-contala-green hover:text-contala-pink transition-colors">
-            Características
-          </Link>
           <button 
             onClick={scrollToPricing}
             className="text-contala-green hover:text-contala-pink transition-colors"
           >
             Precios
           </button>
-          <Link to="/how-it-works" className="text-contala-green hover:text-contala-pink transition-colors">
-            Cómo funciona
-          </Link>
           
           {isLoggedIn ? (
             <>
@@ -119,26 +114,12 @@ export default function Navbar() {
       {isMenuOpen && (
         <div className="md:hidden bg-contala-cream/95 nav-blur shadow-md py-4 px-4 absolute w-full">
           <div className="flex flex-col space-y-4">
-            <Link 
-              to="/#features" 
-              onClick={() => setIsMenuOpen(false)}
-              className="text-contala-green hover:text-contala-pink transition-colors py-2"
-            >
-              Características
-            </Link>
             <button 
               onClick={scrollToPricing}
               className="text-contala-green hover:text-contala-pink transition-colors py-2 text-left"
             >
               Precios
             </button>
-            <Link 
-              to="/how-it-works" 
-              onClick={() => setIsMenuOpen(false)}
-              className="text-contala-green hover:text-contala-pink transition-colors py-2"
-            >
-              Cómo funciona
-            </Link>
             
             <div className="pt-2 border-t border-contala-green/10">
               {isLoggedIn ? (

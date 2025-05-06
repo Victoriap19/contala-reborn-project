@@ -35,13 +35,6 @@ export default function HeroSection() {
                 >
                   Empezar ahora
                 </Button>
-                <Button 
-                  variant="outline" 
-                  className="border-contala-pink text-contala-pink hover:bg-contala-pink hover:text-contala-green h-12 px-8 text-lg"
-                  onClick={() => document.getElementById('how-it-works')?.scrollIntoView({behavior: 'smooth'})}
-                >
-                  Cómo funciona
-                </Button>
               </div>
               <div className="pt-8 flex justify-center md:justify-start">
                 <Button 

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -43,11 +42,17 @@ export default function Login() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     // This would normally connect to your Django backend
     console.log("Login submitted:", values);
+    
+    // Save auth token to simulate login
+    localStorage.setItem("token", "fake-jwt-token");
+    
     toast({
       title: "Inicio de sesión exitoso",
-      description: "Bienvenido a Contala",
+      description: "¡Bienvenido de nuevo!",
     });
-    navigate("/dashboard"); // Redirect to dashboard after login
+    
+    // Redirect to dashboard after login
+    navigate('/dashboard');
   }
 
   const handleSocialLogin = (provider: string) => {

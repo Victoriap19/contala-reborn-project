@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 export default function PricingSection() {
   const navigate = useNavigate();
@@ -53,8 +54,15 @@ export default function PricingSection() {
   }, []);
 
   const handleSubscribe = (planId: number) => {
-    // Redireccionar al usuario a la página de registro
-    navigate(`/register?plan=${planId}`);
+    // Simulate redirection to MercadoPago
+    toast.info("Redirigiendo a MercadoPago para procesar el pago...");
+    
+    // In a real scenario, we would call an API to create a payment and get the MP checkout URL
+    setTimeout(() => {
+      // For demo purposes, we'll simulate a successful payment and redirect to registration
+      toast.success("Pago procesado correctamente");
+      navigate(`/register?plan=${planId}`);
+    }, 2000);
   };
 
   return (
