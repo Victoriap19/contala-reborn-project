@@ -7,6 +7,8 @@ import PricingSection from "@/components/PricingSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import CtaSection from "@/components/CtaSection";
 import Footer from "@/components/Footer";
+import CreatorsGallerySection from "@/components/CreatorsGallerySection";
+import HowItWorksSection from "@/components/HowItWorksSection";
 
 const Index = () => {
   return (
@@ -17,9 +19,11 @@ const Index = () => {
       </Helmet>
       <Navbar />
       <HeroSection />
+      <CreatorsGallerySection />
       <FeaturesSection />
-      <PricingSection />
+      <HowItWorksSection />
       <TestimonialsSection />
+      <PricingSection />
       <CtaSection />
       <Footer />
     </div>

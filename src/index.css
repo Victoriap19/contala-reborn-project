@@ -14,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 20%;
 
-    --primary: 161 47% 21%;
+    --primary: 217 71% 23%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 0 0% 96%;
@@ -24,14 +24,14 @@
     --muted-foreground: 0 0% 45%;
 
     --accent: 142 69% 58%;
-    --accent-foreground: 161 47% 21%;
+    --accent-foreground: 217 71% 23%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 0 0% 90%;
     --input: 0 0% 90%;
-    --ring: 161 47% 21%;
+    --ring: 217 71% 23%;
 
     --radius: 0.5rem;
   }
@@ -83,7 +83,7 @@
 }
 
 .feature-card {
-  @apply rounded-md p-6 transition-all duration-300 hover:shadow-md hover:-translate-y-1 bg-white border-0;
+  @apply rounded-lg p-6 transition-all duration-300 hover:shadow-md hover:-translate-y-1 bg-white border-0;
 }
 
 .navbar-minimal {
@@ -110,7 +110,7 @@
 }
 
 .table-container th {
-  @apply bg-gray-50 text-contala-green font-medium p-3 text-left;
+  @apply bg-gray-50 text-contala-navy font-medium p-3 text-left;
 }
 
 .table-container td {
@@ -156,7 +156,7 @@
 
 /* Button styles similar to inbeat.agency */
 .btn-primary {
-  @apply bg-contala-green text-white rounded-md px-6 py-3 font-medium transition-all hover:bg-contala-green/90;
+  @apply bg-contala-navy text-white rounded-md px-6 py-3 font-medium transition-all hover:bg-contala-navy/90;
 }
 
 .btn-secondary {
@@ -179,7 +179,7 @@
 
 .link-underline:after {
   content: '';
-  @apply absolute w-0 h-0.5 bg-contala-green left-0 -bottom-1 transition-all duration-300;
+  @apply absolute w-0 h-0.5 bg-contala-navy left-0 -bottom-1 transition-all duration-300;
 }
 
 .link-underline:hover:after {

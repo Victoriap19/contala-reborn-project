@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -65,19 +64,19 @@ export default {
 				},
 				contala: {
 					cream: '#FFFFFF',
-					green: '#1B4D3E',
-					pink: '#F6D1C1',
-					"softpink": '#FFDEE2',
-					"darkpink": '#C8938A',
+					green: '#1A3A5A', // Actualizado al azul de inbeat
+					pink: '#F97316', // Actualizado al naranja brillante de inbeat
+					"softpink": '#E5DEFF', // Actualizado al suave púrpura de inbeat
+					"darkpink": '#0EA5E9', // Actualizado al azul océano de inbeat
 					gold: '#D4AF37',
 					sage: '#9CAF88',
-					brown: '#8B4513',
+					brown: '#403E43', // Actualizado al gris carbón de inbeat
 					sand: '#F5DEB3',
 					coral: '#FF7F50',
-					navy: '#1A3A5A',
-					charcoal: '#333333',
-					softgray: '#F7F7F7',
-					lightgray: '#EEEEEE',
+					navy: '#0F172A', // Actualizado al azul oscuro de inbeat
+					charcoal: '#111827', // Actualizado a un color carbón más oscuro
+					softgray: '#F8FAFC', // Actualizado a un gris suave similar a inbeat
+					lightgray: '#F1F5F9', // Actualizado a un gris claro similar a inbeat
 				}
 			},
 			borderRadius: {
@@ -154,9 +153,9 @@ export default {
 			},
 			backgroundImage: {
 				'grain-pattern': "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.1'/%3E%3C/svg%3E\")",
-				'dot-pattern': "url(\"data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231b4d3e' fill-opacity='0.05' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='1'/%3E%3Ccircle cx='13' cy='13' r='1'/%3E%3C/g%3E%3C/svg%3E\")",
-				'diagonal-lines': "url(\"data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231b4d3e' fill-opacity='0.05' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E\")",
-				'cross-pattern': "url(\"data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h4v4H0V0zm4 4h4v4H4V4zm4 4h4v4H8V8zm4-4h4v4h-4V4zm0-4h4v4h-4V0zM4 0h4v4H4V0zm8 8h4v4h-4V8zm-4 0h4v4H8V8z' fill='%231b4d3e' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E\")",
+				'dot-pattern': "url(\"data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231a3a5a' fill-opacity='0.05' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='1'/%3E%3Ccircle cx='13' cy='13' r='1'/%3E%3C/g%3E%3C/svg%3E\")",
+				'diagonal-lines': "url(\"data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231a3a5a' fill-opacity='0.05' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E\")",
+				'cross-pattern': "url(\"data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h4v4H0V0zm4 4h4v4H4V4zm4 4h4v4H8V8zm4-4h4v4h-4V4zm0-4h4v4h-4V0zM4 0h4v4H4V0zm8 8h4v4h-4V8zm-4 0h4v4H8V8z' fill='%231a3a5a' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E\")",
 			}
 		}
 	},
