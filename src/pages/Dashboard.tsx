@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
@@ -10,11 +11,43 @@ import { useUser } from "@/context/UserContext";
 import { toast } from "sonner";
 import { MessageSquare } from "lucide-react";
 import { Helmet } from "react-helmet-async";
+import { motion } from "framer-motion";
 
 // Mock function to simulate email notifications
 const sendEmailNotification = (type: string, recipient: string) => {
   console.log(`Email notification sent: ${type} to ${recipient}`);
   return Promise.resolve();
+};
+
+// Animation variants for page transitions
+const pageVariants = {
+  initial: { opacity: 0, y: 10 },
+  animate: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.4, ease: "easeOut" }
+  },
+  exit: { 
+    opacity: 0,
+    y: -10,
+    transition: { duration: 0.2 }
+  }
+};
+
+// Animation variants for staggered children
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 }
 };
 
 export default function Dashboard() {
@@ -77,19 +110,49 @@ export default function Dashboard() {
       </Helmet>
       <div className="flex min-h-screen w-full bg-white">
         <DashboardSidebar userType="creador" />
-        <div className="flex-1 p-6">
-          {/* Decorative elements - more subtle */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-contala-pink/10 rounded-full blur-3xl -z-10 animate-pulse"></div>
-          <div className="absolute bottom-20 left-10 w-48 h-48 bg-contala-green/5 rounded-full blur-3xl -z-10 animate-pulse"></div>
+        <motion.div 
+          className="flex-1 p-6"
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          variants={pageVariants}
+        >
+          {/* Decorative elements - improved contrast and animation */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-contala-darkpink/10 rounded-full blur-3xl -z-10 animate-pulse-slow"></div>
+          <div className="absolute bottom-20 left-10 w-48 h-48 bg-contala-pink/5 rounded-full blur-3xl -z-10 animate-pulse-slow"></div>
           
-          {/* Render different profile component based on user type */}
-          {activeSection === "perfil" && <CreatorProfile />}
-          
-          {/* Creator user sections */}
-          {activeSection === "proyectos" && <ProjectsSection />}
-          {activeSection === "pendientes" && <PendientesSection />}
-          {activeSection === "generales" && <GeneralesSection />}
-        </div>
+          {/* Render different sections with animation */}
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="w-full"
+          >
+            {/* Render different profile component based on user type */}
+            {activeSection === "perfil" && (
+              <motion.div variants={itemVariants}>
+                <CreatorProfile />
+              </motion.div>
+            )}
+            
+            {/* Creator user sections */}
+            {activeSection === "proyectos" && (
+              <motion.div variants={itemVariants}>
+                <ProjectsSection />
+              </motion.div>
+            )}
+            {activeSection === "pendientes" && (
+              <motion.div variants={itemVariants}>
+                <PendientesSection />
+              </motion.div>
+            )}
+            {activeSection === "generales" && (
+              <motion.div variants={itemVariants}>
+                <GeneralesSection />
+              </motion.div>
+            )}
+          </motion.div>
+        </motion.div>
       </div>
     </SidebarProvider>
   );

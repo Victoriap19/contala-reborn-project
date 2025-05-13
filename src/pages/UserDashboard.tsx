@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { SidebarProvider } from "@/components/ui/sidebar";
@@ -7,10 +8,11 @@ import { ProjectsSection } from "@/components/dashboard/ProjectsSection";
 import { CreatorsSection } from "@/components/dashboard/CreatorsSection";
 import { ConvocatoriasSection } from "@/components/dashboard/ConvocatoriasSection";
 import { DiscoverSection } from "@/components/dashboard/DiscoverSection";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "@/context/UserContext";
 import { toast } from "sonner";
 import { MessageSquare, Check } from "lucide-react";
+import { motion } from "framer-motion";
 
 // Mock function to simulate email notifications
 const sendEmailNotification = (type: string, recipient: string) => {
@@ -18,8 +20,40 @@ const sendEmailNotification = (type: string, recipient: string) => {
   return Promise.resolve();
 };
 
+// Animation variants for page transitions
+const pageVariants = {
+  initial: { opacity: 0, y: 10 },
+  animate: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.4, ease: "easeOut" }
+  },
+  exit: { 
+    opacity: 0,
+    y: -10,
+    transition: { duration: 0.2 }
+  }
+};
+
+// Animation variants for staggered children
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 }
+};
+
 export default function UserDashboard() {
   const location = useLocation();
+  const navigate = useNavigate();
   const path = location.pathname;
   const { userType } = useUser();
   
@@ -27,9 +61,9 @@ export default function UserDashboard() {
   useEffect(() => {
     if (userType === "creador") {
       toast.error("Esta página es solo para usuarios. Redirigiendo al dashboard de creadores.");
-      window.location.href = "/dashboard";
+      navigate("/dashboard");
     }
-  }, [userType]);
+  }, [userType, navigate]);
   
   // Simulate email notifications when receiving messages or proposals
   useEffect(() => {
@@ -78,18 +112,52 @@ export default function UserDashboard() {
       </Helmet>
       <div className="flex min-h-screen w-full bg-white">
         <DashboardSidebar userType="marca" />
-        <div className="flex-1 p-6">
-          {/* Decorative elements - more subtle */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-contala-pink/10 rounded-full blur-3xl -z-10 animate-pulse"></div>
-          <div className="absolute bottom-20 left-10 w-48 h-48 bg-contala-green/5 rounded-full blur-3xl -z-10 animate-pulse"></div>
+        <motion.div 
+          className="flex-1 p-6"
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          variants={pageVariants}
+        >
+          {/* Decorative elements - improved contrast and animation */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-contala-darkpink/10 rounded-full blur-3xl -z-10 animate-pulse-slow"></div>
+          <div className="absolute bottom-20 left-10 w-48 h-48 bg-contala-pink/5 rounded-full blur-3xl -z-10 animate-pulse-slow"></div>
           
-          {/* Render the appropriate section based on the path */}
-          {activeSection === "perfil" && <UserProfile />}
-          {activeSection === "proyectos" && <ProjectsSection />}
-          {activeSection === "creadores" && <CreatorsSection />}
-          {activeSection === "convocatorias" && <ConvocatoriasSection />}
-          {activeSection === "descubrir" && <DiscoverSection />}
-        </div>
+          {/* Render different sections with animation */}
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="w-full"
+          >
+            {/* Render the appropriate section based on the path */}
+            {activeSection === "perfil" && (
+              <motion.div variants={itemVariants}>
+                <UserProfile />
+              </motion.div>
+            )}
+            {activeSection === "proyectos" && (
+              <motion.div variants={itemVariants}>
+                <ProjectsSection />
+              </motion.div>
+            )}
+            {activeSection === "creadores" && (
+              <motion.div variants={itemVariants}>
+                <CreatorsSection />
+              </motion.div>
+            )}
+            {activeSection === "convocatorias" && (
+              <motion.div variants={itemVariants}>
+                <ConvocatoriasSection />
+              </motion.div>
+            )}
+            {activeSection === "descubrir" && (
+              <motion.div variants={itemVariants}>
+                <DiscoverSection />
+              </motion.div>
+            )}
+          </motion.div>
+        </motion.div>
       </div>
     </SidebarProvider>
   );

@@ -156,9 +156,23 @@
   }
 }
 
-/* Button styles similar to inbeat.agency */
+/* Enhanced animations */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 6s ease-in-out infinite;
+}
+
+/* Button styles with improved contrast */
 .btn-primary {
-  @apply bg-contala-navy text-white rounded-md px-6 py-3 font-medium transition-all hover:bg-contala-navy/90;
+  @apply bg-contala-navy text-white rounded-md px-6 py-3 font-medium transition-all hover:bg-opacity-90;
 }
 
 .btn-secondary {
@@ -206,4 +220,17 @@
 /* Tag/badge styles */
 .tag {
   @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800;
+}
+
+/* Enhanced dashboard styles with better contrast */
+.dashboard-card {
+  @apply bg-white border border-gray-100 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md;
+}
+
+.dashboard-stat {
+  @apply flex items-center gap-3 p-4 bg-contala-darkpink text-white rounded-lg;
+}
+
+.dashboard-header {
+  @apply border-b border-gray-100 pb-4 mb-6;
 }
