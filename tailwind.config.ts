@@ -64,10 +64,10 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				contala: {
-					cream: '#FFFFFF', // Changed to white for the background
+					cream: '#FFFFFF',
 					green: '#1B4D3E',
 					pink: '#F6D1C1',
-					"softpink": '#FFDEE2', // Added soft pink for details
+					"softpink": '#FFDEE2',
 					"darkpink": '#C8938A',
 					gold: '#D4AF37',
 					sage: '#9CAF88',
@@ -75,6 +75,9 @@ export default {
 					sand: '#F5DEB3',
 					coral: '#FF7F50',
 					navy: '#1A3A5A',
+					charcoal: '#333333',
+					softgray: '#F7F7F7',
+					lightgray: '#EEEEEE',
 				}
 			},
 			borderRadius: {
@@ -84,7 +87,9 @@ export default {
 			},
 			fontFamily: {
 				serif: ['Playfair Display', 'serif'],
-				sans: ['Helvetica', 'Roboto', 'sans-serif'],
+				sans: ['Inter', 'sans-serif'],
+				display: ['Inter', 'sans-serif'],
+				mono: ['Fira Code', 'monospace'],
 			},
 			keyframes: {
 				'accordion-down': {

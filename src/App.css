@@ -1,42 +1,73 @@
+
 #root {
-  max-width: 1280px;
+  width: 100%;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+body {
+  color: #333;
+  background-color: #fff;
+  font-family: 'Inter', sans-serif;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Focus on clean typography and white space */
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 0.5em;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+p {
+  line-height: 1.6;
+  margin-bottom: 1.5em;
 }
 
+a {
+  color: inherit;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: #1B4D3E;
+}
+
+/* Clean button styles */
+button {
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* Subtle animations */
+.hover-lift {
+  transition: transform 0.2s;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* Card styling */
 .card {
-  padding: 2em;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.read-the-docs {
-  color: #888;
+/* Container sizing */
+.container-lg {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.container-md {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.container-sm {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
 }

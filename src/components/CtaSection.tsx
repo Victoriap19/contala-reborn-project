@@ -4,23 +4,23 @@ import { Link } from "react-router-dom";
 
 export default function CtaSection() {
   return (
-    <section className="py-20 px-4 md:px-6">
+    <section className="py-24 px-4 md:px-6 bg-contala-softgray">
       <div className="max-w-4xl mx-auto text-center">
-        <div className="bg-gradient-to-b from-contala-pink/20 to-contala-cream rounded-3xl p-8 md:p-16 shadow-lg">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Listo para transformar tu marca</h2>
-          <p className="text-xl mb-8 max-w-xl mx-auto">
+        <div className="bg-white rounded-lg p-12 md:p-16 shadow-sm">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">Listo para transformar tu marca</h2>
+          <p className="text-lg mb-10 max-w-xl mx-auto text-gray-600">
             Conecta con los creadores de contenido perfectos para tu marca y acelera tu crecimiento.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
-              className="bg-contala-green text-contala-cream hover:bg-contala-green/90 h-12 px-8 text-lg"
+              className="bg-contala-green text-white hover:bg-contala-green/90 h-12 px-8 text-base rounded-md"
               asChild
             >
               <Link to="/login">Iniciar sesión</Link>
             </Button>
             <Button 
               variant="outline" 
-              className="border-contala-green text-contala-green hover:bg-contala-green hover:text-contala-cream h-12 px-8 text-lg"
+              className="border-gray-200 text-contala-charcoal hover:bg-gray-50 h-12 px-8 text-base rounded-md"
               asChild
             >
               <Link to="/register">Registrarme</Link>
