@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,7 +13,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 20%;
 
-    --primary: 217 71% 23%;
+    --primary: 252 57% 45%; /* Based on #4635B1 */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 0 0% 96%;
@@ -23,15 +22,15 @@
     --muted: 0 0% 96%;
     --muted-foreground: 0 0% 45%;
 
-    --accent: 142 69% 58%;
-    --accent-foreground: 217 71% 23%;
+    --accent: 103 70% 75%; /* Based on #AEEA94 */
+    --accent-foreground: 252 57% 45%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 0 0% 90%;
     --input: 0 0% 90%;
-    --ring: 217 71% 23%;
+    --ring: 252 57% 45%;
 
     --radius: 0.5rem;
   }

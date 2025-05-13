@@ -63,20 +63,20 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				contala: {
-					cream: '#FFFFFF',
-					green: '#1A3A5A', // Actualizado al azul de inbeat
-					pink: '#F97316', // Actualizado al naranja brillante de inbeat
-					"softpink": '#E5DEFF', // Actualizado al suave púrpura de inbeat
-					"darkpink": '#0EA5E9', // Actualizado al azul océano de inbeat
+					cream: '#FFFBCA',    // New cream color
+					green: '#AEEA94',    // New green color
+					pink: '#B771E5',     // New blue/purple color
+					"softpink": '#B771E5', // Same as pink for now
+					"darkpink": '#4635B1', // New dark purple color
 					gold: '#D4AF37',
 					sage: '#9CAF88',
-					brown: '#403E43', // Actualizado al gris carbón de inbeat
-					sand: '#F5DEB3',
-					coral: '#FF7F50',
-					navy: '#0F172A', // Actualizado al azul oscuro de inbeat
-					charcoal: '#111827', // Actualizado a un color carbón más oscuro
-					softgray: '#F8FAFC', // Actualizado a un gris suave similar a inbeat
-					lightgray: '#F1F5F9', // Actualizado a un gris claro similar a inbeat
+					brown: '#4635B1',    // Using dark purple
+					sand: '#FFFBCA',     // Using cream
+					coral: '#B771E5',    // Using blue/purple
+					navy: '#4635B1',     // Using dark purple
+					charcoal: '#4635B1',  // Using dark purple
+					softgray: '#F8FAFC',  // Keeping this light color
+					lightgray: '#F1F5F9', // Keeping this light color
 				}
 			},
 			borderRadius: {
