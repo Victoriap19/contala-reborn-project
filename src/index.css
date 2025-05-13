@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,6 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 20%;
 
+    /* Dark purple (primary) */
     --primary: 252 57% 45%; /* Based on #4635B1 */
     --primary-foreground: 0 0% 100%;
 
@@ -22,6 +24,7 @@
     --muted: 0 0% 96%;
     --muted-foreground: 0 0% 45%;
 
+    /* Light green as accent */
     --accent: 103 70% 75%; /* Based on #AEEA94 */
     --accent-foreground: 252 57% 45%;
 

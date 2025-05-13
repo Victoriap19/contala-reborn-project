@@ -29,7 +29,7 @@ a {
 }
 
 a:hover {
-  color: #4635B1; /* Updated to new dark purple */
+  color: #4635B1; /* Dark purple */
 }
 
 /* Clean button styles */
@@ -72,7 +72,7 @@ button {
   padding: 0 1.5rem;
 }
 
-/* New styles for our updated color palette */
+/* Updated styles for our color palette */
 .bg-contala-gradient {
   background: linear-gradient(135deg, #4635B1, #B771E5);
 }
