@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -121,7 +122,7 @@ export default function Navbar() {
           
           {isLoggedIn ? <>
               <Button variant="outline" onClick={handleLogout} className="border-contala-brown text-contala-brown">
-                Iniciar Sesión
+                Cerrar Sesión
               </Button>
               <Button onClick={handleDashboardClick} className="bg-contala-pink text-white hover:bg-contala-pink/90">
                 Dashboard
@@ -173,10 +174,10 @@ export default function Navbar() {
             <div className="pt-2 border-t border-contala-brown/10">
               {isLoggedIn ? <>
                   <Button variant="outline" className="w-full border-contala-brown text-contala-brown mb-2" onClick={() => {
-              handleLogout();
-              setIsMenuOpen(false);
-            }}>
-                    Iniciar Sesión
+                    handleLogout();
+                    setIsMenuOpen(false);
+                  }}>
+                    Cerrar Sesión
                   </Button>
                   <Button className="w-full bg-contala-pink text-white hover:bg-contala-pink/90" onClick={handleDashboardClick}>
                     Dashboard
