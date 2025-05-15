@@ -85,16 +85,16 @@ export default function Navbar() {
         
         {/* Desktop menu */}
         <div className="hidden md:flex items-center space-x-6">
-          <button onClick={scrollToPricing} className="text-contala-green hover:text-contala-pink transition-colors">
+          <button onClick={scrollToPricing} className="transition-colors text-contala-brown">
             Precios
           </button>
           
-          <button onClick={handleAboutUsClick} className="text-contala-green hover:text-contala-pink transition-colors">
+          <button onClick={handleAboutUsClick} className="transition-colors text-contala-brown">
             Nosotros
           </button>
           
           {isLoggedIn ? <>
-              <Button variant="outline" className="border-contala-green text-contala-green" onClick={handleLogout}>Iniciar sesión</Button>
+              <Button variant="outline" onClick={handleLogout} className="border-contala-green text-contala-pink">Iniciar sesión</Button>
               
             </> : <>
               <Button variant="outline" className="border-contala-green text-contala-green" onClick={handleLoginClick}>
