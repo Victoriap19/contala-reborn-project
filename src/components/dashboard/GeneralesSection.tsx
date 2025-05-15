@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Globe, Search, User } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { motion } from "framer-motion";
 
 type Convocatoria = {
   id: string;
@@ -83,127 +84,166 @@ export function GeneralesSection() {
     });
   };
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-contala-green">Convocatorias Generales</h2>
+    <motion.div 
+      className="space-y-6"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <motion.h2 
+        className="text-2xl font-bold text-contala-darkpink"
+        variants={itemVariants}
+      >
+        Convocatorias Generales
+      </motion.h2>
       
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-contala-green text-lg">Filtrar Convocatorias</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="ubicacion">Ubicación</Label>
-              <Select 
-                value={filtros.ubicacion} 
-                onValueChange={(value) => handleFiltroChange('ubicacion', value)}
-              >
-                <SelectTrigger id="ubicacion">
-                  <SelectValue placeholder="Todas las ubicaciones" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Todos">Todas las ubicaciones</SelectItem>
-                  <SelectItem value="Buenos Aires">Buenos Aires</SelectItem>
-                  <SelectItem value="Córdoba">Córdoba</SelectItem>
-                  <SelectItem value="Rosario">Rosario</SelectItem>
-                  <SelectItem value="Mendoza">Mendoza</SelectItem>
-                  <SelectItem value="Remoto">Remoto</SelectItem>
-                </SelectContent>
-              </Select>
+      <motion.div variants={itemVariants}>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-contala-darkpink text-lg">Filtrar Convocatorias</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="ubicacion">Ubicación</Label>
+                <Select 
+                  value={filtros.ubicacion} 
+                  onValueChange={(value) => handleFiltroChange('ubicacion', value)}
+                >
+                  <SelectTrigger id="ubicacion">
+                    <SelectValue placeholder="Todas las ubicaciones" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Todos">Todas las ubicaciones</SelectItem>
+                    <SelectItem value="Buenos Aires">Buenos Aires</SelectItem>
+                    <SelectItem value="Córdoba">Córdoba</SelectItem>
+                    <SelectItem value="Rosario">Rosario</SelectItem>
+                    <SelectItem value="Mendoza">Mendoza</SelectItem>
+                    <SelectItem value="Remoto">Remoto</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="tipoContenido">Tipo de Contenido</Label>
+                <Select 
+                  value={filtros.tipoContenido} 
+                  onValueChange={(value) => handleFiltroChange('tipoContenido', value)}
+                >
+                  <SelectTrigger id="tipoContenido">
+                    <SelectValue placeholder="Todos los tipos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Todos">Todos los tipos</SelectItem>
+                    <SelectItem value="Reels">Reels</SelectItem>
+                    <SelectItem value="Stories">Stories</SelectItem>
+                    <SelectItem value="TikTok">TikTok</SelectItem>
+                    <SelectItem value="YouTube">YouTube</SelectItem>
+                    <SelectItem value="Fotos">Fotos</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="genero">Género</Label>
+                <Select 
+                  value={filtros.genero} 
+                  onValueChange={(value) => handleFiltroChange('genero', value)}
+                >
+                  <SelectTrigger id="genero">
+                    <SelectValue placeholder="Todos los géneros" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Todos">Todos los géneros</SelectItem>
+                    <SelectItem value="Femenino">Femenino</SelectItem>
+                    <SelectItem value="Masculino">Masculino</SelectItem>
+                    <SelectItem value="No binario">No binario</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="tipoContenido">Tipo de Contenido</Label>
-              <Select 
-                value={filtros.tipoContenido} 
-                onValueChange={(value) => handleFiltroChange('tipoContenido', value)}
-              >
-                <SelectTrigger id="tipoContenido">
-                  <SelectValue placeholder="Todos los tipos" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Todos">Todos los tipos</SelectItem>
-                  <SelectItem value="Reels">Reels</SelectItem>
-                  <SelectItem value="Stories">Stories</SelectItem>
-                  <SelectItem value="TikTok">TikTok</SelectItem>
-                  <SelectItem value="YouTube">YouTube</SelectItem>
-                  <SelectItem value="Fotos">Fotos</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="genero">Género</Label>
-              <Select 
-                value={filtros.genero} 
-                onValueChange={(value) => handleFiltroChange('genero', value)}
-              >
-                <SelectTrigger id="genero">
-                  <SelectValue placeholder="Todos los géneros" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Todos">Todos los géneros</SelectItem>
-                  <SelectItem value="Femenino">Femenino</SelectItem>
-                  <SelectItem value="Masculino">Masculino</SelectItem>
-                  <SelectItem value="No binario">No binario</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </motion.div>
       
       {convocatoriasFiltradas.length === 0 ? (
-        <Card className="border-dashed border-2">
-          <CardHeader className="flex flex-row items-center justify-center p-6">
-            <div className="flex flex-col items-center text-center">
-              <Search className="h-12 w-12 text-contala-green mb-2" />
-              <CardTitle className="text-contala-green">No hay convocatorias</CardTitle>
-              <CardDescription>
-                No se encontraron convocatorias con los filtros seleccionados
-              </CardDescription>
-            </div>
-          </CardHeader>
-        </Card>
+        <motion.div variants={itemVariants}>
+          <Card className="border-dashed border-2">
+            <CardHeader className="flex flex-row items-center justify-center p-6">
+              <div className="flex flex-col items-center text-center">
+                <Search className="h-12 w-12 text-contala-darkpink mb-2" />
+                <CardTitle className="text-contala-darkpink">No hay convocatorias</CardTitle>
+                <CardDescription>
+                  No se encontraron convocatorias con los filtros seleccionados
+                </CardDescription>
+              </div>
+            </CardHeader>
+          </Card>
+        </motion.div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 gap-4"
+          variants={containerVariants}
+        >
           {convocatoriasFiltradas.map((convocatoria) => (
-            <Card key={convocatoria.id}>
-              <CardHeader>
-                <CardTitle className="text-contala-green">{convocatoria.titulo}</CardTitle>
-                <CardDescription>{convocatoria.marca}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <p>{convocatoria.descripcion}</p>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div>
-                    <span className="font-medium">Ubicación:</span> {convocatoria.ubicacion}
+            <motion.div 
+              key={convocatoria.id}
+              variants={itemVariants}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            >
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-contala-darkpink">{convocatoria.titulo}</CardTitle>
+                  <CardDescription>{convocatoria.marca}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <p>{convocatoria.descripcion}</p>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div>
+                      <span className="font-medium">Ubicación:</span> {convocatoria.ubicacion}
+                    </div>
+                    <div>
+                      <span className="font-medium">Contenido:</span> {convocatoria.tipoContenido}
+                    </div>
+                    <div>
+                      <span className="font-medium">Género:</span> {convocatoria.genero}
+                    </div>
+                    <div>
+                      <span className="font-medium">Edad:</span> {convocatoria.edadMin}-{convocatoria.edadMax} años
+                    </div>
                   </div>
-                  <div>
-                    <span className="font-medium">Contenido:</span> {convocatoria.tipoContenido}
-                  </div>
-                  <div>
-                    <span className="font-medium">Género:</span> {convocatoria.genero}
-                  </div>
-                  <div>
-                    <span className="font-medium">Edad:</span> {convocatoria.edadMin}-{convocatoria.edadMax} años
-                  </div>
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button 
-                  className="w-full bg-contala-green text-contala-cream hover:bg-contala-green/90"
-                  onClick={() => handleAplicar(convocatoria.id)}
-                >
-                  <User className="mr-1 h-4 w-4" />
-                  Aplicar a esta convocatoria
-                </Button>
-              </CardFooter>
-            </Card>
+                </CardContent>
+                <CardFooter>
+                  <Button 
+                    className="w-full bg-contala-darkpink text-white hover:bg-contala-darkpink/90"
+                    onClick={() => handleAplicar(convocatoria.id)}
+                  >
+                    <User className="mr-1 h-4 w-4" />
+                    Aplicar a esta convocatoria
+                  </Button>
+                </CardFooter>
+              </Card>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }

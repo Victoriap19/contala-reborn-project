@@ -65,7 +65,7 @@ export function DashboardSidebar({ userType }: SidebarProps) {
       
       {/* Sidebar */}
       <div className={cn(
-        "fixed inset-y-0 left-0 z-50 w-64 bg-contala-green transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0",
+        "fixed inset-y-0 left-0 z-50 w-64 bg-contala-darkpink transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0",
         open ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="flex h-full flex-col overflow-y-auto pt-5 pb-2">
@@ -74,7 +74,7 @@ export function DashboardSidebar({ userType }: SidebarProps) {
             <Logo size="sm" variant="horizontal" />
             <button
               onClick={() => setOpen(false)}
-              className="text-contala-cream hover:text-contala-pink"
+              className="text-white hover:text-contala-cream"
             >
               <X size={24} />
             </button>
@@ -89,18 +89,18 @@ export function DashboardSidebar({ userType }: SidebarProps) {
           {notifications > 0 && (
             <div className="mx-4 mb-6 p-3 bg-contala-pink/20 rounded-lg">
               <div className="flex justify-between items-center mb-2">
-                <h3 className="font-medium text-contala-cream flex items-center">
+                <h3 className="font-medium text-white flex items-center">
                   <Bell className="w-4 h-4 mr-2" />
                   Notificaciones ({notifications})
                 </h3>
                 <button
                   onClick={dismissNotifications}
-                  className="text-xs text-contala-cream/70 hover:text-contala-cream"
+                  className="text-xs text-white/70 hover:text-white"
                 >
                   Marcar leídas
                 </button>
               </div>
-              <p className="text-xs text-contala-cream/80">
+              <p className="text-xs text-white/80">
                 {notifications === 1 ? (
                   "Tienes un mensaje sin leer."
                 ) : (
@@ -127,8 +127,8 @@ export function DashboardSidebar({ userType }: SidebarProps) {
                     className={cn(
                       "group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors",
                       (isActive || isPartialActive)
-                        ? "bg-contala-pink/20 text-contala-cream"
-                        : "text-contala-cream/70 hover:bg-contala-green-dark hover:text-contala-cream"
+                        ? "bg-contala-pink/20 text-white"
+                        : "text-white/70 hover:bg-contala-pink/10 hover:text-white"
                     )}
                     onClick={() => window.innerWidth < 1024 && setOpen(false)}
                   >
@@ -136,8 +136,8 @@ export function DashboardSidebar({ userType }: SidebarProps) {
                       className={cn(
                         "mr-3 h-5 w-5 flex-shrink-0",
                         (isActive || isPartialActive)
-                          ? "text-contala-cream"
-                          : "text-contala-cream/70 group-hover:text-contala-cream"
+                          ? "text-white"
+                          : "text-white/70 group-hover:text-white"
                       )}
                     />
                     {item.name}
@@ -149,16 +149,16 @@ export function DashboardSidebar({ userType }: SidebarProps) {
           
           {/* Chat section */}
           <div className="mx-4 mb-6 p-3 bg-contala-pink/10 rounded-lg">
-            <h3 className="font-medium text-contala-cream flex items-center mb-2">
+            <h3 className="font-medium text-white flex items-center mb-2">
               <MessageSquare className="w-4 h-4 mr-2" />
               Mensajería
             </h3>
-            <p className="text-xs text-contala-cream/80 mb-2">
+            <p className="text-xs text-white/80 mb-2">
               Comunícate directamente con {userType === "marca" ? "creadores" : "marcas"} para resolver dudas.
             </p>
             <button
               onClick={() => toast.info("Funcionalidad de chat próximamente")}
-              className="w-full bg-contala-pink/20 hover:bg-contala-pink/30 text-contala-cream text-xs py-1 px-2 rounded"
+              className="w-full bg-contala-pink/20 hover:bg-contala-pink/30 text-white text-xs py-1 px-2 rounded"
             >
               Abrir mensajes
             </button>
@@ -168,7 +168,7 @@ export function DashboardSidebar({ userType }: SidebarProps) {
           <div className="px-4 mb-4">
             <button
               onClick={handleLogout}
-              className="flex items-center w-full px-2 py-2 text-sm font-medium text-contala-cream/70 rounded-md hover:bg-contala-green-dark hover:text-contala-cream transition-colors"
+              className="flex items-center w-full px-2 py-2 text-sm font-medium text-white/70 rounded-md hover:bg-contala-pink/10 hover:text-white transition-colors"
             >
               <LogOut className="mr-3 h-5 w-5" />
               Cerrar sesión
@@ -183,7 +183,7 @@ export function DashboardSidebar({ userType }: SidebarProps) {
           onClick={() => setOpen(!open)}
           className={cn(
             "p-3 rounded-full shadow-lg transition-colors",
-            open ? "bg-contala-pink text-contala-green" : "bg-contala-green text-contala-cream"
+            open ? "bg-contala-pink text-white" : "bg-contala-darkpink text-white"
           )}
         >
           <Menu size={24} />
