@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -94,8 +95,12 @@ export default function Navbar() {
           </button>
           
           {isLoggedIn ? <>
-              <Button variant="outline" onClick={handleLogout} className="border-contala-brown bg-contala-green text-contala-brown">Iniciar sesión</Button>
-              
+              <Button variant="outline" onClick={handleLogout} className="border-contala-brown text-contala-brown">
+                Cerrar sesión
+              </Button>
+              <Button onClick={handleDashboardClick} className="bg-contala-pink text-white hover:bg-contala-pink/90">
+                Dashboard
+              </Button>
             </> : <>
               <Button variant="outline" className="border-contala-brown text-contala-brown" onClick={handleLoginClick}>
                 Iniciar sesión
