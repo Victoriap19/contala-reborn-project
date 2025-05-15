@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -6,7 +5,6 @@ import { Menu, X } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { useUser } from "@/context/UserContext";
 import { toast } from "sonner";
-
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -32,7 +30,6 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  
   const handleLogout = () => {
     // Remove token
     localStorage.removeItem("token");
@@ -41,11 +38,9 @@ export default function Navbar() {
     // Redirect to home page after logout
     navigate('/');
   };
-  
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-  
   const scrollToPricing = () => {
     const pricingSection = document.getElementById('pricing');
     if (pricingSection) {
@@ -57,23 +52,19 @@ export default function Navbar() {
     }
     setIsMenuOpen(false);
   };
-  
   const handleCreadorClick = () => {
     navigate("/soy-creador");
     setIsMenuOpen(false);
   };
-  
   const handleMarcaClick = () => {
     setUserType("marca");
     navigate("/subscriptions");
     setIsMenuOpen(false);
   };
-  
   const handleAboutUsClick = () => {
     navigate("/about-us");
     setIsMenuOpen(false);
   };
-  
   const handleDashboardClick = () => {
     if (userType === "creador") {
       navigate("/creador-dashboard");
@@ -82,12 +73,10 @@ export default function Navbar() {
     }
     setIsMenuOpen(false);
   };
-  
   const handleLoginClick = () => {
     navigate("/login");
     setIsMenuOpen(false);
   };
-  
   return <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? "py-3 bg-contala-cream/90 shadow-sm nav-blur" : "py-5"}`}>
       <div className="container mx-auto px-4 flex justify-between items-center">
         <Link to="/" className="flex items-center">
@@ -105,10 +94,8 @@ export default function Navbar() {
           </button>
           
           {isLoggedIn ? <>
-              <Button variant="outline" onClick={handleLogout} className="border-contala-brown text-white">Cerrar sesión</Button>
-              <Button onClick={handleDashboardClick} className="bg-contala-pink text-white hover:bg-contala-pink/90">
-                Dashboard
-              </Button>
+              <Button variant="outline" onClick={handleLogout} className="border-contala-brown bg-contala-green text-contala-brown">Iniciar sesión</Button>
+              
             </> : <>
               <Button variant="outline" className="border-contala-brown text-contala-brown" onClick={handleLoginClick}>
                 Iniciar sesión
