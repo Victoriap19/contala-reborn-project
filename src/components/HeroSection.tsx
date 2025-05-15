@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@/context/UserContext";
@@ -34,7 +35,7 @@ export default function HeroSection() {
     setUserType("marca");
     navigate("/subscriptions");
   };
-  return <section className="pt-28 pb-20 bg-white">
+  return <section className="pt-36 pb-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 md:px-6 relative">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className={`transition-all duration-1000 ${isVisible ? "opacity-100" : "opacity-0 translate-y-10"}`}>
