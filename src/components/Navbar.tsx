@@ -13,10 +13,7 @@ export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const {
-    userType,
-    setUserType
-  } = useUser();
+  const { userType } = useUser();
 
   // Update login status from localStorage
   useEffect(() => {
@@ -55,17 +52,6 @@ export default function Navbar() {
     } else {
       navigate('/#pricing');
     }
-    setIsMenuOpen(false);
-  };
-
-  const handleCreadorClick = () => {
-    navigate("/soy-creador");
-    setIsMenuOpen(false);
-  };
-
-  const handleMarcaClick = () => {
-    setUserType("marca");
-    navigate("/subscriptions");
     setIsMenuOpen(false);
   };
 
@@ -120,25 +106,20 @@ export default function Navbar() {
             Nosotros
           </button>
           
-          {isLoggedIn ? <>
-              <Button variant="outline" onClick={handleLogout} className="border-contala-brown text-contala-brown">
-                Cerrar Sesión
-              </Button>
+          {isLoggedIn ? (
+            <>
               <Button onClick={handleDashboardClick} className="bg-contala-pink text-white hover:bg-contala-pink/90">
                 Dashboard
               </Button>
-            </> : <>
-              <Button variant="outline" className="border-contala-brown text-contala-brown" onClick={handleLoginClick}>
-                Iniciar sesión
+              <Button variant="outline" onClick={handleLogout} className="border-contala-brown text-contala-brown">
+                Cerrar Sesión
               </Button>
-              <Button onClick={handleMarcaClick} className="bg-contala-pink text-white hover:bg-contala-pink/90">
-                Soy Marca
-              </Button>
-            </>}
-          
-          {!isLoggedIn && <Button variant="ghost" className="text-contala-brown hover:text-contala-pink" onClick={handleCreadorClick}>
-              Soy Creador
-            </Button>}
+            </>
+          ) : (
+            <Button variant="outline" className="border-contala-brown text-contala-brown" onClick={handleLoginClick}>
+              Iniciar Sesión
+            </Button>
+          )}
         </div>
         
         {/* Mobile menu button */}
@@ -148,7 +129,8 @@ export default function Navbar() {
       </div>
       
       {/* Mobile menu */}
-      {isMenuOpen && <div className="md:hidden bg-contala-cream/95 nav-blur shadow-md py-4 px-4 absolute w-full">
+      {isMenuOpen && (
+        <div className="md:hidden bg-contala-cream/95 nav-blur shadow-md py-4 px-4 absolute w-full">
           <div className="flex flex-col space-y-4">
             {isNotHomePage && (
               <Button 
@@ -172,29 +154,26 @@ export default function Navbar() {
             </button>
             
             <div className="pt-2 border-t border-contala-brown/10">
-              {isLoggedIn ? <>
-                  <Button variant="outline" className="w-full border-contala-brown text-contala-brown mb-2" onClick={() => {
+              {isLoggedIn ? (
+                <>
+                  <Button className="w-full bg-contala-pink text-white hover:bg-contala-pink/90 mb-2" onClick={handleDashboardClick}>
+                    Dashboard
+                  </Button>
+                  <Button variant="outline" className="w-full border-contala-brown text-contala-brown" onClick={() => {
                     handleLogout();
                     setIsMenuOpen(false);
                   }}>
                     Cerrar Sesión
                   </Button>
-                  <Button className="w-full bg-contala-pink text-white hover:bg-contala-pink/90" onClick={handleDashboardClick}>
-                    Dashboard
-                  </Button>
-                </> : <>
-                  <Button variant="outline" className="w-full border-contala-brown text-contala-brown mb-2" onClick={handleLoginClick}>
-                    Iniciar sesión
-                  </Button>
-                  <Button className="w-full bg-contala-pink text-white hover:bg-contala-pink/90 mb-2" onClick={handleMarcaClick}>
-                    Soy Marca
-                  </Button>
-                  <Button variant="ghost" className="w-full text-contala-brown hover:text-contala-pink" onClick={handleCreadorClick}>
-                    Soy Creador
-                  </Button>
-                </>}
+                </>
+              ) : (
+                <Button variant="outline" className="w-full border-contala-brown text-contala-brown" onClick={handleLoginClick}>
+                  Iniciar Sesión
+                </Button>
+              )}
             </div>
           </div>
-        </div>}
+        </div>
+      )}
     </nav>;
 }
