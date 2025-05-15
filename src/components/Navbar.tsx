@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -5,6 +6,7 @@ import { Menu, X } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { useUser } from "@/context/UserContext";
 import { toast } from "sonner";
+
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -30,6 +32,7 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+  
   const handleLogout = () => {
     // Remove token
     localStorage.removeItem("token");
@@ -38,9 +41,11 @@ export default function Navbar() {
     // Redirect to home page after logout
     navigate('/');
   };
+  
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+  
   const scrollToPricing = () => {
     const pricingSection = document.getElementById('pricing');
     if (pricingSection) {
@@ -52,19 +57,23 @@ export default function Navbar() {
     }
     setIsMenuOpen(false);
   };
+  
   const handleCreadorClick = () => {
     navigate("/soy-creador");
     setIsMenuOpen(false);
   };
+  
   const handleMarcaClick = () => {
     setUserType("marca");
     navigate("/subscriptions");
     setIsMenuOpen(false);
   };
+  
   const handleAboutUsClick = () => {
     navigate("/about-us");
     setIsMenuOpen(false);
   };
+  
   const handleDashboardClick = () => {
     if (userType === "creador") {
       navigate("/creador-dashboard");
@@ -73,10 +82,12 @@ export default function Navbar() {
     }
     setIsMenuOpen(false);
   };
+  
   const handleLoginClick = () => {
     navigate("/login");
     setIsMenuOpen(false);
   };
+  
   return <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? "py-3 bg-contala-cream/90 shadow-sm nav-blur" : "py-5"}`}>
       <div className="container mx-auto px-4 flex justify-between items-center">
         <Link to="/" className="flex items-center">
@@ -94,24 +105,26 @@ export default function Navbar() {
           </button>
           
           {isLoggedIn ? <>
-              <Button variant="outline" onClick={handleLogout} className="border-contala-green text-contala-pink">Iniciar sesión</Button>
-              
+              <Button variant="outline" onClick={handleLogout} className="border-contala-brown text-white">Cerrar sesión</Button>
+              <Button onClick={handleDashboardClick} className="bg-contala-pink text-white hover:bg-contala-pink/90">
+                Dashboard
+              </Button>
             </> : <>
-              <Button variant="outline" className="border-contala-green text-contala-green" onClick={handleLoginClick}>
+              <Button variant="outline" className="border-contala-brown text-contala-brown" onClick={handleLoginClick}>
                 Iniciar sesión
               </Button>
-              <Button onClick={handleMarcaClick} className="bg-contala-pink text-contala-green hover:bg-contala-pink/90">
+              <Button onClick={handleMarcaClick} className="bg-contala-pink text-white hover:bg-contala-pink/90">
                 Soy Marca
               </Button>
             </>}
           
-          {!isLoggedIn && <Button variant="ghost" className="text-contala-green hover:text-contala-pink" onClick={handleCreadorClick}>
+          {!isLoggedIn && <Button variant="ghost" className="text-contala-brown hover:text-contala-pink" onClick={handleCreadorClick}>
               Soy Creador
             </Button>}
         </div>
         
         {/* Mobile menu button */}
-        <button onClick={toggleMenu} className="md:hidden text-contala-green">
+        <button onClick={toggleMenu} className="md:hidden text-contala-brown">
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
@@ -119,33 +132,33 @@ export default function Navbar() {
       {/* Mobile menu */}
       {isMenuOpen && <div className="md:hidden bg-contala-cream/95 nav-blur shadow-md py-4 px-4 absolute w-full">
           <div className="flex flex-col space-y-4">
-            <button onClick={scrollToPricing} className="text-contala-green hover:text-contala-pink transition-colors py-2 text-left">
+            <button onClick={scrollToPricing} className="text-contala-brown hover:text-contala-pink transition-colors py-2 text-left">
               Precios
             </button>
             
-            <button onClick={handleAboutUsClick} className="text-contala-green hover:text-contala-pink transition-colors py-2 text-left">
+            <button onClick={handleAboutUsClick} className="text-contala-brown hover:text-contala-pink transition-colors py-2 text-left">
               Nosotros
             </button>
             
-            <div className="pt-2 border-t border-contala-green/10">
+            <div className="pt-2 border-t border-contala-brown/10">
               {isLoggedIn ? <>
-                  <Button variant="outline" className="w-full border-contala-green text-contala-green mb-2" onClick={() => {
+                  <Button variant="outline" className="w-full border-contala-brown text-contala-brown mb-2" onClick={() => {
               handleLogout();
               setIsMenuOpen(false);
             }}>
                     Cerrar sesión
                   </Button>
-                  <Button className="w-full bg-contala-pink text-contala-green hover:bg-contala-pink/90" onClick={handleDashboardClick}>
+                  <Button className="w-full bg-contala-pink text-white hover:bg-contala-pink/90" onClick={handleDashboardClick}>
                     Dashboard
                   </Button>
                 </> : <>
-                  <Button variant="outline" className="w-full border-contala-green text-contala-green mb-2" onClick={handleLoginClick}>
+                  <Button variant="outline" className="w-full border-contala-brown text-contala-brown mb-2" onClick={handleLoginClick}>
                     Iniciar sesión
                   </Button>
-                  <Button className="w-full bg-contala-pink text-contala-green hover:bg-contala-pink/90 mb-2" onClick={handleMarcaClick}>
+                  <Button className="w-full bg-contala-pink text-white hover:bg-contala-pink/90 mb-2" onClick={handleMarcaClick}>
                     Soy Marca
                   </Button>
-                  <Button variant="ghost" className="w-full text-contala-green hover:text-contala-pink" onClick={handleCreadorClick}>
+                  <Button variant="ghost" className="w-full text-contala-brown hover:text-contala-pink" onClick={handleCreadorClick}>
                     Soy Creador
                   </Button>
                 </>}
