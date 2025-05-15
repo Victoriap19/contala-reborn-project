@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff, Facebook, Github } from "lucide-react";
+import { Eye, EyeOff, Facebook } from "lucide-react";
 import { 
   Form,
   FormControl,
@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
 import { useUser } from "@/context/UserContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { motion } from "framer-motion";
 
 const formSchema = z.object({
   username: z.string().min(1, {
@@ -28,6 +29,16 @@ const formSchema = z.object({
     message: "Por favor ingresa tu contraseña.",
   }),
 });
+
+// Animation variants
+const fadeIn = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.4, ease: "easeOut" }
+  }
+};
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -57,7 +68,7 @@ export default function Login() {
     
     toast({
       title: "Inicio de sesión exitoso",
-      description: "¡Bienvenido de nuevo!",
+      description: `¡Bienvenido de nuevo! Has iniciado sesión como ${activeTab === "marca" ? "Marca" : "Creador"}`,
     });
     
     // Redirect to appropriate dashboard based on user type
@@ -69,7 +80,7 @@ export default function Login() {
     console.log(`Login with ${provider}`, "userType:", activeTab);
     toast({
       title: `Iniciando sesión con ${provider}`,
-      description: "Redirigiendo...",
+      description: `Como ${activeTab === "marca" ? "Marca" : "Creador"}`,
     });
     
     // Save auth token to simulate login
@@ -83,7 +94,7 @@ export default function Login() {
     setTimeout(() => {
       toast({
         title: "Inicio de sesión exitoso",
-        description: "Bienvenido a Contala",
+        description: `Bienvenido a Contala como ${activeTab === "marca" ? "Marca" : "Creador"}`,
       });
       const redirectPath = activeTab === "marca" ? "/marca-dashboard" : "/creador-dashboard";
       navigate(redirectPath);
@@ -91,16 +102,21 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-contala-cream flex items-center justify-center px-4">
+    <motion.div 
+      className="min-h-screen bg-[#FFFBCA] flex items-center justify-center px-4"
+      initial="hidden"
+      animate="visible"
+      variants={fadeIn}
+    >
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
           <Link to="/" className="inline-block">
-            <h2 className="text-3xl font-bold text-contala-green">Contala</h2>
+            <h2 className="text-3xl font-bold text-[#4635B1]">Contala</h2>
           </Link>
         </div>
         
-        <div className="bg-contala-green rounded-3xl p-8 md:p-10 shadow-xl">
-          <h1 className="text-2xl md:text-3xl font-bold text-contala-cream mb-6 text-center">
+        <div className={`rounded-3xl p-8 md:p-10 shadow-xl ${activeTab === "marca" ? "bg-[#4635B1]" : "bg-[#B771E5]"}`}>
+          <h1 className="text-2xl md:text-3xl font-bold text-white mb-6 text-center">
             Iniciar sesión
           </h1>
           
@@ -109,11 +125,17 @@ export default function Login() {
             onValueChange={(value) => setActiveTab(value as "marca" | "creador")}
             className="mb-6"
           >
-            <TabsList className="grid w-full grid-cols-2 bg-contala-green-dark">
-              <TabsTrigger value="marca" className="data-[state=active]:bg-contala-pink data-[state=active]:text-contala-green">
+            <TabsList className="grid w-full grid-cols-2 bg-white/10">
+              <TabsTrigger 
+                value="marca" 
+                className="data-[state=active]:bg-[#AEEA94] data-[state=active]:text-[#4635B1] text-white"
+              >
                 Soy Marca
               </TabsTrigger>
-              <TabsTrigger value="creador" className="data-[state=active]:bg-contala-pink data-[state=active]:text-contala-green">
+              <TabsTrigger 
+                value="creador" 
+                className="data-[state=active]:bg-[#FFFBCA] data-[state=active]:text-[#B771E5] text-white"
+              >
                 Soy Creador
               </TabsTrigger>
             </TabsList>
@@ -124,7 +146,7 @@ export default function Login() {
             <Button 
               type="button" 
               variant="outline" 
-              className="bg-white text-contala-green border-none hover:bg-gray-100 flex items-center justify-center gap-2"
+              className="bg-white text-[#4635B1] border-none hover:bg-gray-100 flex items-center justify-center gap-2"
               onClick={() => handleSocialLogin("Google")}
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px">
@@ -149,9 +171,9 @@ export default function Login() {
           
           {/* Divider */}
           <div className="flex items-center my-6">
-            <Separator className="flex-grow bg-contala-cream/30" />
-            <span className="px-3 text-sm text-contala-cream">o</span>
-            <Separator className="flex-grow bg-contala-cream/30" />
+            <Separator className="flex-grow bg-white/30" />
+            <span className="px-3 text-sm text-white">o</span>
+            <Separator className="flex-grow bg-white/30" />
           </div>
           
           <Form {...form}>
@@ -161,12 +183,12 @@ export default function Login() {
                 name="username"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
-                    <FormLabel className="text-contala-pink text-sm">Usuario</FormLabel>
+                    <FormLabel className="text-white text-sm">Usuario</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         placeholder="Nombre de usuario"
-                        className="bg-contala-cream text-contala-green placeholder:text-contala-green/50 border-none"
+                        className="bg-white text-[#4635B1] placeholder:text-[#4635B1]/50 border-none"
                       />
                     </FormControl>
                     <FormMessage />
@@ -179,19 +201,19 @@ export default function Login() {
                 name="password"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
-                    <FormLabel className="text-contala-pink text-sm">Contraseña</FormLabel>
+                    <FormLabel className="text-white text-sm">Contraseña</FormLabel>
                     <div className="relative">
                       <FormControl>
                         <Input
                           {...field}
                           type={showPassword ? "text" : "password"}
                           placeholder="Contraseña"
-                          className="bg-contala-cream text-contala-green placeholder:text-contala-green/50 border-none pr-10"
+                          className="bg-white text-[#4635B1] placeholder:text-[#4635B1]/50 border-none pr-10"
                         />
                       </FormControl>
                       <button
                         type="button"
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-contala-green"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#4635B1]"
                         onClick={() => setShowPassword(!showPassword)}
                         aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                       >
@@ -205,7 +227,11 @@ export default function Login() {
               
               <Button 
                 type="submit" 
-                className="w-full bg-contala-pink hover:bg-white text-contala-green font-bold py-3 rounded-lg transition-colors mt-2"
+                className={`w-full font-bold py-3 rounded-lg transition-colors mt-2 ${
+                  activeTab === "marca" 
+                    ? "bg-[#AEEA94] hover:bg-[#AEEA94]/90 text-[#4635B1]" 
+                    : "bg-[#FFFBCA] hover:bg-[#FFFBCA]/90 text-[#B771E5]"
+                }`}
               >
                 Entrar
               </Button>
@@ -213,12 +239,15 @@ export default function Login() {
           </Form>
           
           <div className="mt-6 text-center">
-            <Link to={activeTab === "marca" ? "/subscriptions" : "/register?type=creador"} className="text-contala-pink hover:text-white hover:underline transition-colors">
+            <Link 
+              to={activeTab === "marca" ? "/subscriptions" : "/register?type=creador"} 
+              className="text-white hover:underline transition-colors"
+            >
               ¿No tenés cuenta? Registrate como {activeTab === "marca" ? "Marca" : "Creador"}
             </Link>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

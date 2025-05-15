@@ -15,7 +15,7 @@ const AuthGuard = ({ children, userType }: AuthGuardProps) => {
   const { toast } = useToast();
   const location = useLocation();
   const navigate = useNavigate();
-  const { userType: currentUserType } = useUser();
+  const { userType: currentUserType, setUserType } = useUser();
 
   useEffect(() => {
     // Check if the user is authenticated
@@ -34,37 +34,23 @@ const AuthGuard = ({ children, userType }: AuthGuardProps) => {
     }
     
     // If authenticated but wrong user type, redirect to the appropriate dashboard
-    if (isLoggedIn) {
-      // If marca tries to access creador dashboard
-      if (currentUserType === "marca" && userType === "creador") {
-        toast({
-          title: "Acceso restringido",
-          description: "Esta sección es solo para creadores",
-          variant: "destructive",
-        });
-        navigate("/marca-dashboard");
-        return;
-      }
+    if (isLoggedIn && currentUserType !== userType) {
+      // Set the correct user type based on the requested page
+      setUserType(userType);
       
-      // If creador tries to access marca dashboard
-      if (currentUserType === "creador" && userType === "marca") {
-        toast({
-          title: "Acceso restringido",
-          description: "Esta sección es solo para marcas",
-          variant: "destructive",
-        });
-        navigate("/creador-dashboard");
-        return;
-      }
+      toast({
+        title: `Cambiando a modo ${userType === 'marca' ? 'Marca' : 'Creador'}`,
+        description: `Has iniciado sesión como ${userType === 'marca' ? 'Marca' : 'Creador'}`,
+      });
     }
-  }, [toast, location, navigate, currentUserType, userType]);
+  }, [toast, location, navigate, currentUserType, userType, setUserType]);
 
   // Show loading state while checking authentication
   if (isAuthenticated === null) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-contala-cream">
-        <Loader2 className="h-8 w-8 text-contala-green animate-spin" />
-        <p className="mt-4 text-contala-green">Verificando sesión...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FFFBCA]">
+        <Loader2 className="h-8 w-8 text-[#4635B1] animate-spin" />
+        <p className="mt-4 text-[#4635B1]">Verificando sesión...</p>
       </div>
     );
   }
@@ -74,7 +60,7 @@ const AuthGuard = ({ children, userType }: AuthGuardProps) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Render children if authenticated and correct user type
+  // Render children if authenticated
   return <>{children}</>;
 };
 

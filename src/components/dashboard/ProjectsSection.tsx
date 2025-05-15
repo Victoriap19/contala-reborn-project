@@ -1,5 +1,6 @@
+
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -11,6 +12,7 @@ import { ProjectDetails } from "./ProjectDetails";
 import { ProjectProposal } from "./ProjectProposal";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useUser } from "@/context/UserContext";
+import { motion } from "framer-motion";
 
 type Project = {
   id: string;
@@ -22,7 +24,28 @@ type Project = {
   description: string;
 };
 
-const projectsData: Project[] = [
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.3 }
+  }
+};
+
+// Datos de proyectos para marcas (todos los estados)
+const marcaProjectsData: Project[] = [
   { id: "1", title: "Campaña Instagram", creator: "Laura Rodríguez", status: "accepted", date: "12/04/2025", budget: 25000, description: "Creación de contenido para campaña de producto nuevo." },
   { id: "2", title: "Video Explicativo", creator: "Carlos Gómez", status: "sent", date: "08/04/2025", budget: 30000, description: "Video explicativo de uso del producto para canal de YouTube." },
   { id: "3", title: "Fotografía Productos", creator: "Ana Martínez", status: "draft", date: "05/04/2025", description: "Sesión de fotografías para catálogo de productos." },
@@ -32,7 +55,7 @@ const projectsData: Project[] = [
 ];
 
 // Datos de proyectos para creadores (solo los aceptados/en curso y completados)
-const creatorProjectsData: Project[] = [
+const creadorProjectsData: Project[] = [
   { id: "1", title: "Campaña Instagram", creator: "SummerVibes", status: "accepted", date: "12/04/2025", budget: 25000, description: "Creación de contenido para campaña de producto nuevo." },
   { id: "5", title: "Reel Promocional", creator: "EventosNow", status: "completed", date: "20/03/2025", budget: 18000, description: "Reel promocional para lanzamiento de temporada." },
   { id: "6", title: "Post Redes Sociales", creator: "FashionStyle", status: "accepted", date: "15/03/2025", budget: 12000, description: "Diseño de 10 posts para redes sociales." },
@@ -54,7 +77,7 @@ const ProjectStatusBadge = ({ status }: { status: Project["status"] }) => {
     <Badge variant={config.variant as any} className={
       status === "accepted" ? "bg-green-500" : 
       status === "rejected" ? "bg-red-500" : 
-      status === "completed" ? "bg-contala-green" :
+      status === "completed" ? "bg-[#4635B1]" :
       ""
     }>
       {config.label}
@@ -63,8 +86,8 @@ const ProjectStatusBadge = ({ status }: { status: Project["status"] }) => {
 };
 
 // Additional Action Button Component
-const ActionButton = ({ project, onAction, userRole }: { project: Project; onAction: (action: string, project: Project) => void; userRole: "client" | "creator" }) => {
-  if (userRole === "creator") {
+const ActionButton = ({ project, onAction, userRole }: { project: Project; onAction: (action: string, project: Project) => void; userRole: "marca" | "creador" }) => {
+  if (userRole === "creador") {
     // Botones específicos para creadores
     if (project.status === "accepted") {
       return (
@@ -98,7 +121,7 @@ const ActionButton = ({ project, onAction, userRole }: { project: Project; onAct
     );
   }
   
-  // Para clientes se mantiene la lógica original
+  // Para marcas se mantiene la lógica original
   if (project.status === "draft") {
     return (
       <Button variant="outline" size="sm" onClick={() => onAction("send", project)}>
@@ -160,7 +183,7 @@ const ActionButton = ({ project, onAction, userRole }: { project: Project; onAct
 
 export function ProjectsSection() {
   const { userType } = useUser();
-  const isCreator = userType === "creador";
+  const isCreador = userType === "creador";
   
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [chatOpen, setChatOpen] = useState(false);
@@ -170,7 +193,7 @@ export function ProjectsSection() {
   const [activeTab, setActiveTab] = useState<string>("all");
   
   // Usar el conjunto de datos correcto según el rol del usuario
-  const allProjectsData = isCreator ? creatorProjectsData : projectsData;
+  const allProjectsData = isCreador ? creadorProjectsData : marcaProjectsData;
   
   // Filtered projects based on active tab
   const filteredProjects = activeTab === "all" 
@@ -203,9 +226,9 @@ export function ProjectsSection() {
 
   // Solo mostrar pestañas relevantes según el rol
   const getTabs = () => {
-    if (isCreator) {
+    if (isCreador) {
       return (
-        <TabsList className="bg-contala-cream/50 border border-contala-green/10">
+        <TabsList className="bg-[#FFFBCA]/50 border border-[#B771E5]/10">
           <TabsTrigger value="all">Todos</TabsTrigger>
           <TabsTrigger value="accepted">En curso</TabsTrigger>
           <TabsTrigger value="completed">Completados</TabsTrigger>
@@ -214,7 +237,7 @@ export function ProjectsSection() {
     }
     
     return (
-      <TabsList className="bg-contala-cream/50 border border-contala-green/10">
+      <TabsList className="bg-[#AEEA94]/50 border border-[#4635B1]/10">
         <TabsTrigger value="all">Todos</TabsTrigger>
         <TabsTrigger value="draft">Borradores</TabsTrigger>
         <TabsTrigger value="sent">Enviados</TabsTrigger>
@@ -226,91 +249,104 @@ export function ProjectsSection() {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div 
+      className="space-y-6"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-3xl font-bold text-contala-green">Tus Proyectos</h2>
+          <h2 className="text-3xl font-bold text-[#4635B1]">Tus Proyectos</h2>
           <p className="text-gray-500">
-            {isCreator 
+            {isCreador 
               ? "Administra y haz seguimiento de tus proyectos en curso"
               : "Administra y haz seguimiento de tus propuestas"}
           </p>
         </div>
+        {/* Solo para marcas: crear nuevo proyecto */}
+        {!isCreador && (
+          <Button className="bg-[#4635B1] hover:bg-[#4635B1]/90 text-white">
+            + Nuevo Proyecto
+          </Button>
+        )}
       </div>
       
       <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
         {getTabs()}
         
         <TabsContent value={activeTab} className="mt-4">
-          <Card className="vintage-card">
-            <CardHeader className="pb-0">
-              <CardTitle>
-                {isCreator 
-                  ? `Proyectos ${activeTab !== "all" ? (activeTab === "accepted" ? "- En Curso" : "- Completados") : ""}`
-                  : `Proyectos ${activeTab !== "all" ? `- ${activeTab}` : ""}`}
-              </CardTitle>
-              <CardDescription>
-                {isCreator
-                  ? (activeTab === "all" ? "Todos tus proyectos activos" :
-                     activeTab === "accepted" ? "Proyectos que estás desarrollando actualmente" :
-                     "Proyectos que ya has completado")
-                  : (activeTab === "all" ? "Todos tus proyectos" : 
-                     activeTab === "draft" ? "Borradores de propuestas pendientes de enviar" :
-                     activeTab === "sent" ? "Propuestas enviadas esperando respuesta" :
-                     activeTab === "accepted" ? "Propuestas aceptadas por creadores" :
-                     activeTab === "rejected" ? "Propuestas rechazadas por creadores" :
-                     "Proyectos completados")}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="table-container">
-                <ScrollArea className="max-h-[500px]">
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Proyecto</TableHead>
-                          <TableHead>{isCreator ? "Cliente" : "Creador"}</TableHead>
-                          <TableHead>Fecha</TableHead>
-                          <TableHead>Presupuesto</TableHead>
-                          <TableHead>Estado</TableHead>
-                          <TableHead className="text-right">Acciones</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {filteredProjects.length > 0 ? (
-                          filteredProjects.map((project) => (
-                            <TableRow key={project.id}>
-                              <TableCell className="font-medium">{project.title}</TableCell>
-                              <TableCell>{project.creator}</TableCell>
-                              <TableCell>{project.date}</TableCell>
-                              <TableCell>{project.budget ? `$${project.budget.toLocaleString()}` : "-"}</TableCell>
-                              <TableCell>
-                                <ProjectStatusBadge status={project.status} />
-                              </TableCell>
-                              <TableCell className="text-right">
-                                <ActionButton 
-                                  project={project} 
-                                  onAction={handleProjectAction} 
-                                  userRole={isCreator ? "creator" : "client"}
-                                />
+          <motion.div variants={itemVariants}>
+            <Card className="border border-[#4635B1]/10 shadow-sm">
+              <CardHeader className="pb-0">
+                <CardTitle className={isCreador ? "text-[#B771E5]" : "text-[#4635B1]"}>
+                  {isCreador 
+                    ? `Proyectos ${activeTab !== "all" ? (activeTab === "accepted" ? "- En Curso" : "- Completados") : ""}`
+                    : `Proyectos ${activeTab !== "all" ? `- ${activeTab}` : ""}`}
+                </CardTitle>
+                <CardDescription>
+                  {isCreador
+                    ? (activeTab === "all" ? "Todos tus proyectos activos" :
+                       activeTab === "accepted" ? "Proyectos que estás desarrollando actualmente" :
+                       "Proyectos que ya has completado")
+                    : (activeTab === "all" ? "Todos tus proyectos" : 
+                       activeTab === "draft" ? "Borradores de propuestas pendientes de enviar" :
+                       activeTab === "sent" ? "Propuestas enviadas esperando respuesta" :
+                       activeTab === "accepted" ? "Propuestas aceptadas por creadores" :
+                       activeTab === "rejected" ? "Propuestas rechazadas por creadores" :
+                       "Proyectos completados")}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="table-container">
+                  <ScrollArea className="max-h-[500px]">
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Proyecto</TableHead>
+                            <TableHead>{isCreador ? "Cliente" : "Creador"}</TableHead>
+                            <TableHead>Fecha</TableHead>
+                            <TableHead>Presupuesto</TableHead>
+                            <TableHead>Estado</TableHead>
+                            <TableHead className="text-right">Acciones</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {filteredProjects.length > 0 ? (
+                            filteredProjects.map((project) => (
+                              <TableRow key={project.id} className="hover:bg-[#FFFBCA]/10">
+                                <TableCell className="font-medium">{project.title}</TableCell>
+                                <TableCell>{project.creator}</TableCell>
+                                <TableCell>{project.date}</TableCell>
+                                <TableCell>{project.budget ? `$${project.budget.toLocaleString()}` : "-"}</TableCell>
+                                <TableCell>
+                                  <ProjectStatusBadge status={project.status} />
+                                </TableCell>
+                                <TableCell className="text-right">
+                                  <ActionButton 
+                                    project={project} 
+                                    onAction={handleProjectAction} 
+                                    userRole={isCreador ? "creador" : "marca"}
+                                  />
+                                </TableCell>
+                              </TableRow>
+                            ))
+                          ) : (
+                            <TableRow>
+                              <TableCell colSpan={6} className="text-center py-10 text-gray-500">
+                                No hay proyectos {activeTab !== "all" ? `en estado ${activeTab}` : ""}
                               </TableCell>
                             </TableRow>
-                          ))
-                        ) : (
-                          <TableRow>
-                            <TableCell colSpan={6} className="text-center py-10 text-gray-500">
-                              No hay proyectos {activeTab !== "all" ? `en estado ${activeTab}` : ""}
-                            </TableCell>
-                          </TableRow>
-                        )}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </ScrollArea>
-              </div>
-            </CardContent>
-          </Card>
+                          )}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </ScrollArea>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
         </TabsContent>
       </Tabs>
 
@@ -392,10 +428,10 @@ export function ProjectsSection() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {isCreator ? "Entrega del Proyecto" : "Pago de Proyecto"}
+              {isCreador ? "Entrega del Proyecto" : "Pago de Proyecto"}
             </DialogTitle>
             <DialogDescription>
-              {isCreator 
+              {isCreador 
                 ? "Confirma la entrega del proyecto para finalizar" 
                 : `Confirma el pago para iniciar el proyecto con ${selectedProject?.creator}`}
             </DialogDescription>
@@ -406,7 +442,7 @@ export function ProjectsSection() {
               <span>{selectedProject?.title}</span>
             </div>
             <div className="flex justify-between">
-              <span className="font-medium">{isCreator ? "Cliente" : "Creador"}:</span>
+              <span className="font-medium">{isCreador ? "Cliente" : "Creador"}:</span>
               <span>{selectedProject?.creator}</span>
             </div>
             <div className="flex justify-between">
@@ -414,13 +450,13 @@ export function ProjectsSection() {
               <span className="font-bold">${selectedProject?.budget?.toLocaleString()}</span>
             </div>
             
-            <div className="border rounded-lg p-4 bg-contala-cream/50 mt-4">
-              <h4 className="font-bold text-contala-green flex items-center mb-2">
+            <div className="border rounded-lg p-4 bg-[#FFFBCA]/50 mt-4">
+              <h4 className="font-bold text-[#4635B1] flex items-center mb-2">
                 <Clock className="h-4 w-4 mr-2" /> 
-                {isCreator ? "Proceso de Entrega" : "Proceso de Pago"}
+                {isCreador ? "Proceso de Entrega" : "Proceso de Pago"}
               </h4>
               <p className="text-sm text-gray-600">
-                {isCreator 
+                {isCreador 
                   ? "Una vez confirmada la entrega, el cliente recibirá una notificación para revisar y aprobar el trabajo. El pago se liberará una vez aprobado."
                   : "El pago se procesará a través de MercadoPago. Una vez confirmado, el creador recibirá una notificación para iniciar el proyecto."}
               </p>
@@ -428,12 +464,12 @@ export function ProjectsSection() {
           </div>
           <div className="flex justify-end gap-3">
             <Button variant="outline" onClick={() => setPaymentOpen(false)}>Cancelar</Button>
-            <Button className="bg-contala-green">
-              {isCreator ? "Confirmar Entrega" : "Proceder al Pago"}
+            <Button className={isCreador ? "bg-[#B771E5]" : "bg-[#4635B1]"}>
+              {isCreador ? "Confirmar Entrega" : "Proceder al Pago"}
             </Button>
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </motion.div>
   );
 }

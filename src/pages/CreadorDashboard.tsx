@@ -34,41 +34,21 @@ const pageVariants = {
   }
 };
 
-// Animation variants for staggered children
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 }
-};
-
 export default function CreadorDashboard() {
   const location = useLocation();
   const navigate = useNavigate();
   const path = location.pathname;
-  const { userType } = useUser();
+  const { userType, setUserType } = useUser();
   
   // Ensure we're in creador user mode
   useEffect(() => {
     if (userType !== "creador") {
-      toast.error("Esta página es solo para creadores. Redirigiendo al dashboard de marcas.");
-      navigate("/marca-dashboard");
+      setUserType("creador");
     }
-  }, [userType, navigate]);
+  }, [userType, setUserType]);
   
   // Simulate email notifications when receiving messages or proposals
   useEffect(() => {
-    // For creators only
-    if (userType !== "creador") return;
-
     // Simulate receiving a proposal from a user
     const proposalTimer = window.setTimeout(() => {
       toast(
@@ -87,7 +67,7 @@ export default function CreadorDashboard() {
     return () => {
       window.clearTimeout(proposalTimer);
     };
-  }, [userType]);
+  }, []);
   
   // Determine which section to show based on the path
   const getActiveSection = () => {
@@ -119,40 +99,14 @@ export default function CreadorDashboard() {
           variants={pageVariants}
         >
           {/* Decorative elements - improved contrast and animation */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-contala-darkpink/10 rounded-full blur-3xl -z-10 animate-pulse-slow"></div>
-          <div className="absolute bottom-20 left-10 w-48 h-48 bg-contala-pink/5 rounded-full blur-3xl -z-10 animate-pulse-slow"></div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-[#B771E5]/10 rounded-full blur-3xl -z-10 animate-pulse-slow"></div>
+          <div className="absolute bottom-20 left-10 w-48 h-48 bg-[#FFFBCA]/20 rounded-full blur-3xl -z-10 animate-pulse-slow"></div>
           
-          {/* Render different sections with animation */}
-          <motion.div 
-            variants={containerVariants}
-            initial="hidden"
-            animate="show"
-            className="w-full"
-          >
-            {/* Render different profile component based on user type */}
-            {activeSection === "perfil" && (
-              <motion.div variants={itemVariants}>
-                <CreatorProfile />
-              </motion.div>
-            )}
-            
-            {/* Creator user sections */}
-            {activeSection === "proyectos" && (
-              <motion.div variants={itemVariants}>
-                <ProjectsSection />
-              </motion.div>
-            )}
-            {activeSection === "pendientes" && (
-              <motion.div variants={itemVariants}>
-                <PendientesSection />
-              </motion.div>
-            )}
-            {activeSection === "generales" && (
-              <motion.div variants={itemVariants}>
-                <GeneralesSection />
-              </motion.div>
-            )}
-          </motion.div>
+          {/* Render the appropriate section based on the path */}
+          {activeSection === "perfil" && <CreatorProfile />}
+          {activeSection === "proyectos" && <ProjectsSection />}
+          {activeSection === "pendientes" && <PendientesSection />}
+          {activeSection === "generales" && <GeneralesSection />}
         </motion.div>
       </div>
     </SidebarProvider>

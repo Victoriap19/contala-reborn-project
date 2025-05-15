@@ -35,35 +35,18 @@ const pageVariants = {
   }
 };
 
-// Animation variants for staggered children
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 }
-};
-
 export default function MarcaDashboard() {
   const location = useLocation();
   const navigate = useNavigate();
   const path = location.pathname;
-  const { userType } = useUser();
+  const { userType, setUserType } = useUser();
   
   // Ensure we're in marca user mode
   useEffect(() => {
     if (userType !== "marca") {
-      toast.error("Esta página es solo para marcas. Redirigiendo al dashboard de creadores.");
-      navigate("/creador-dashboard");
+      setUserType("marca");
     }
-  }, [userType, navigate]);
+  }, [userType, setUserType]);
   
   // Simulate email notifications when receiving messages or proposals
   useEffect(() => {
@@ -119,44 +102,16 @@ export default function MarcaDashboard() {
           exit="exit"
           variants={pageVariants}
         >
-          {/* Decorative elements - improved contrast and animation */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-contala-darkpink/10 rounded-full blur-3xl -z-10 animate-pulse-slow"></div>
-          <div className="absolute bottom-20 left-10 w-48 h-48 bg-contala-pink/5 rounded-full blur-3xl -z-10 animate-pulse-slow"></div>
+          {/* Decorative elements with updated colors */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-[#4635B1]/10 rounded-full blur-3xl -z-10 animate-pulse-slow"></div>
+          <div className="absolute bottom-20 left-10 w-48 h-48 bg-[#AEEA94]/20 rounded-full blur-3xl -z-10 animate-pulse-slow"></div>
           
-          {/* Render different sections with animation */}
-          <motion.div 
-            variants={containerVariants}
-            initial="hidden"
-            animate="show"
-            className="w-full"
-          >
-            {/* Render the appropriate section based on the path */}
-            {activeSection === "perfil" && (
-              <motion.div variants={itemVariants}>
-                <UserProfile />
-              </motion.div>
-            )}
-            {activeSection === "proyectos" && (
-              <motion.div variants={itemVariants}>
-                <ProjectsSection />
-              </motion.div>
-            )}
-            {activeSection === "creadores" && (
-              <motion.div variants={itemVariants}>
-                <CreatorsSection />
-              </motion.div>
-            )}
-            {activeSection === "convocatorias" && (
-              <motion.div variants={itemVariants}>
-                <ConvocatoriasSection />
-              </motion.div>
-            )}
-            {activeSection === "descubrir" && (
-              <motion.div variants={itemVariants}>
-                <DiscoverSection />
-              </motion.div>
-            )}
-          </motion.div>
+          {/* Render the appropriate section based on the path */}
+          {activeSection === "perfil" && <UserProfile />}
+          {activeSection === "proyectos" && <ProjectsSection />}
+          {activeSection === "creadores" && <CreatorsSection />}
+          {activeSection === "convocatorias" && <ConvocatoriasSection />}
+          {activeSection === "descubrir" && <DiscoverSection />}
         </motion.div>
       </div>
     </SidebarProvider>
