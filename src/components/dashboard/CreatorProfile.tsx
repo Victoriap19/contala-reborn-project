@@ -246,7 +246,7 @@ export function CreatorProfile() {
                 </AvatarFallback>}
             </Avatar>
             <div className="flex items-center space-x-2">
-              <Label htmlFor="picture" className="cursor-pointer bg-contala-green/10 text-contala-green px-4 py-2 rounded-md hover:bg-contala-green/20 transition">
+              <Label htmlFor="picture" className="cursor-pointer text-contala-brown px-4 py-2 rounded-md transition bg-transparent">
                 Cambiar foto
               </Label>
               <Input id="picture" type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
