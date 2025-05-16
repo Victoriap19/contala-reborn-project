@@ -67,16 +67,21 @@ export function ProjectDetails({ project, onShowChat, onShowProposal, onModifyPr
         />
         
         {/* Milestones */}
-        <ProjectMilestones project={project} />
+        <ProjectMilestones project={project} shipmentStatus={shipmentStatus} />
       </div>
       
-      {/* Project Deliverables */}
-      {project.status === "completed" && (
-        <>
-          <Separator />
-          <ProjectDeliverables projectStatus={project.status} />
-        </>
-      )}
+      {/* Project Deliverables or Shipment Info */}
+      <Separator />
+      <ProjectDeliverables 
+        projectStatus={project.status} 
+        shipmentInfo={
+          shipmentStatus ? {
+            trackingNumber: trackingInfo.trackingNumber,
+            carrier: trackingInfo.carrier,
+            status: shipmentStatus
+          } : undefined
+        } 
+      />
       
       {/* Shipment Dialog */}
       <Dialog open={showShipmentDialog} onOpenChange={setShowShipmentDialog}>

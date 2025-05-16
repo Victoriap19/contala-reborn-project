@@ -1,5 +1,6 @@
 
-import { Check, Clock } from "lucide-react";
+import { Check, Clock, Package, Truck } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 type Project = {
   id: string;
@@ -13,15 +14,38 @@ type Project = {
 
 interface ProjectMilestonesProps {
   project: Project;
+  shipmentStatus?: "pending" | "shipped" | "delivered" | "confirmed" | null;
 }
 
-export function ProjectMilestones({ project }: ProjectMilestonesProps) {
-  // Mock project milestones
+export function ProjectMilestones({ project, shipmentStatus }: ProjectMilestonesProps) {
+  // Calculate milestones based on project status and shipment status
   const milestones = [
-    { title: "Propuesta enviada", date: project.date, completed: true },
-    { title: "Propuesta aceptada", date: "15/04/2025", completed: project.status === "accepted" || project.status === "completed" },
-    { title: "Pago realizado", date: "16/04/2025", completed: project.status === "completed" },
-    { title: "Proyecto completado", date: "28/04/2025", completed: project.status === "completed" },
+    { title: "Propuesta enviada", date: project.date, completed: true, icon: Check },
+    { title: "Propuesta aceptada", date: "15/04/2025", completed: project.status === "accepted" || project.status === "completed", icon: Check },
+    { 
+      title: "Pago realizado", 
+      date: "16/04/2025", 
+      completed: project.status === "accepted" || project.status === "completed", 
+      icon: Check 
+    },
+    { 
+      title: "Envío configurado", 
+      date: shipmentStatus ? "17/04/2025" : "Pendiente", 
+      completed: shipmentStatus === "shipped" || shipmentStatus === "delivered" || shipmentStatus === "confirmed", 
+      icon: Package 
+    },
+    { 
+      title: "Producto entregado", 
+      date: shipmentStatus === "delivered" || shipmentStatus === "confirmed" ? "25/04/2025" : "Pendiente", 
+      completed: shipmentStatus === "delivered" || shipmentStatus === "confirmed", 
+      icon: Truck 
+    },
+    { 
+      title: "Proyecto completado", 
+      date: project.status === "completed" ? "28/04/2025" : "Pendiente", 
+      completed: project.status === "completed", 
+      icon: Check 
+    },
   ];
   
   return (
@@ -37,7 +61,7 @@ export function ProjectMilestones({ project }: ProjectMilestonesProps) {
               milestone.completed ? "bg-contala-green text-white" : "bg-gray-200"
             }`}>
               {milestone.completed ? (
-                <Check className="h-4 w-4" />
+                <milestone.icon className="h-4 w-4" />
               ) : (
                 <Clock className="h-4 w-4 text-gray-500" />
               )}
@@ -47,6 +71,13 @@ export function ProjectMilestones({ project }: ProjectMilestonesProps) {
                 <p className="font-medium">{milestone.title}</p>
                 <span className="text-sm text-gray-500">{milestone.date}</span>
               </div>
+              {milestone.title === "Envío configurado" && shipmentStatus === "shipped" && (
+                <div className="mt-1">
+                  <Badge variant="outline" className="text-xs bg-blue-50 border-blue-200 text-blue-700">
+                    En ruta
+                  </Badge>
+                </div>
+              )}
             </div>
           </div>
         ))}
