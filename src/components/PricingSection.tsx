@@ -17,8 +17,8 @@ export default function PricingSection() {
   useEffect(() => {
     // Update plans based on billing period selection
     const updatePlans = () => {
-      // Updated pricing according to the new requirements
-      setPlans([
+      // All available plans
+      const allPlans = [
         {
           id: 1,
           name: "Free",
@@ -34,8 +34,8 @@ export default function PricingSection() {
         {
           id: 2,
           name: "Pro",
-          price: isAnnual ? 192000 : 20000, // 20000 x 12 - 20% = 192000
-          interval: isAnnual ? "year" : "month",
+          price: 20000,
+          interval: "month",
           description: "Para usuarios frecuentes",
           features: [
             "Hasta 10 propuestas o proyectos por mes",
@@ -47,9 +47,23 @@ export default function PricingSection() {
         },
         {
           id: 3,
+          name: "Pro",
+          price: 192000, // 20000 x 12 - 20% = 192000
+          interval: "year",
+          description: "Para usuarios frecuentes con 20% de descuento anual",
+          features: [
+            "Hasta 10 propuestas o proyectos por mes",
+            "Filtros avanzados",
+            "Mensajes ilimitados",
+            "Soporte rápido"
+          ],
+          popular: true
+        },
+        {
+          id: 4,
           name: "Empresa",
-          price: isAnnual ? 432000 : 45000, // 45000 x 12 - 20% = 432000
-          interval: isAnnual ? "year" : "month",
+          price: 45000,
+          interval: "month",
           description: "Para empresas y agencias",
           features: [
             "Hasta 30 propuestas o proyectos por mes",
@@ -58,8 +72,29 @@ export default function PricingSection() {
             "Soporte prioritario",
             "API de integración"
           ]
+        },
+        {
+          id: 5,
+          name: "Empresa",
+          price: 432000, // 45000 x 12 - 20% = 432000
+          interval: "year",
+          description: "Para empresas y agencias con 20% de descuento anual",
+          features: [
+            "Hasta 30 propuestas o proyectos por mes",
+            "Filtros avanzados",
+            "Mensajes ilimitados",
+            "Soporte prioritario",
+            "API de integración"
+          ]
         }
-      ]);
+      ];
+      
+      // Filter plans based on selected billing period
+      const filteredPlans = allPlans.filter(plan => 
+        plan.interval === (isAnnual ? "year" : "month") || plan.price === 0
+      );
+      
+      setPlans(filteredPlans);
     };
     
     updatePlans();
