@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { SidebarProvider } from "@/components/ui/sidebar";
@@ -11,7 +10,7 @@ import { DiscoverSection } from "@/components/dashboard/DiscoverSection";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "@/context/UserContext";
 import { toast } from "sonner";
-import { MessageSquare, Check } from "lucide-react";
+import { MessageSquare, Check, Package, Truck } from "lucide-react";
 import { motion } from "framer-motion";
 
 // Mock function to simulate email notifications
@@ -48,7 +47,7 @@ export default function MarcaDashboard() {
     }
   }, [userType, setUserType]);
   
-  // Simulate email notifications when receiving messages or proposals
+  // Enhanced notifications to include shipping updates
   useEffect(() => {
     // Subscription to new messages would go here in a real app
     // For demo, we'll simulate random notifications
@@ -66,8 +65,37 @@ export default function MarcaDashboard() {
       sendEmailNotification("proposal_accepted", "user@example.com");
     }, 30000);
       
+    // Add shipping notifications
+    const shippingTimer = window.setTimeout(() => {
+      toast(
+        <div className="flex gap-2">
+          <Truck className="h-5 w-5 text-blue-500" />
+          <div>
+            <p className="font-medium">Actualización de envío</p>
+            <p className="text-sm text-gray-500">Tu paquete está en camino a Carlos Gómez</p>
+          </div>
+        </div>,
+        { duration: 5000 }
+      );
+    }, 45000);
+
+    const deliveryTimer = window.setTimeout(() => {
+      toast(
+        <div className="flex gap-2">
+          <Package className="h-5 w-5 text-[#4635B1]" />
+          <div>
+            <p className="font-medium">Envío confirmado</p>
+            <p className="text-sm text-gray-500">Carlos Gómez ha confirmado la recepción del envío</p>
+          </div>
+        </div>,
+        { duration: 5000 }
+      );
+    }, 60000);
+      
     return () => {
       window.clearTimeout(acceptanceTimer);
+      window.clearTimeout(shippingTimer);
+      window.clearTimeout(deliveryTimer);
     };
   }, []);
   

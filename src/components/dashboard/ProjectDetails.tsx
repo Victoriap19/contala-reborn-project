@@ -7,6 +7,8 @@ import { Separator } from "@/components/ui/separator";
 import { FileText, MessageSquare, Download, File, Clock, Check, Truck, Package } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ShipmentTracker } from "./ShipmentTracker";
+import { ShipmentManagement } from "./ShipmentManagement";
+import { toast } from "sonner";
 
 type Project = {
   id: string;
@@ -27,6 +29,16 @@ interface ProjectDetailsProps {
 
 export function ProjectDetails({ project, onShowChat, onShowProposal, onModifyProposal }: ProjectDetailsProps) {
   const [showShipmentDialog, setShowShipmentDialog] = useState<boolean>(false);
+  // For demo purposes, we'll use state to manage shipment info
+  // In a real app, this would come from the backend
+  const [shipmentStatus, setShipmentStatus] = useState<"pending" | "shipped" | "delivered" | "confirmed" | null>(
+    project.status === "completed" ? "confirmed" : project.status === "accepted" ? "pending" : null
+  );
+  const [trackingInfo, setTrackingInfo] = useState({
+    trackingNumber: "",
+    carrier: "",
+    additionalInfo: ""
+  });
   
   // Mock project deliverables for completed projects
   const projectDeliverables = project.status === "completed" ? [
@@ -42,6 +54,21 @@ export function ProjectDetails({ project, onShowChat, onShowProposal, onModifyPr
     { title: "Pago realizado", date: "16/04/2025", completed: project.status === "completed" },
     { title: "Proyecto completado", date: "28/04/2025", completed: project.status === "completed" },
   ];
+
+  // Handle shipping information update (from the form)
+  const handleUpdateShipment = (data: any) => {
+    setTrackingInfo(data);
+    setShipmentStatus("shipped");
+    // In a real app, you would send this to the backend
+    toast.success("Información de envío registrada correctamente");
+  };
+
+  // Handle confirmation of receipt by creator
+  const handleConfirmReceipt = () => {
+    setShipmentStatus("confirmed");
+    // In a real app, you would send this to the backend
+    toast.success("Recepción del producto confirmada");
+  };
 
   return (
     <div className="space-y-6 py-4">
@@ -84,6 +111,25 @@ export function ProjectDetails({ project, onShowChat, onShowProposal, onModifyPr
                  "Completado"}
               </Badge>
             </div>
+            {shipmentStatus && (
+              <div className="flex justify-between items-center">
+                <span className="text-gray-500">Envío:</span>
+                <Badge variant={
+                  shipmentStatus === "confirmed" ? "default" :
+                  shipmentStatus === "delivered" ? "secondary" :
+                  shipmentStatus === "shipped" ? "outline" :
+                  "outline"
+                } className={
+                  shipmentStatus === "confirmed" ? "bg-[#4635B1]" :
+                  shipmentStatus === "delivered" ? "bg-green-500" : ""
+                }>
+                  {shipmentStatus === "pending" ? "Pendiente" :
+                   shipmentStatus === "shipped" ? "Enviado" :
+                   shipmentStatus === "delivered" ? "Entregado" :
+                   "Confirmado"}
+                </Badge>
+              </div>
+            )}
           </div>
           
           <div>
@@ -136,7 +182,7 @@ export function ProjectDetails({ project, onShowChat, onShowProposal, onModifyPr
                 onClick={() => setShowShipmentDialog(true)}
               >
                 <Truck className="mr-2 h-4 w-4" />
-                Seguimiento de envío
+                {shipmentStatus === "pending" ? "Registrar envío" : "Ver envío"}
               </Button>
             )}
           </div>
@@ -209,7 +255,14 @@ export function ProjectDetails({ project, onShowChat, onShowProposal, onModifyPr
       {/* Shipment Dialog */}
       <Dialog open={showShipmentDialog} onOpenChange={setShowShipmentDialog}>
         <DialogContent className="max-w-3xl">
-          <ShipmentTracker projectId={project.id} userRole="client" />
+          <ShipmentManagement
+            projectId={project.id}
+            userRole="client"
+            shipmentStatus={shipmentStatus}
+            trackingInfo={trackingInfo}
+            onUpdateShipment={handleUpdateShipment}
+            onConfirmReceipt={handleConfirmReceipt}
+          />
         </DialogContent>
       </Dialog>
     </div>

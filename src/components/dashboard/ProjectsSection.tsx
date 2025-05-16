@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -190,6 +189,7 @@ export function ProjectsSection() {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [proposalOpen, setProposalOpen] = useState(false);
   const [paymentOpen, setPaymentOpen] = useState(false);
+  const [shipmentDialogOpen, setShipmentDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("all");
   
   // Usar el conjunto de datos correcto según el rol del usuario
@@ -218,6 +218,9 @@ export function ProjectsSection() {
       case "confirm":
       case "deliverable":
         setPaymentOpen(true);
+        break;
+      case "shipment":
+        setShipmentDialogOpen(true);
         break;
       default:
         break;
@@ -466,6 +469,48 @@ export function ProjectsSection() {
             <Button variant="outline" onClick={() => setPaymentOpen(false)}>Cancelar</Button>
             <Button className={isCreador ? "bg-[#B771E5]" : "bg-[#4635B1]"}>
               {isCreador ? "Confirmar Entrega" : "Proceder al Pago"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Shipment Dialog */}
+      <Dialog open={shipmentDialogOpen} onOpenChange={setShipmentDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Entrega del Proyecto</DialogTitle>
+            <DialogDescription>
+              {selectedProject?.title} - {selectedProject?.creator}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="flex justify-between">
+              <span className="font-medium">Proyecto:</span>
+              <span>{selectedProject?.title}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium">{isCreador ? "Cliente" : "Creador"}:</span>
+              <span>{selectedProject?.creator}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium">Monto:</span>
+              <span className="font-bold">${selectedProject?.budget?.toLocaleString()}</span>
+            </div>
+            
+            <div className="border rounded-lg p-4 bg-[#FFFBCA]/50 mt-4">
+              <h4 className="font-bold text-[#4635B1] flex items-center mb-2">
+                <Clock className="h-4 w-4 mr-2" /> 
+                Proceso de Entrega
+              </h4>
+              <p className="text-sm text-gray-600">
+                Una vez confirmada la entrega, el cliente recibirá una notificación para revisar y aprobar el trabajo. El pago se liberará una vez aprobado.
+              </p>
+            </div>
+          </div>
+          <div className="flex justify-end gap-3">
+            <Button variant="outline" onClick={() => setShipmentDialogOpen(false)}>Cancelar</Button>
+            <Button className="bg-[#4635B1]">
+              Confirmar Entrega
             </Button>
           </div>
         </DialogContent>
