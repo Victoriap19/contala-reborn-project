@@ -26,28 +26,28 @@ export default function Footer() {
           </div>
           
           <div className="space-y-4">
-            <h4 className="font-semibold text-sm uppercase tracking-wider text-gray-400">Empresa</h4>
+            <h4 className="font-semibold text-sm uppercase tracking-wider text-contala-darkpink/70">Empresa</h4>
             <ul className="space-y-3">
-              <li><a href="#" className="text-gray-600 hover:text-contala-green transition-colors text-sm">Sobre nosotros</a></li>
-              <li><a href="#" className="text-gray-600 hover:text-contala-green transition-colors text-sm">Cómo funciona</a></li>
-              <li><a href="#" className="text-gray-600 hover:text-contala-green transition-colors text-sm">Contacto</a></li>
+              <li><a href="#" className="text-gray-600 hover:text-contala-darkpink transition-colors text-sm">Sobre nosotros</a></li>
+              <li><a href="#" className="text-gray-600 hover:text-contala-darkpink transition-colors text-sm">Cómo funciona</a></li>
+              <li><a href="#" className="text-gray-600 hover:text-contala-darkpink transition-colors text-sm">Contacto</a></li>
             </ul>
           </div>
           
           <div className="space-y-4">
-            <h4 className="font-semibold text-sm uppercase tracking-wider text-gray-400">Recursos</h4>
+            <h4 className="font-semibold text-sm uppercase tracking-wider text-contala-darkpink/70">Recursos</h4>
             <ul className="space-y-3">
-              <li><a href="#" className="text-gray-600 hover:text-contala-green transition-colors text-sm">Blog</a></li>
-              <li><a href="#" className="text-gray-600 hover:text-contala-green transition-colors text-sm">Guía para marcas</a></li>
-              <li><a href="#" className="text-gray-600 hover:text-contala-green transition-colors text-sm">Guía para creadores</a></li>
+              <li><a href="#" className="text-gray-600 hover:text-contala-darkpink transition-colors text-sm">Blog</a></li>
+              <li><a href="#" className="text-gray-600 hover:text-contala-darkpink transition-colors text-sm">Guía para marcas</a></li>
+              <li><a href="#" className="text-gray-600 hover:text-contala-darkpink transition-colors text-sm">Guía para creadores</a></li>
             </ul>
           </div>
           
           <div className="space-y-4">
-            <h4 className="font-semibold text-sm uppercase tracking-wider text-gray-400">Legal</h4>
+            <h4 className="font-semibold text-sm uppercase tracking-wider text-contala-darkpink/70">Legal</h4>
             <ul className="space-y-3">
-              <li><a href="#" className="text-gray-600 hover:text-contala-green transition-colors text-sm">Términos de servicio</a></li>
-              <li><a href="#" className="text-gray-600 hover:text-contala-green transition-colors text-sm">Política de privacidad</a></li>
+              <li><a href="#" className="text-gray-600 hover:text-contala-darkpink transition-colors text-sm">Términos de servicio</a></li>
+              <li><a href="#" className="text-gray-600 hover:text-contala-darkpink transition-colors text-sm">Política de privacidad</a></li>
             </ul>
           </div>
         </div>
@@ -56,7 +56,7 @@ export default function Footer() {
           <p className="text-gray-400 text-sm">© Contala 2025. Todos los derechos reservados.</p>
           
           <div className="mt-4 md:mt-0">
-            <a href="#" className="text-sm text-gray-500 hover:text-contala-green">Español</a>
+            <a href="#" className="text-sm text-gray-500 hover:text-contala-darkpink">Español</a>
           </div>
         </div>
       </div>

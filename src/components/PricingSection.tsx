@@ -109,18 +109,18 @@ export default function PricingSection() {
   };
 
   return (
-    <section id="pricing" className="py-20 bg-white">
+    <section id="pricing" className="py-20 bg-contala-cream/30">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-contala-green mb-3">Planes y Precios</h2>
-          <p className="text-xl text-contala-green/80 max-w-2xl mx-auto">
+          <h2 className="text-4xl font-bold text-contala-darkpink mb-3">Planes y Precios</h2>
+          <p className="text-xl text-contala-darkpink/80 max-w-2xl mx-auto">
             Elige el plan que mejor se adapte a tus necesidades para conectar con los mejores creadores.
           </p>
         </div>
         
         <div className="flex items-center justify-center mb-8">
           <div className="flex items-center space-x-2">
-            <Label htmlFor="billing-toggle" className={`text-sm ${!isAnnual ? 'font-bold text-contala-green' : 'text-contala-green/70'}`}>
+            <Label htmlFor="billing-toggle" className={`text-sm ${!isAnnual ? 'font-bold text-contala-darkpink' : 'text-contala-darkpink/70'}`}>
               Facturación mensual
             </Label>
             
@@ -131,7 +131,7 @@ export default function PricingSection() {
               className="data-[state=checked]:bg-contala-green data-[state=checked]:border-contala-green"
             />
             
-            <Label htmlFor="billing-toggle" className={`text-sm flex items-center ${isAnnual ? 'font-bold text-contala-green' : 'text-contala-green/70'}`}>
+            <Label htmlFor="billing-toggle" className={`text-sm flex items-center ${isAnnual ? 'font-bold text-contala-darkpink' : 'text-contala-darkpink/70'}`}>
               Facturación anual
               {isAnnual && (
                 <span className="ml-2 text-xs font-medium bg-amber-100 text-amber-800 rounded-full px-2 py-0.5">
@@ -150,7 +150,7 @@ export default function PricingSection() {
         </div>
         
         <div className="mt-12 text-center">
-          <p className="text-contala-green/70 mb-4">¿Tenés alguna duda sobre nuestros planes?</p>
+          <p className="text-contala-darkpink/70 mb-4">¿Tenés alguna duda sobre nuestros planes?</p>
           <Button 
             variant="outline"
             className="border-contala-pink text-contala-pink hover:bg-contala-pink hover:text-white"

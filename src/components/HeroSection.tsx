@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "@/context/UserContext";
 import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
+
 export default function HeroSection() {
   const navigate = useNavigate();
   const {
@@ -39,13 +40,10 @@ export default function HeroSection() {
       <div className="max-w-7xl mx-auto px-4 md:px-6 relative">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className={`transition-all duration-1000 ${isVisible ? "opacity-100" : "opacity-0 translate-y-10"}`}>
-            <div className="relative">
-              
-              
-            </div>
+            <div className="relative"></div>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight">
-              Conecta con <span className="text-contala-navy relative inline-block">
+              Conecta con <span className="text-contala-darkpink relative inline-block">
                 creadores
                 <svg className="absolute -bottom-1 left-0 w-full h-2 text-contala-pink/30" viewBox="0 0 200 8" preserveAspectRatio="none">
                   <path d="M0,5 C50,0 150,0 200,5 L200,8 L0,8 Z" fill="currentColor"></path>
@@ -58,10 +56,10 @@ export default function HeroSection() {
             </p>
             
             <div className="flex flex-wrap gap-4">
-              <Button className="bg-contala-navy hover:bg-contala-navy/90 text-white h-14 px-8 text-lg rounded-md shadow-none" onClick={handleMarcaClick}>
+              <Button className="bg-contala-darkpink hover:bg-contala-darkpink/90 text-white h-14 px-8 text-lg rounded-md shadow-none" onClick={handleMarcaClick}>
                 Empezar como Marca <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button variant="outline" className="border-gray-200 hover:bg-gray-50 text-contala-charcoal h-14 px-8 text-lg rounded-md shadow-none" onClick={handleCreadorClick}>
+              <Button variant="outline" className="border-gray-200 hover:bg-contala-cream text-contala-darkpink h-14 px-8 text-lg rounded-md shadow-none" onClick={handleCreadorClick}>
                 Soy creador de contenido
               </Button>
             </div>
@@ -77,7 +75,7 @@ export default function HeroSection() {
                 <div className="w-10 h-10 rounded-full border-2 border-white overflow-hidden bg-gray-100 flex items-center justify-center">
                   <img src="https://randomuser.me/api/portraits/women/42.jpg" alt="Usuario" className="w-full h-full object-cover" />
                 </div>
-                <div className="w-10 h-10 rounded-full border-2 border-white bg-contala-navy flex items-center justify-center text-white text-xs font-bold">
+                <div className="w-10 h-10 rounded-full border-2 border-white bg-contala-darkpink flex items-center justify-center text-white text-xs font-bold">
                   +50
                 </div>
               </div>

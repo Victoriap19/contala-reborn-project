@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import Navbar from "@/components/Navbar";
@@ -17,6 +18,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+
 type SubscriptionPlan = {
   id: number;
   name: string;
@@ -26,17 +28,20 @@ type SubscriptionPlan = {
   features: string[];
   popular?: boolean;
 };
+
 type Subscription = {
   id: number;
   status: "active" | "canceled" | "past_due";
   current_period_end: string;
   plan: SubscriptionPlan;
 };
+
 const emailSchema = z.object({
   email: z.string().email({
     message: "Por favor ingresa un email válido"
   })
 });
+
 export default function Subscriptions() {
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [currentSubscription, setCurrentSubscription] = useState<Subscription | null>(null);
@@ -65,6 +70,7 @@ export default function Subscriptions() {
       setUserType("marca");
     }
   }, [userType, setUserType, navigate]);
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -127,11 +133,13 @@ export default function Subscriptions() {
     };
     fetchData();
   }, []);
+  
   const handleSubscribe = (planId: number) => {
     // Open email dialog and store the selected plan ID
     setSelectedPlanId(planId);
     setEmailDialogOpen(true);
   };
+  
   const proceedToPayment = (email: string) => {
     if (!selectedPlanId) return;
 
@@ -149,10 +157,12 @@ export default function Subscriptions() {
       navigate(`/register?plan=${selectedPlanId}&type=marca&email=${encodeURIComponent(email)}`);
     }, 2000);
   };
+  
   const onSubmitEmail = (values: z.infer<typeof emailSchema>) => {
     setEmailDialogOpen(false);
     proceedToPayment(values.email);
   };
+  
   const handleCancelSubscription = async () => {
     try {
       // Aquí se implementaría la lógica real para cancelar la suscripción
@@ -174,6 +184,7 @@ export default function Subscriptions() {
       toast.error("Hubo un problema al cancelar tu suscripción");
     }
   };
+
   return <>
       <Helmet>
         <title>Suscripciones | Contala</title>
@@ -182,16 +193,16 @@ export default function Subscriptions() {
       <Navbar />
       
       <main className="container mx-auto px-4 py-12 max-w-6xl">
-        <h1 className="text-3xl font-bold mb-8 text-contala-brown my-[78px] py-[2px]">Suscripciones</h1>
+        <h1 className="text-3xl font-bold mb-8 text-contala-darkpink my-[78px] py-[2px]">Suscripciones</h1>
         
         {loading ? <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 text-contala-green animate-spin" />
+            <Loader2 className="h-8 w-8 text-contala-darkpink animate-spin" />
             <span className="ml-2">Cargando planes de suscripción...</span>
           </div> : <>
             {currentSubscription && <CurrentSubscription subscription={currentSubscription} onCancel={handleCancelSubscription} />}
             
             <div className="mt-12">
-              <h2 className="text-2xl font-semibold mb-6 text-contala-coral my-[39px]">
+              <h2 className="text-2xl font-semibold mb-6 text-contala-pink my-[39px]">
                 {currentSubscription ? "Cambiar plan" : "Elige tu plan"}
               </h2>
               <SubscriptionPlans plans={plans} currentPlanId={currentSubscription?.plan.id} onSubscribe={handleSubscribe} />
@@ -222,7 +233,7 @@ export default function Subscriptions() {
                       <FormControl>
                         <Input id="email" placeholder="tu@email.com" className="pl-10" {...field} />
                       </FormControl>
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-contala-green/60 h-5 w-5" />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-contala-darkpink/60 h-5 w-5" />
                     </div>
                     <FormMessage />
                   </FormItem>} />

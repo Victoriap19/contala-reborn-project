@@ -63,20 +63,21 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				contala: {
-					cream: '#FFFBCA',    // New cream color
-					green: '#AEEA94',    // New green color
-					pink: '#B771E5',     // New blue/purple color
-					"softpink": '#B771E5', // Same as pink for now
-					"darkpink": '#4635B1', // New dark purple color
+					// Colores actualizados según los criterios
+					cream: '#FFFBCA',    // Crema suave
+					green: '#AEEA94',    // Verde claro
+					pink: '#B771E5',     // Púrpura medio
+					"softpink": '#B771E5', // Púrpura medio
+					"darkpink": '#4635B1', // Violeta oscuro
+					navy: '#4635B1',     // Violeta oscuro
+					brown: '#4635B1',    // Violeta oscuro
+					sand: '#FFFBCA',     // Crema suave
+					coral: '#B771E5',    // Púrpura medio
+					charcoal: '#4635B1',  // Violeta oscuro
+					softgray: '#F8FAFC',  
+					lightgray: '#F1F5F9',
 					gold: '#D4AF37',
 					sage: '#9CAF88',
-					brown: '#4635B1',    // Using dark purple
-					sand: '#FFFBCA',     // Using cream
-					coral: '#B771E5',    // Using blue/purple
-					navy: '#4635B1',     // Using dark purple
-					charcoal: '#4635B1',  // Using dark purple
-					softgray: '#F8FAFC',  // Keeping this light color
-					lightgray: '#F1F5F9', // Keeping this light color
 				}
 			},
 			borderRadius: {

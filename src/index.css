@@ -5,8 +5,8 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%; /* Pure white background */
-    --foreground: 0 0% 20%; /* Dark gray text */
+    --background: 0 0% 100%; /* Mantener fondo blanco como principal */
+    --foreground: 0 0% 20%; /* Texto gris oscuro */
 
     --card: 0 0% 100%;
     --card-foreground: 0 0% 20%;
@@ -14,18 +14,18 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 20%;
 
-    /* Dark purple (primary) */
-    --primary: 252 57% 45%; /* Based on #4635B1 */
+    /* Violeta oscuro (primary) */
+    --primary: 252 57% 45%; /* Basado en #4635B1 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 20%;
+    --secondary: 60 100% 90%; /* Basado en #FFFBCA (crema suave) */
+    --secondary-foreground: 252 57% 45%; 
 
-    --muted: 0 0% 96%;
+    --muted: 60 100% 95%;
     --muted-foreground: 0 0% 45%;
 
-    /* Light green as accent */
-    --accent: 103 70% 75%; /* Based on #AEEA94 */
+    /* Verde claro como acento */
+    --accent: 103 70% 75%; /* Basado en #AEEA94 */
     --accent-foreground: 252 57% 45%;
 
     --destructive: 0 84.2% 60.2%;
@@ -112,7 +112,7 @@
 }
 
 .table-container th {
-  @apply bg-gray-50 text-contala-darkpink font-medium p-3 text-left;
+  @apply bg-contala-cream text-contala-darkpink font-medium p-3 text-left;
 }
 
 .table-container td {
@@ -120,7 +120,7 @@
 }
 
 .table-container tr:hover {
-  @apply bg-gray-50;
+  @apply bg-contala-cream/30;
 }
 
 /* Logo styling */
@@ -134,7 +134,7 @@
   @apply rounded-full flex items-center justify-center;
   width: 2.5rem;
   height: 2.5rem;
-  background-color: #4635B1; /* Updated to purple */
+  background-color: #4635B1; /* Violeta oscuro */
 }
 
 .logo-bubble {
@@ -220,7 +220,7 @@
 
 /* Tag/badge styles */
 .tag {
-  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800;
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-contala-cream text-contala-navy;
 }
 
 /* Enhanced dashboard styles with better contrast */

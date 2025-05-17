@@ -84,7 +84,7 @@ export default function Navbar() {
             <Button 
               variant="ghost" 
               size="sm" 
-              className="mr-2 text-contala-brown hover:text-contala-pink"
+              className="mr-2 text-contala-darkpink hover:text-contala-pink"
               onClick={() => navigate('/')}
             >
               <ArrowLeft className="mr-1 h-4 w-4" />
@@ -98,11 +98,11 @@ export default function Navbar() {
         
         {/* Desktop menu */}
         <div className="hidden md:flex items-center space-x-6">
-          <button onClick={scrollToPricing} className="transition-colors text-contala-brown">
+          <button onClick={scrollToPricing} className="transition-colors text-contala-darkpink hover:text-contala-pink">
             Precios
           </button>
           
-          <button onClick={handleAboutUsClick} className="transition-colors text-contala-brown">
+          <button onClick={handleAboutUsClick} className="transition-colors text-contala-darkpink hover:text-contala-pink">
             Nosotros
           </button>
           
@@ -111,19 +111,19 @@ export default function Navbar() {
               <Button onClick={handleDashboardClick} className="bg-contala-pink text-white hover:bg-contala-pink/90">
                 Dashboard
               </Button>
-              <Button variant="outline" onClick={handleLogout} className="border-contala-brown text-contala-brown">
+              <Button variant="outline" onClick={handleLogout} className="border-contala-darkpink text-contala-darkpink">
                 Cerrar Sesión
               </Button>
             </>
           ) : (
-            <Button variant="outline" className="border-contala-brown text-contala-brown" onClick={handleLoginClick}>
+            <Button variant="outline" className="border-contala-darkpink text-contala-darkpink" onClick={handleLoginClick}>
               Iniciar Sesión
             </Button>
           )}
         </div>
         
         {/* Mobile menu button */}
-        <button onClick={toggleMenu} className="md:hidden text-contala-brown">
+        <button onClick={toggleMenu} className="md:hidden text-contala-darkpink">
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
@@ -135,7 +135,7 @@ export default function Navbar() {
             {isNotHomePage && (
               <Button 
                 variant="ghost" 
-                className="flex items-center justify-start text-contala-brown hover:text-contala-pink w-full text-left py-2"
+                className="flex items-center justify-start text-contala-darkpink hover:text-contala-pink w-full text-left py-2"
                 onClick={() => {
                   navigate('/');
                   setIsMenuOpen(false);
@@ -145,21 +145,21 @@ export default function Navbar() {
                 Inicio
               </Button>
             )}
-            <button onClick={scrollToPricing} className="text-contala-brown hover:text-contala-pink transition-colors py-2 text-left">
+            <button onClick={scrollToPricing} className="text-contala-darkpink hover:text-contala-pink transition-colors py-2 text-left">
               Precios
             </button>
             
-            <button onClick={handleAboutUsClick} className="text-contala-brown hover:text-contala-pink transition-colors py-2 text-left">
+            <button onClick={handleAboutUsClick} className="text-contala-darkpink hover:text-contala-pink transition-colors py-2 text-left">
               Nosotros
             </button>
             
-            <div className="pt-2 border-t border-contala-brown/10">
+            <div className="pt-2 border-t border-contala-darkpink/10">
               {isLoggedIn ? (
                 <>
                   <Button className="w-full bg-contala-pink text-white hover:bg-contala-pink/90 mb-2" onClick={handleDashboardClick}>
                     Dashboard
                   </Button>
-                  <Button variant="outline" className="w-full border-contala-brown text-contala-brown" onClick={() => {
+                  <Button variant="outline" className="w-full border-contala-darkpink text-contala-darkpink" onClick={() => {
                     handleLogout();
                     setIsMenuOpen(false);
                   }}>
@@ -167,7 +167,7 @@ export default function Navbar() {
                   </Button>
                 </>
               ) : (
-                <Button variant="outline" className="w-full border-contala-brown text-contala-brown" onClick={handleLoginClick}>
+                <Button variant="outline" className="w-full border-contala-darkpink text-contala-darkpink" onClick={handleLoginClick}>
                   Iniciar Sesión
                 </Button>
               )}
