@@ -1,0 +1,9 @@
+[build]
+  # Carpeta que Netlify sirve tras el build de Vite
+  publish = "dist"
+
+[[redirects]]
+  # Para cualquier ruta (/*), devolver index.html con éxito (200)
+  from = "/*"
+  to = "/index.html"
+  status = 200
